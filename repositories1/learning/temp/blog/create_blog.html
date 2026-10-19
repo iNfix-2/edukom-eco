@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block header %}
+<style>
+    .header-cover .community {
+        background-image: linear-gradient(180deg, rgba(169, 209, 86, 0.4) 0%, rgba(0, 39, 105, 0.5) 100%),
+        url({% static 'IMG/header/bloghead.jpg' %});
+        background-size: cover;
+        background-position: center;
+        color: white !important;
+        height: 35vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .form-container {
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: none;
+    }
+
+    .form-header {
+        background: #002769;
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .form-header h2 {
+        margin: 0;
+        font-weight: 700;
+        color: white;
+        font-size: 2rem;
+    }
+
+    .form-header p {
+        margin-top: 10px;
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    .form-body {
+        padding: 3rem;
+    }
+
+    .form-control:focus {
+        border-color: #A9D156;
+        box-shadow: 0 0 0 0.2rem rgba(169, 209, 86, 0.25);
+    }
+
+    .btn-publish {
+        background: #002769;
+        border: none;
+        padding: 12px 30px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+        color: white;
+    }
+
+    .btn-publish:hover {
+        background: #A9D156;
+        color: #002769;
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        color: #666;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        color: #002769;
+        text-decoration: underline;
+    }
+
+    label {
+        font-weight: 700;
+        color: #002769;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    /* Override global destructive padding */
+    body>.container {
+        padding-top: 2rem !important;
+    }
+
+    @media (max-width: 768px) {
+        .form-body {
+            padding: 1.5rem;
+        }
+
+        .header-cover .community {
+            height: 25vh;
+        }
+
+        .form-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .form-header {
+            padding: 1.5rem;
+        }
+    }
+</style>
+<div class="community">
+    <h1>Blog Management</h1>
+    <p style="font-size: 1.2rem;">Share your knowledge with the Edukom community</p>
+</div>
+{% endblock header %}
+
+{% block main %}
+<div class="container my-5" style="position: relative; z-index: 10;">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card form-container">
+                <div class="form-header">
+                    <nav aria-label="breadcrumb" class="mb-3">
+                        <ol class="breadcrumb justify-content-center" style="margin:0;">
+                            <li class="breadcrumb-item"><a href="/" style="color: rgba(255,255,255,0.7);">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'blog_list' %}"
+                                    style="color: rgba(255,255,255,0.7);">Blog</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"
+                                style="color: white; font-weight: 600;">{{ page_title|default:"Create Post" }}</li>
+                        </ol>
+                    </nav>
+                    <h2><i class="fas fa-pen-nib me-2"></i> {{ page_title|default:"Write a New Post" }}</h2>
+                    <p>Fill in the details below to {% if is_edit %}update{% else %}create{% endif %} your blog post.
+                    </p>
+                </div>
+                <div class="form-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                {{ form.title|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="p-4"
+                                    style="background: #f8f9fa; border-radius: 10px; border: 2px dashed #dee2e6;">
+                                    <h6 class="mb-3" style="color: #002769; font-weight: 700;"><i
+                                            class="fas fa-image me-2"></i> Featured Image</h6>
+                                    {{ form.image|as_crispy_field }}
+                                    <small class="text-muted d-block mt-2"><i class="fas fa-info-circle me-1"></i>
+                                        Recommended size: 1200x630px. Supported formats: JPG, PNG.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                {{ form.cta_title|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.cta_url|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                {{ form.content|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{% url 'blog_list' %}" class="btn-cancel"><i class="fas fa-arrow-left me-2"></i>
+                                Cancel</a>
+                            <button type="submit" class="btn btn-primary btn-publish rounded-pill">
+                                Publish Post <i class="fas fa-paper-plane ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}

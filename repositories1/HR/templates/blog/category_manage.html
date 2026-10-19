@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Categories — Edukom HR{% endblock %}
+{% block meta_description %}<meta name="description" content="Create and manage blog categories." />{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:900px">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h4 mb-1">Categories</h1>
+      <div class="text-muted small">Create and manage categories for your posts.</div>
+    </div>
+    <div>
+      <a class="btn btn-outline-secondary" href="{% url 'blog_manage' %}">Back to Manage Posts</a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-5">
+      <div class="bg-white rounded-4 shadow-sm p-4">
+        <h2 class="h6 mb-3">Add New Category</h2>
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            {{ form.name }}
+          </div>
+          <button class="btn btn-primary" type="submit">Add Category</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-7">
+      <div class="bg-white rounded-4 shadow-sm p-4 mb-4">
+        <h2 class="h6 mb-3">Existing Categories</h2>
+        {% if categories %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Slug</th>
+                  <th class="text-center">Posts</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in categories %}
+                <tr>
+                  <td>{{ c.name }}</td>
+                  <td><code>{{ c.slug }}</code></td>
+                  <td class="text-center">{{ c.posts.count }}</td>
+                  <td class="text-end">
+                    <form method="post" action="{% url 'blog_category_delete' c.slug %}" onsubmit="return confirm('Delete category {{ c.name }}?');" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-muted small">No categories yet. Add your first one.</div>
+        {% endif %}
+      </div>
+
+      <div class="bg-white rounded-4 shadow-sm p-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="h6 mb-0">Tags</h2>
+        </div>
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <form method="post">
+              {% csrf_token %}
+              <h3 class="h6">Add New Tag</h3>
+              <div class="mb-3">
+                <label class="form-label">Name</label>
+                {{ tag_form.name }}
+              </div>
+              <button class="btn btn-primary" type="submit">Add Tag</button>
+            </form>
+          </div>
+          <div class="col-lg-6">
+            {% if tags %}
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for t in tags %}
+                  <tr>
+                    <td>{{ t.name }}</td>
+                    <td class="text-end">
+                      <form method="post" action="{% url 'blog_tag_delete' t.slug %}" onsubmit="return confirm('Delete tag {{ t.name }}?');" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+              <div class="text-muted small">No tags yet. Add your first one.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+  <center class="p-3"><h1 class="text-center">View Guradians</h1></center>
+{% endblock header %}
+{% block main %}
+<br>
+<style>
+  th{
+    text-transform: uppercase;
+  }
+
+@media screen and (max-width: 960px){
+body > * {
+    padding-top: 0.5rem !important;
+}
+}
+</style>
+<main>
+    <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">s/n</th>
+            <th scope="col">name</th>
+            <th scope="col">Child</th>
+            <th scope="col">lesson</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for person in guardian %}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td><a href="{% url 'guardian' person.uid %}">{{person.full_name}}</a></td>
+            <td>{{person.AboutChild.child_class}}</td>
+            <td>{{person.Lesson.days}}</td>
+          </tr>
+          {% endfor %}
+         
+        </tbody>
+      </table>
+   
+</main>
+{% endblock main %}

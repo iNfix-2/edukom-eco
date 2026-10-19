@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+<!DOCTYPE html>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<div class="container mt-5">
+    <div class="content">
+        <p>Hello Admin,</p>
+        <p>A new guardian has just signed up for tutorship for their ward. Below are the details:</p>
+        <ul>
+            <li><strong>Name:</strong> {{ guardian.first_name }} {{ guardian.last_name }}</li>
+            <li><strong>Email:</strong> {{ guardian.email }}</li>
+            <li><strong>Phone:</strong> {{ guardian.phone }}</li>
+            <li><strong>Preferred Lesson Type:</strong> {{ guardian.lesson_type }}</li>
+        </ul>
+        <p>Please take the necessary steps to review the information and contact the guardian if required. Thank you!</p>
+    </div>
+   
+    <div class="card">
+        <div class="card-body">
+
+            <!-- Guardian Information -->
+            <h4 class="card-title">Guardian Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">UID:</dt>
+                <dd class="col-sm-9">{{ guardian.uid }}</dd>
+
+                <dt class="col-sm-3">Full Name:</dt>
+                <dd class="col-sm-9">{{ guardian.first_name }} {{ guardian.last_name }}</dd>
+
+                <dt class="col-sm-3">Email:</dt>
+                <dd class="col-sm-9">{{ guardian.email }}</dd>
+
+                <dt class="col-sm-3">Phone:</dt>
+                <dd class="col-sm-9">{{ guardian.phone }}</dd>
+
+                <!-- Add more fields as needed -->
+
+                <dt class="col-sm-3">Curriculum:</dt>
+                <dd class="col-sm-9">{{ guardian.curriculum }}</dd>
+            </dl>
+
+            <!-- About Child Information -->
+            <h4 class="card-title">About Child Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">Child Class:</dt>
+                <dd class="col-sm-9">{{ guardian.AboutChild.child_class }}</dd>
+
+                <dt class="col-sm-3">Goal:</dt>
+                <dd class="col-sm-9">{{ guardian.AboutChild.goal }}</dd>
+
+                <dt class="col-sm-3">Subject:</dt>
+                <dd class="col-sm-9">{{ guardian.AboutChild.subject }}</dd>
+
+                <!-- Add more fields as needed -->
+
+                <dt class="col-sm-3">About Child:</dt>
+                <dd class="col-sm-9">{{ guardian.AboutChild.about }}</dd>
+            </dl>
+
+            <!-- Location Information -->
+            <h4 class="card-title">Location Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">State:</dt>
+                <dd class="col-sm-9">{{ guardian.Location.state }}</dd>
+
+                <dt class="col-sm-3">Street Address:</dt>
+                <dd class="col-sm-9">{{ guardian.Location.street_address }}</dd>
+            </dl>
+
+            <!-- guardian.Lesson Information -->
+            <h4 class="card-title">Lesson Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">Days:</dt>
+                <dd class="col-sm-9">{{ guardian.Lesson.days }}</dd>
+
+                <dt class="col-sm-3">Start Date:</dt>
+                <dd class="col-sm-9">{{ guardian.Lesson.start }}</dd>
+
+                <dt class="col-sm-3">Weeks:</dt>
+                <dd class="col-sm-9">{{ guardian.Lesson.weeks }}</dd>
+
+                <!-- Add more fields as needed -->
+
+                <dt class="col-sm-3">Hour Per Day:</dt>
+                <dd class="col-sm-9">{{ guardian.Lesson.hour_per_day }}</dd>
+
+                <dt class="col-sm-3">Start Time:</dt>
+                <dd class="col-sm-9">{{ guardian.Lesson.start_time }}</dd>
+            </dl>
+
+            <!-- Guardian Email Information -->
+            <h4 class="card-title">Guardian Email Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">Sent:</dt>
+                <dd class="col-sm-9">{{ guardian.GuardianEmail.sent }}</dd>
+
+                <dt class="col-sm-3">Date Joined:</dt>
+                <dd class="col-sm-9">{{ guardian.GuardianEmail.date_joined }}</dd>
+            </dl>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Bootstrap JS and dependencies (Popper.js and jQuery) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock main %}

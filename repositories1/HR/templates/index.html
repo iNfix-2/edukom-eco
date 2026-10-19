@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edukom HR Solutions – Professional HR Services in Nigeria</title>
+  <meta name="description" content="Edukom HR Solutions provides expert HR consulting, recruitment, training, organizational development, and performance strategies tailored for businesses in Nigeria and beyond.">
+  <meta name="keywords" content="HR solutions Nigeria, Edukom HR, human resources, recruitment, training, performance management, HR consulting Abuja, organizational development, HR outsourcing">
+  <meta name="author" content="Edukom HR Solutions">
+
+  <!-- Open Graph / Facebook Meta Tags -->
+  <meta property="og:title" content="Edukom HR Solutions – Professional HR Services in Nigeria">
+  <meta property="og:description" content="Get tailored HR services from certified experts. Recruitment, training, performance management, and more.">
+  <meta property="og:image" content="https://hr.edukom.ng/img/logo2.png">
+  <meta property="og:url" content="https://hr.edukom.ng">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card Meta -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Edukom HR Solutions – Professional HR Services in Nigeria">
+  <meta name="twitter:description" content="Edukom HR Solutions offers modern, certified HR consulting services across Nigeria.">
+  <meta name="twitter:image" content="https://hr.edukom.ng/img/logo2.png">
+
+  <!-- Favicon / App Icon -->
+  <link rel="icon" type="image/png" href="img/logo2.png" />
+  <link rel="apple-touch-icon" href="img/logo2.png" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+ <link rel="stylesheet" href="/static/site.css">
+  <style>
+    /* ======= Light, lively palette ======= */
+    :root {
+      /* Warm, premium palette (no blue) */
+      --primary-color: #7A3E9D;      /* plum */
+      --accent-color:  #FFC857;      /* gold */
+      --tertiary-color:#E56B6F;      /* rose */
+
+      --bg-page:      #FFF7EF;       /* warm ivory */
+      --bg-surface:   #FFFFFF;       /* cards */
+      --bg-muted:     #FFF3E5;       /* soft surfaces */
+
+      --text-color:   #1E1B2E;       /* deep ink */
+      --text-muted:   #6B6A74;
+
+      --border-light: #F1E6D8;
+      --shadow-sm:    0 4px 12px rgba(70, 30, 80, 0.06);
+      --shadow-lg:    0 16px 42px rgba(70, 30, 80, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-page);
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text-color);
+      text-align: justify;
+    }
+    h4{
+      text-align: left;
+    }
+    /* ======= Navbar ======= */
+    .navbar { background: var(--bg-surface) !important; box-shadow: var(--shadow-sm); }
+    .navbar .nav-link { color: var(--text-color); font-weight: 600; }
+    .navbar .nav-link:hover, .navbar .nav-link.active { color: var(--primary-color); }
+    .navbar .btn-brand { background: var(--accent-color); color: #fff; border: none; }
+    .navbar .btn-brand:hover { filter: brightness(0.9); }
+
+    /* ======= Hero ======= */
+    .hero-section {
+      position: relative;
+      padding: 120px 0 100px;
+      background:
+        radial-gradient(1200px 600px at 10% 8%, rgba(110, 89, 255, .12), transparent 60%),
+        radial-gradient(900px 500px at 90% 20%, rgba(10, 132, 255, .10), transparent 55%),
+        linear-gradient( to right, rgba(122, 62, 157, 0.10), rgba(255, 200, 87, 0.12) ),
+        url('img/bg.jpg') center/cover no-repeat;
+      color: #fff;
+      overflow: hidden;
+    }
+    .hero-overlay { position:absolute; inset:0; background: linear-gradient( to right, rgba(10,15,26,.55), rgba(13,27,42,.35) ); }
+    .hero-content { position: relative; z-index: 1; }
+    .badge-hero { background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); }
+    .hero-section .display-4 { line-height: 1.1; }
+    .highlight { color: var(--accent-color); }
+
+    /* Floating shapes for liveliness */
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(20px); opacity: .45; z-index: 0;
+      animation: float 16s ease-in-out infinite;
+    }
+    .blob.bl-1 { width: 240px; height: 240px; left: -60px; top: 40px; background: #7A3E9D; animation-delay: -2s; }
+    .blob.bl-2 { width: 280px; height: 280px; right: -80px; bottom: -40px; background: #FFC857; animation-delay: -6s; }
+    @keyframes float { 0%,100%{ transform: translateY(0)} 50%{ transform: translateY(-12px) } }
+
+    /* ======= Cards / Boxes ======= */
+    .service-grid { background: rgba(255,255,255,.7); backdrop-filter: blur(8px); border: 1px solid var(--border-light); border-radius: 20px; box-shadow: var(--shadow-sm); }
+    .service-box { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 18px; text-align: center; color: var(--text-color); transition: transform .25s ease, box-shadow .25s ease; }
+    .service-box i { color: var(--accent-color); }
+    .service-box:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+    .about-card, .cert-card, .team-card, .info-box {
+      background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 22px; box-shadow: var(--shadow-sm); transition: transform .25s, box-shadow .25s;
+    }
+    .about-card:hover, .cert-card:hover, .team-card:hover, .info-box:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+    /* ======= Images flow nicely ======= */
+    .img-flow { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 16px; box-shadow: var(--shadow-sm); }
+    .team-avatar { width: 120px; height: 120px; object-fit: cover; }
+    .faculty-featured img { width: 100%; max-height: 320px; object-fit: cover; border-radius: 16px; }
+
+    /* Ensure consistent spacing on sections */
+    section { padding: 72px 0; }
+    .section-subtle { background: var(--bg-surface); }
+
+    /* Text helpers */
+    .text-accent { color: var(--primary-color) !important; }
+
+    /* Buttons */
+    .btn-primary { background: var(--primary-color); border: none; }
+    .btn-primary:hover { filter: brightness(.92); }
+    .btn-success { background: var(--accent-color); border: none; }
+    .btn-success:hover { filter: brightness(.92); }
+    .btn-soft { background: var(--bg-muted); color: var(--text-color); border: 1px solid var(--border-light); }
+
+    /* Accordion */
+    .accordion-button { font-weight: 600; color: var(--text-color); }
+    .accordion-button:not(.collapsed) { color: #fff; background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); }
+    .accordion-body { background: #fff; border-left: 4px solid var(--accent-color); }
+
+    /* Footer */
+    .footer-section { background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color)); color: #fff; }
+    .footer-link { color: rgba(255,255,255,.9); text-decoration: none; }
+    .footer-link:hover { color: #fff; }
+
+    /* Small polish */
+    .shadow-hover:hover { box-shadow: var(--shadow-lg) !important; }
+    .rounded-4 { border-radius: 1rem !important; }
+  </style>
+</head>
+
+<body>
+  <!-- ======= Navbar ======= -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <img src="img/logo.png" alt="Edukom HR Solutions" height="46" class="rounded-3 shadow-sm">
+        <span class="fw-bold text-accent">Edukom HR</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faculty">Team</a></li>
+          <li class="nav-item"><a class="nav-link" href="#certifications">Certifications</a></li>
+          <li class="nav-item"><a class="nav-link" href="/blog/">Blog</a></li>
+          <li class="nav-item ms-lg-2"><a class="btn btn-brand btn-sm px-3 py-2" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ======= Hero ======= -->
+  <section class="hero-section text-white position-relative" style="min-height: 95vh;display: flex;align-items: center;">
+    <div class="hero-overlay"></div>
+    <div class="blob bl-1"></div>
+    <div class="blob bl-2"></div>
+
+    <div class="container hero-content">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+          <span class="badge badge-hero mb-3">Modern HR Solutions</span>
+          <h1 class="display-4 fw-bold mb-3" style="text-align: left;">Transform Your <span class="highlight">Workforce</span></h1>
+          <p class="lead mb-4">Optimize your company’s HR processes with cutting‑edge solutions tailored to your unique business needs. From recruitment to performance management, we've got you covered.</p>
+          <div class="d-flex gap-3">
+            <a href="#services" class="btn btn-soft">Explore Services</a>
+            <a href="#contact" class="btn btn-success">Get Started</a>
+          </div>
+          <div class="d-flex gap-4 mt-5">
+            <div><h4 class="fw-bold mb-0" style="color: var(--accent-color);">20+</h4><small>Years Experience</small></div>
+            <div><h4 class="fw-bold mb-0" style="color: var(--accent-color);">100+</h4><small>Clients Served</small></div>
+            <div><h4 class="fw-bold mb-0" style="color: var(--accent-color);">10+</h4><small>Industries</small></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="service-grid p-4 p-md-5">
+            <div class="row g-3">
+              <div class="col-6"><div class="service-box"><i class="bi bi-person-plus-fill fs-3"></i><div class="mt-1 fw-semibold">Recruitment</div><small>Find the right talent</small></div></div>
+              <div class="col-6"><div class="service-box"><i class="bi bi-bar-chart-fill fs-3"></i><div class="mt-1 fw-semibold">Performance</div><small>Boost productivity</small></div></div>
+              <div class="col-6"><div class="service-box"><i class="bi bi-mortarboard-fill fs-3"></i><div class="mt-1 fw-semibold">Training</div><small>Develop skills</small></div></div>
+              <div class="col-6"><div class="service-box"><i class="bi bi-diagram-3-fill fs-3"></i><div class="mt-1 fw-semibold">Strategy</div><small>Scale effectively</small></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= About ======= -->
+  <section id="about" class="section-subtle">
+    <div class="container text-center">
+      <span class="badge bg-gradient text-light mb-2 px-3 py-1" style="background:linear-gradient(90deg,var(--primary-color),var(--accent-color))">About Edukom HR Solutions</span>
+      <h2 class="fw-bold display-6 mb-3">Who We Are</h2>
+      <p class="lead mb-5 mx-auto" style="max-width:740px">We are passionate about helping organizations build better human resources management systems through innovative, data‑driven solutions.</p>
+
+      <div class="row g-4 mb-5">
+        <div class="col-6 col-lg-3"><div class="about-card h-100"><i class="bi bi-person-fill fs-2 text-accent"></i><h5 class="fw-bold mt-3">People First</h5><p class="small mb-0">Human‑centered approach to HR</p></div></div>
+        <div class="col-6 col-lg-3"><div class="about-card h-100"><i class="bi bi-bullseye fs-2 text-accent"></i><h5 class="fw-bold mt-3">Process</h5><p class="small mb-0">Streamlined workflows</p></div></div>
+        <div class="col-6 col-lg-3"><div class="about-card h-100"><i class="bi bi-cpu-fill fs-2 text-accent"></i><h5 class="fw-bold mt-3">Systems</h5><p class="small mb-0">Technology‑driven solutions</p></div></div>
+        <div class="col-6 col-lg-3"><div class="about-card h-100"><i class="bi bi-star-fill fs-2 text-accent"></i><h5 class="fw-bold mt-3">Results</h5><p class="small mb-0">Measurable outcomes</p></div></div>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-6"><div class="info-box h-100 text-start"><h5 class="fw-semibold"><i class="bi bi-eye-fill me-2 text-accent"></i>Vision</h5><p class="mb-0">To become the leading provider of comprehensive, cutting‑edge HR solutions in Nigeria, empowering organizations to optimize their human capital and achieve sustainable growth.</p></div></div>
+        <div class="col-md-6"><div class="info-box h-100 text-start"><h5 class="fw-semibold"><i class="bi bi-bullseye me-2 text-accent"></i>Mission</h5><p class="mb-0">To deliver effective and innovative HR services that help organizations build a strong, well‑structured workforce through tailored solutions aligned with each client’s unique goals.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= Services ======= -->
+  <section id="services">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge bg-gradient text-light px-3 py-1" style="background:linear-gradient(90deg,var(--primary-color),var(--accent-color))">What We Do</span>
+        <h2 class="fw-bold mt-3">Our HR Services</h2>
+        <p class="mx-auto" style="max-width: 740px;">Edukom HR Solutions provides end‑to‑end human resource services designed to transform your workforce, enhance performance, and align your HR strategy with your business goals.</p>
+      </div>
+
+      <div class="row align-items-center mb-5 g-4">
+        <div class="col-md-6" data-aos="fade-right">
+          <img src="img/recruitement1.png" alt="Recruitment Services" class="img-flow" loading="lazy">
+        </div>
+        <div class="col-md-6" data-aos="fade-left">
+          <h4 class="fw-bold text-accent">Recruitment & Talent Acquisition</h4>
+          <p>We specialize in identifying, attracting, and onboarding top‑tier talent tailored to your company’s needs. Our recruitment process is data‑driven and built on industry best practices to ensure you get the best‑fit candidates.</p>
+          <ul class="list-unstyled small">
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Structured Interviewing Techniques</li>
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Job Description Development</li>
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Candidate Sourcing & Screening</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row align-items-center flex-md-row-reverse mb-5 g-4">
+        <div class="col-md-6" data-aos="fade-left">
+          <img src="img/training2.jpg" alt="Training Services" class="img-flow" loading="lazy">
+        </div>
+        <div class="col-md-6" data-aos="fade-right">
+          <h4 class="fw-bold text-accent">Training & Workforce Development</h4>
+          <p>Empower your employees with the knowledge and skills needed to excel. We deliver customized training programs across technical, soft, and leadership skills, all aligned with your business strategy.</p>
+          <ul class="list-unstyled small">
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Customized Training Modules</li>
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>On‑site & Virtual Workshops</li>
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Post‑training Impact Assessments</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row align-items-center mb-5 g-4">
+        <div class="col-md-6" data-aos="fade-right">
+          <img src="img/stragtegy.jpg" alt="Strategy & Structuring" class="img-flow" loading="lazy">
+        </div>
+        <div class="col-md-6" data-aos="fade-left">
+          <h4 class="fw-bold text-accent">Organizational Structuring & Strategy</h4>
+          <p>Build a scalable and agile organization with our expert structuring services. We help you design an HR framework that supports growth, enhances efficiency, and fosters a strong company culture.</p>
+          <ul class="list-unstyled small">
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Role Clarification & Workflow Optimization</li>
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>HR Policy Drafting</li>
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Change Management Support</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="row align-items-center flex-md-row-reverse g-4">
+        <div class="col-md-6" data-aos="fade-left">
+          <img src="img/performance 2.png" alt="Performance Management" class="img-flow" loading="lazy">
+        </div>
+        <div class="col-md-6" data-aos="fade-right">
+          <h4 class="fw-bold text-accent">Performance & Employee Relations</h4>
+          <p>Cultivate a high‑performing, engaged workforce. We implement performance appraisal systems and employee engagement strategies that promote accountability and motivation.</p>
+          <ul class="list-unstyled small">
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>KPIs & Appraisal Frameworks</li>
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Coaching & Mentoring</li>
+            <li><i class="bi bi-check-circle-fill text-accent me-2"></i>Conflict Resolution & Mediation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= Team / Faculty ======= -->
+  <section id="faculty" class="section-subtle">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge bg-gradient text-light px-3 py-1" style="background:linear-gradient(90deg,var(--primary-color),var(--accent-color))">Our Team</span>
+        <h2 class="fw-bold mt-3">Expert Leadership</h2>
+        <p class="mx-auto" style="max-width: 740px;">Our team of internationally certified HR professionals brings decades of combined experience across diverse industries.</p>
+      </div>
+
+      <!-- Featured Member: Ope -->
+      <div class="row align-items-center g-4 mb-5">
+        <div class="col-md-4 faculty-featured">
+          <!-- REPLACE with new image file when available -->
+          <img src="img/opekomolafe2.jpg" alt="Ope Komolafe" loading="lazy">
+        </div>
+        <div class="col-md-8">
+          <div class="bg-white p-4 p-md-4 rounded-4 shadow-sm">
+            <h4 class="fw-bold mb-1">Ope Komolafe</h4>
+            <h6 class="text-accent mb-3">Principal Partner & Executive Director</h6>
+            <p class="small mb-4">Ope Komolafe is an internationally certified Human Resources professional with over 20 years of experience across consulting, aviation, healthcare, education and more. She has supported organizations in construction, government, finance, and faith‑based institutions.</p>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <h6 class="text-accent fw-semibold mb-2">Certifications</h6>
+                <ul class="list-unstyled small mb-0">
+                  <li><i class="bi bi-patch-check-fill text-accent me-2"></i>HRPL - Human Resources Practitioner's License (CIPMN)</li>
+                  <li><i class="bi bi-patch-check-fill text-accent me-2"></i>GPHR – Global Professional in HR (HRCI)</li>
+                  <li><i class="bi bi-patch-check-fill text-accent me-2"></i>PHRi – Professional in HR – International (HRCI)</li>
+                  <li><i class="bi bi-patch-check-fill text-accent me-2"></i>LDP – Learning & Development Professional</li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <h6 class="text-accent fw-semibold mb-2">Memberships</h6>
+                <ul class="list-unstyled small mb-0">
+                  <li><i class="bi bi-people-fill text-accent me-2"></i>NITAD – Institute for Training & Development (Member)</li>
+                  <li><i class="bi bi-people-fill text-accent me-2"></i>ACIPM – Associate, Chartered Institute of Personnel Management (Nigeria)</li>
+                  <li><i class="bi bi-people-fill text-accent me-2"></i>LDNI – Learning & Development Network International</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="row mt-4 g-3">
+              <div class="col-md-4">
+                <h6 class="text-accent fw-semibold mb-2">Expertise</h6>
+                <ul class="list-unstyled small mb-0">
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>Multi‑industry Consulting</li>
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>Recruitment & Selection</li>
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>HR Mentoring & Coaching</li>
+                </ul>
+              </div>
+              <div class="col-md-4">
+                <ul class="list-unstyled small mb-0">
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>Development</li>
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>Training</li>
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>Performance Management</li>
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>Organizational Development</li>
+                </ul>
+              </div>
+              <div class="col-md-4">
+                <ul class="list-unstyled small mb-0">
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>Workforce Planning</li>
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>HR Certification Coaching</li>
+                  <li><i class="bi bi-check2-circle text-accent me-2"></i>Software Skills Development</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Grid -->
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="team-card text-center p-4 h-100">
+            <img src="img/SegunLawal-DoXji1tV.jpg" class="rounded-circle shadow mb-3 team-avatar" alt="Segun Lawal" loading="lazy">
+            <h6 class="fw-bold mb-0">Segun Lawal</h6>
+            <p class="text-muted small mb-1">Consultant & Principal Partner</p>
+            <p class="small mb-0">Wisdom Scroll Consulting</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="team-card text-center p-4 h-100">
+            <img src="img/tokunboFasoro-DODu3Tnt.jpg" class="rounded-circle shadow mb-3 team-avatar" alt="Tokunbo Fasoro" loading="lazy">
+            <h6 class="fw-bold mb-0">Tokunbo Fasoro</h6>
+            <p class="text-muted small mb-1">Managing Consultant – Elevate by TF</p>
+            <p class="small mb-0">Creative Director – Lioness by TF</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="team-card text-center p-4 h-100">
+            <!-- REPLACE with new rounded avatar for Ope if desired -->
+            <img src="img/opekomolafe2.jpg" class="rounded-circle shadow mb-3 team-avatar" alt="Ope Komolafe" loading="lazy">
+            <h6 class="fw-bold mb-0">Ope Komolafe</h6>
+            <p class="text-muted small mb-1">Principal Partner</p>
+            <p class="small mb-0">Edukom Learning & HR Solutions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= Certifications (logos) ======= -->
+  <section id="certifications">
+    <div class="container text-center">
+      <span class="badge bg-gradient text-light px-3 py-1" style="background:linear-gradient(90deg,var(--primary-color),var(--accent-color))">Memberships & Recognition</span>
+      <h2 class="fw-bold mt-3 mb-4">Certifications & Professional Memberships</h2>
+      <p class="mb-5 mx-auto" style="max-width: 740px;">We are members of leading human‑resources bodies globally and locally, reflecting our commitment to excellence and industry standards.</p>
+
+      <div class="row justify-content-center g-4">
+        <div class="col-6 col-md-3"><div class="cert-card h-100"><img src="img/shrm-main.svg" alt="SHRM" class="img-fluid mb-2" style="max-height:60px"><h6 class="small fw-semibold mb-1">SHRM</h6><p class="small text-muted mb-0">Society for Human Resource Management</p></div></div>
+        <div class="col-6 col-md-3"><div class="cert-card h-100"><img src="img/nitad-logo.png" alt="NITAD" class="img-fluid mb-2" style="max-height:60px"><h6 class="small fw-semibold mb-1">NITAD</h6><p class="small text-muted mb-0">Nigerian Institute for Training & Development</p></div></div>
+        <div class="col-6 col-md-3"><div class="cert-card h-100"><img src="img/CIPMN.jpeg" alt="CIPM Nigeria" class="img-fluid mb-2" style="max-height:60px"><h6 class="small fw-semibold mb-1">CIPM Nigeria</h6><p class="small text-muted mb-0">Chartered Institute of Personnel Management</p></div></div>
+        <div class="col-6 col-md-3"><div class="cert-card h-100"><img src="img/ldni.jpg" alt="LDNI" class="img-fluid mb-2" style="max-height:60px"><h6 class="small fw-semibold mb-1">LDNI</h6><p class="small text-muted mb-0">Learning & Development Network Intl.</p></div></div>
+        <div class="col-6 col-md-3"><div class="cert-card h-100"><img src="img/hrci.jpg" alt="HRCI" class="img-fluid mb-2" style="max-height:60px"><h6 class="small fw-semibold mb-1">HRCI</h6><p class="small text-muted mb-0">Professional in HR.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= Contact ======= -->
+  <section id="contact" class="section-subtle">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge bg-gradient text-light px-3 py-1" style="background:linear-gradient(90deg,var(--primary-color),var(--accent-color))">Contact Us</span>
+        <h2 class="fw-bold mt-3">We’d Love to Hear From You!</h2>
+        <p class="mx-auto" style="max-width: 740px;">Whether you have questions or want to discuss how Edukom HR Solutions can help your organization, get in touch today.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-5">
+          <div class="info-box h-100">
+            <h5 class="text-accent">Reach Out</h5>
+            <p class="mb-2"><i class="bi bi-envelope-fill me-2"></i><a class="text-decoration-none" href="mailto:info@edukom.ng">info@edukom.ng</a></p>
+            <p class="mb-2"><i class="bi bi-envelope-fill me-2"></i><a class="text-decoration-none" href="mailto:ope.komolafe@edukom.ng">ope.komolafe@edukom.ng</a></p>
+            <p class="mb-2"><i class="bi bi-telephone-fill me-2"></i><a class="text-decoration-none" href="tel:+2348033310626">+234 803 331 0626</a></p>
+            <p class="mb-3"><i class="bi bi-geo-alt-fill me-2"></i>Plot D2, Maazi Fidelis Nwosu Close,<br>Valley Hub Estate (beside River Park Estate), Lugbe, Abuja.</p>
+            <a href="https://wa.me/2348033310626" target="_blank" rel="noopener" class="btn btn-success btn-sm"><i class="bi bi-whatsapp me-1"></i> Chat on WhatsApp</a>
+          </div>
+        </div>
+        <div class="col-md-7">
+          <form action="send-email.php" method="POST" class="bg-white p-4 rounded-4 shadow-sm">
+            <input type="hidden" name="website" value="">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+              </div>
+              <div class="col-md-6">
+                <input type="email" name="email" class="form-control" placeholder="Your Email" required>
+              </div>
+              <div class="col-12">
+                <input type="text" name="subject" class="form-control" placeholder="Subject">
+              </div>
+              <div class="col-12">
+                <textarea name="message" class="form-control" rows="5" placeholder="Your Message" required></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary px-4">Send Message</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= FAQ ======= -->
+  <section id="faq">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="badge bg-gradient text-light px-3 py-1" style="background:linear-gradient(90deg,var(--primary-color),var(--accent-color))">FAQs</span>
+        <h2 class="fw-bold mt-3">Frequently Asked Questions</h2>
+        <p class="mx-auto" style="max-width: 740px;">Here are some common questions we get about our HR solutions and services.</p>
+      </div>
+
+      <div class="accordion" id="faqAccordion">
+        <div class="accordion-item mb-3">
+          <h2 class="accordion-header" id="faq1"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1">What services does Edukom HR Solutions provide?</button></h2>
+          <div id="faqCollapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion"><div class="accordion-body">We offer recruitment, onboarding, training, HR department setup, performance management, and many more tailored services for organizations of all sizes.</div></div>
+        </div>
+        <div class="accordion-item mb-3">
+          <h2 class="accordion-header" id="faq2"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2">Do you serve clients outside Abuja or Nigeria?</button></h2>
+          <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Yes, our services extend across Nigeria and internationally. We work with clients virtually and onsite depending on needs.</div></div>
+        </div>
+        <div class="accordion-item mb-3">
+          <h2 class="accordion-header" id="faq3"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3">Can you help set up a full HR department from scratch?</button></h2>
+          <div id="faqCollapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Absolutely. We specialise in structuring HR departments, staffing, creating policies, Standard Operating Procedures ( SOPs), Manpower planning, organizational structuring, ensuring legal compliance, and so much more.</div></div>
+        </div>
+        <div class="accordion-item mb-3">
+          <h2 class="accordion-header" id="faq4"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4">How do I get started with Edukom?</button></h2>
+          <div id="faqCollapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Just reach out via the contact form or WhatsApp link. We'll schedule a discovery session to understand your needs and recommend the right solution.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= Footer ======= -->
+  <footer class="footer-section text-white mt-5">
+    <div class="container py-5">
+      <div class="row gy-4">
+        <div class="col-md-4">
+          <img src="img/logo.png" alt="Edukom Logo" height="50" class="mb-3">
+          <p class="small mb-0">Edukom HR Solutions is dedicated to delivering tailored, innovative HR services for organizations across sectors. We simplify and optimize human resource management.</p>
+        </div>
+        <div class="col-md-2">
+          <h6 class="fw-semibold">Quick Links</h6>
+          <ul class="list-unstyled small mb-0">
+            <li><a href="#" class="footer-link">Home</a></li>
+            <li><a href="#about" class="footer-link">About</a></li>
+            <li><a href="#services" class="footer-link">Services</a></li>
+            <li><a href="#faculty" class="footer-link">Team</a></li>
+            <li><a href="#contact" class="footer-link">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h6 class="fw-semibold">Contact</h6>
+          <p class="small mb-1"><i class="bi bi-envelope me-1"></i><a class="text-white text-decoration-none" href="mailto:info@edukom.ng">info@edukom.ng</a></p>
+          <p class="small mb-1"><i class="bi bi-telephone me-1"></i><a class="text-white text-decoration-none" href="tel:+2348033310626">+234 803 331 0626</a></p>
+          <p class="small mb-0"><i class="bi bi-geo-alt me-1"></i>Lugbe, Abuja</p>
+        </div>
+        <div class="col-md-3">
+          <h6 class="fw-semibold">Follow Us</h6>
+          <div class="d-flex gap-3">
+            <a href="#" class="text-white fs-5" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <!-- <a href="#" class="text-white fs-5" aria-label="Twitter / X"><i class="bi bi-twitter-x"></i></a> -->
+            <a href="#" class="text-white fs-5" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="https://wa.me/2348033310626" class="text-white fs-5" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center small py-3" style="background: rgba(255, 255, 255, 0.12)">© <span id="year"></span> Edukom HR Solutions. All rights reserved.</div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="/static/scripts.js"></script>
+  <script>
+    AOS.init({ duration: 900, once: true });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Active nav on scroll
+      const sections = document.querySelectorAll("section[id]");
+      const navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+      const offset = 80;
+      window.addEventListener("scroll", () => {
+        let scrollY = window.pageYOffset;
+        sections.forEach((current) => {
+          const sectionHeight = current.offsetHeight;
+          const sectionTop = current.offsetTop - offset;
+          const id = current.getAttribute("id");
+          if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+            navLinks.forEach((link) => {
+              link.classList.remove("active");
+              if (link.getAttribute("href") === `#${id}`) link.classList.add("active");
+            });
+          }
+        });
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>
+
+

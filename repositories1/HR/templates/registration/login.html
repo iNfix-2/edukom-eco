@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Login — Edukom HR{% endblock %}
+{% block meta_description %}<meta name="description" content="Login to manage and publish blog posts." />{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:640px">
+  <h1 class="h3 mb-4">Login</h1>
+  {% if form.errors %}
+    <div class="alert alert-danger">Please correct the error(s) below.</div>
+  {% endif %}
+  <form method="post" class="bg-white p-4 rounded-4 shadow-sm">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label" for="id_username">Username</label>
+      {{ form.username }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label" for="id_password">Password</label>
+      {{ form.password }}
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog — Edukom HR{% endblock %}
+{% block meta_description %}
+<meta name="description" content="Insights on HR, recruitment, training, performance, and strategy from Edukom HR." />
+{% endblock %}
+
+{% block head_extra %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .chip{display:inline-flex;align-items:center;gap:.4rem;padding:.2rem .6rem;border:1px solid #e8ecf3;border-radius:999px;background:#f6f7fb;color:#374151;font-size:.75rem;text-decoration:none}
+    .chip.active{background:#fff;border-color:#b5c0d0}
+    .card-post{background:#fff;border:1px solid #eef0f4;border-radius:16px;box-shadow:0 6px 18px rgba(12,18,28,.06);transition:transform .2s ease, box-shadow .2s ease}
+    .card-post:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(12,18,28,.10)}
+    .cover{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#f6f7fb,#eef1f7)}
+    .cover img{width:100%;height:100%;object-fit:cover;display:block}
+    .meta{color:#6b7280;font-size:.85rem}
+    .badge-cat{background:#f5f7fb;border:1px solid #e8ecf3;border-radius:6px;padding:.15rem .4rem;font-size:.72rem}
+    .truncate-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .truncate-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .toolbar .form-control,.toolbar .form-select{min-height:42px}
+    .pagination .page-link{border-radius:10px;margin:0 .15rem}
+    @media (max-width:575.98px){.toolbar .form-control{min-width:100%}}
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/blog/">Blog</a></li>
+        {% if current_category %}<li class="breadcrumb-item active" aria-current="page">Category: {{ current_category.name }}</li>{% endif %}
+        {% if current_tag %}<li class="breadcrumb-item active" aria-current="page">Tag: {{ current_tag.name }}</li>{% endif %}
+      </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <h1 class="fw-bold mb-0">Blog</h1>
+        <p class="text-muted mb-0">Insights on HR, recruitment, training and performance.</p>
+      </div>
+      <div class="text-muted small d-none d-md-block">
+        {% if page_obj %}Showing {{ posts|length }} of {{ page_obj.paginator.count }} articles{% endif %}
+      </div>
+    </div>
+
+    <!-- Toolbar: search + sort -->
+    <form method="get" class="toolbar mb-4">
+      <div class="row g-2 align-items-center">
+        <div class="col-sm-7 col-lg-8">
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="search" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search articles (title, tags)…" aria-label="Search blog">
+          </div>
+        </div>
+        <div class="col-sm-3 col-lg-2">
+          <select name="sort" class="form-select" aria-label="Sort">
+            <option value="-created" {% if request.GET.sort|default:'-created' == '-created' %}selected{% endif %}>Newest</option>
+            <option value="created" {% if request.GET.sort == 'created' %}selected{% endif %}>Oldest</option>
+            <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>Title A–Z</option>
+          </select>
+        </div>
+        <div class="col-sm-2 col-lg-2 d-flex gap-2 justify-content-sm-end">
+          {% if current_category %}<input type="hidden" name="category" value="{{ current_category.slug }}">{% endif %}
+          {% if current_tag %}<input type="hidden" name="tag" value="{{ current_tag.slug }}">{% endif %}
+          <a href="{% if current_category %}{{ current_category.get_absolute_url }}{% elif current_tag %}{{ current_tag.get_absolute_url }}{% else %}{% url 'blog_list' %}{% endif %}" class="btn btn-outline-secondary">Reset</a>
+          <button class="btn btn-primary" type="submit">Apply</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Category / Tag chips -->
+    <div class="row g-3 align-items-center mb-4">
+      <div class="col-md-6">
+        <div class="d-flex flex-wrap gap-2">
+          <a class="chip{% if not current_category and not current_tag %} active{% endif %}" href="{% url 'blog_list' %}"><i class="bi bi-grid"></i> All</a>
+          {% for c in categories %}
+            <a class="chip{% if current_category and c.pk == current_category.pk %} active{% endif %}" href="{{ c.get_absolute_url }}"><i class="bi bi-folder2"></i> {{ c.name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+          {% for t in tags %}
+            <a class="chip{% if current_tag and t.pk == current_tag.pk %} active{% endif %}" href="{{ t.get_absolute_url }}">#{{ t.name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    {% if posts %}
+    <div class="row g-4">
+      {% for post in posts %}
+      <div class="col-md-6 col-lg-4">
+        <article class="p-3 card-post h-100">
+          <div class="cover mb-3">
+            {% if post.cover %}
+              <img src="{{ post.cover.url }}" alt="Cover image for {{ post.title }}" loading="lazy">
+            {% else %}
+              <!-- Fallback visual if no image -->
+              <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">No image</div>
+            {% endif %}
+          </div>
+          <div class="d-flex align-items-center justify-content-between mb-1 meta">
+            <div>
+              <span>{{ post.created_at|date:"M d, Y" }}</span>
+              {% if post.author %} • <span>{{ post.author }}</span>{% endif %}
+              {% if post.read_time %} • <span>{{ post.read_time }} min read</span>{% endif %}
+            </div>
+            {% if post.category %}
+              <a class="badge-cat text-decoration-none" href="{{ post.category.get_absolute_url }}">{{ post.category.name }}</a>
+            {% endif %}
+          </div>
+          <h3 class="h5 mb-2"><a class="text-decoration-none" href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+          <p class="truncate-3 mb-2">{{ post.excerpt|default:post.content|striptags|truncatewords:36 }}</p>
+          {% if post.tags.all %}
+            <div class="meta d-flex flex-wrap gap-2">
+              {% for t in post.tags.all|slice:':4' %}
+                <a class="chip" href="{{ t.get_absolute_url }}">#{{ t.name }}</a>
+              {% endfor %}
+              {% if post.tags.count > 4 %}<span class="text-muted small">+{{ post.tags.count|add:'-4' }}</span>{% endif %}
+            </div>
+          {% endif %}
+        </article>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <div class="alert alert-info d-flex align-items-center" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <div>No posts yet. Add some in the admin.</div>
+      </div>
+    {% endif %}
+
+    {% if page_obj and page_obj.paginator.num_pages > 1 %}
+    <nav class="mt-4" aria-label="Blog pagination">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Previous</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Previous</span></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          <li class="page-item{% if num == page_obj.number %} active{% endif %}"><a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ num }}</a></li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">Next</a></li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">Next</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+{% endblock %}

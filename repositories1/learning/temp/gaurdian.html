@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+  <center class="p-3"><h1 class="text-center">View Guradians</h1></center>
+{% endblock header %}
+{% block main %}
+<br>
+<style>
+  th{
+    text-transform: uppercase;
+  }
+
+@media screen and (max-width: 960px){
+body > * {
+    padding-top: 0.5rem !important;
+}
+}
+</style>
+<main>
+  <div class="content">
+    <p>Hello Admin,</p>
+    <p>A new guardian has just signed up for tutorship for their ward. Below are the details:</p>
+    <ul>
+        <li><strong>Name:</strong> {{ guardian.first_name }} {{ guardian.last_name }}</li>
+        <li><strong>Email:</strong> {{ guardian.email }}</li>
+        <li><strong>Phone:</strong> {{ guardian.phone }}</li>
+        <li><strong>Preferred Lesson Type:</strong> {{ guardian.lesson_type }}</li>
+    </ul>
+    <p>Please take the necessary steps to review the information and contact the guardian if required. Thank you!</p>
+</div>
+    <table class="table">
+        <tbody>
+          <tr>
+            <th scope="col">Guradian</th>
+            <td>
+              <p>{{guardian.full_name}}</p>
+              <p>{{guardian.phone}}</p>
+              <p>{{guardian.email}}</p>
+              <p>{{guardian.lesson_type}}</p>
+              <p>{{guardian.curriculum}}</p>
+              <p>{{guardian.date_joined}}</p>
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">Child</th>
+            <td>
+              <p>{{guardian.AboutChild.child_class}}</p>
+              <p>{{guardian.AboutChild.goal}}</p>
+              <p>{{guardian.AboutChild.subject}}</p>
+              <p>{{guardian.AboutChild.about}}</p>
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">lesson</th>
+            <td>
+              <p>{{guardian.Lesson.days}}</p>
+              <p>from {{guardian.Lesson.start}}</p>
+              <p>{{guardian.Lesson.weeks}} weeks</p>
+              <p>{{guardian.Lesson.hour_per_day}} hrs per day</p>
+              <p>from {{guardian.Lesson.start_time}} daily</p>
+            </td>
+          </tr>
+         
+        </tbody>
+      </table>
+   
+</main>
+{% endblock main %}

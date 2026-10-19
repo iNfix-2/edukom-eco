@@ -1,0 +1,72 @@
+{% extends "Forms/base.html" %} {% block header %}
+{% endblock header %} {% block main %}
+<style>
+    .thankyou{
+        text-align: center;
+        margin:2rem 2%;
+        box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.25);
+        padding:5% 10px;
+    }
+    .steps > div{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin: 2rem;
+        justify-content: center;
+    }
+    
+    .steps > div > div{
+        max-width: 300px;
+        text-align: left !important;
+    }
+    .steps > div > div > h4:first-child {
+        border: 2px black solid;
+        width: fit-content;
+        padding:3px 10px;
+        border-radius: 20px;
+    }
+    .thankyou > div > div:last-child > div{
+        display: flex;
+        gap: 3rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+</style>
+<div class="container">
+  <div class="thankyou">
+    <div>
+        <h2 style="font-size: xx-large;font-weight: 500;font-size: 2em;">Thank you {{guardian.full_name}} for your application!</h2>
+        <div class="steps">
+        <div style="text-align: left;justify-content: left;align-items: start;"><h2>What Next?</h2></div>
+           <div>
+            <div>
+                <h4>1</h4>
+                <h4>Call From Me</h4>
+                <p>I'll review your request and give you a call to schedule a mock session.</p>
+            </div>
+            <div>
+                <h4>2</h4>
+                <h4>Schedule a mock session</h4>
+                <p>Demonstrate and showcase your tutoring prowess by engaging in a comprehensive 20 minute session.</p>
+            </div>
+            <div>
+                <h4>3</h4>
+                <h4>Complete mock process</h4>
+                <p>After watching a short videos introducing Edukom, site navigation, and lesson instruction.</p>
+            </div>
+           </div>
+        </div>
+        <div>
+
+            <h5 style="text-align: center; font-family: 'Montserrat';"> <i class="fa fa-check-square" style="color: #71A20A;"></i> {{tutor.status}}</h5>
+            <br>
+            <h2>Have questions? Feel free to reach out to me</h2>
+            <div>
+                <div><i class="fa fa-mail"></i>info@edukom.ng </div>
+                <div><i class="fa fa-phone"></i> +2348033310626 </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock main %}

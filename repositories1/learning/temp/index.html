@@ -1,0 +1,722 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+<style>
+  .header-cover .community {
+    background-image: linear-gradient(180deg, #A9D156 0%, #002769 119%),
+    url({% static 'IMG/header/90.png' %});
+    color: white !important;
+  }
+
+  .nav-item-list ul li a {
+    color: #002769 !important;
+  }
+
+  .carousel-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .carousel-item {
+    width: 100%;
+    height: 100%;
+    display: none;
+  }
+
+  .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
+<link rel="stylesheet" href="{% static 'CSS/community.css' %}">
+
+<header class="carousel-container">
+  <div class="carousel-item">
+    <div>
+
+      <div class="header-text" style="display: flex;align-items: center;gap: 1rem;">
+        <div style="display: flex;flex-direction: column;gap: 10px;">
+          <small style="color: #A9D156;font-size: 1.5rem;">Get your ward </small>
+          <h1 style="position: relative;font-size: 50px;font-weight: 900;-webkit-text-stroke-width: 4px;">
+            Professional
+            <span style="color: #A9D156">Private</span> Tutoring
+          </h1>
+          <p>
+            We ensure that your child not only stays ahead in their learning journey but also excels. We also focus on
+            filling any knowledge gaps, offering personalized attention, and creating an environment where your child
+            can learn comfortably at their own pace.
+          </p>
+          <div style="display: flex;gap: 1rem;flex-wrap: wrap;">
+            <a href="{% url 'GetATutor' %}" class="btn rounded-0">Get Started
+              <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+                <path d="M5.91797 12H21.0846" stroke="#002769" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path d="M13.5 5L21.0833 12L13.5 19" stroke="#002769" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </a>
+            <a href="{% url 'contact' %}" class="headerPhone rounded-0" style="display: block;width: max-content;"> <i
+                class="fa fa-phone"></i> Contact Us</a><br />
+          </div>
+        </div>
+      </div>
+      <div class="header-image">
+        <img src="{% static 'IMG/header/resfr.jpg' %}" alt="Header Image" />
+      </div>
+    </div>
+  </div>
+  <!-- <div class="carousel-item">
+    <div class="community" style="position: relative;">
+      <div class="splatter">
+        <img src="{% static 'IMG/community/Splatter - 18.png' %}" alt="">
+      </div>
+      <div class="fhdi">
+        <div class=" header-text">
+          <small style="color: red; font-weight: 900;">Become a Tutor</small>
+          <h1>
+            Join Our Network Of <span style="color: #002769;">Expert</span> Tutors
+            Today!
+          </h1>
+          <p>Our platform takes out the worry of finding students and managing your business. Start earning with us today.</p>
+          <a href="{% url 'BecomeATutor' %}" style="display: flex;color:white;background: #002769;width: max-content;" class="btn">Apply Now <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+              <path d="M5.91797 12H21.0846" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M13.5 5L21.0833 12L13.5 19" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </div>
+        <div class="header-image">
+          <img src="{% static 'IMG/wrw/wrw.png' %}" alt="">
+        </div>
+      </div>
+      </div>
+   </div> -->
+
+</header>
+<script>
+  const carouselItems = document.querySelectorAll('.carousel-item');
+  let currentIndex = 0;
+
+  function showSlide(index) {
+    // Hide all carousel items
+    carouselItems.forEach(item => {
+      item.style.display = 'none';
+    });
+
+    // Show the slide at the specified index
+    carouselItems[index].style.display = 'block';
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % carouselItems.length;
+    showSlide(currentIndex);
+  }
+
+  function previousSlide() {
+    currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
+    showSlide(currentIndex);
+  }
+
+  // Show the first slide initially
+  showSlide(currentIndex);
+
+  setInterval(nextSlide, 5000);
+</script>
+{% endblock header %}
+</div>
+
+{% block main %}
+<div class="first">
+  <h1>Our Comprehensive Educational Support</h1>
+  <ul>
+    <li class="hover-lift animate-fade-up delay-100">
+      <svg xmlns="http://www.w3.org/2000/svg" width="88" height="78" viewBox="0 0 88 78" fill="none">
+        <path
+          d="M77.1142 23.7408V59.9179C77.1142 60.7264 76.7821 61.5017 76.191 62.0734C75.5999 62.6451 74.7981 62.9663 73.9622 62.9663H6.50163C5.66566 62.9663 4.86393 62.6451 4.27282 62.0734C3.6817 61.5017 3.34961 60.7264 3.34961 59.9179V14.2104C3.34961 13.4019 3.6817 12.6265 4.27282 12.0549C4.86393 11.4832 5.66566 11.162 6.50163 11.162H53.1842"
+          stroke="#002769" stroke-width="3" />
+        <path d="M3.34961 51.5963H77.1142" stroke="#002769" stroke-width="3" />
+        <path
+          d="M26.3008 74.9844C28.549 73.9474 30.3358 72.1618 31.3338 69.9547C32.3318 67.7476 32.4744 65.2667 31.7353 62.9662"
+          stroke="#002769" stroke-width="3" />
+        <path
+          d="M55.5565 74.9844C53.2943 73.9595 51.4902 72.1799 50.4753 69.9723C49.4604 67.7647 49.3028 65.2772 50.0314 62.9662"
+          stroke="#002769" stroke-width="3" />
+        <path d="M17.6426 74.9844H62.8216" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path
+          d="M26.1212 33.2887C29.6528 33.2887 32.5158 30.5199 32.5158 27.1045C32.5158 23.689 29.6528 20.9202 26.1212 20.9202C22.5895 20.9202 19.7266 23.689 19.7266 27.1045C19.7266 30.5199 22.5895 33.2887 26.1212 33.2887Z"
+          stroke="#002769" stroke-width="3" />
+        <path
+          d="M39.0734 51.5963C39.0686 48.2772 37.7019 45.0956 35.2734 42.7502C32.8449 40.4049 29.5532 39.0876 26.1211 39.0876C22.6939 39.0922 19.4087 40.4122 16.987 42.7575C14.5653 45.1028 13.2051 48.2818 13.2051 51.5963H39.0734Z"
+          stroke="#002769" stroke-width="3" />
+        <path
+          d="M83.0916 23.7408H67.8749L58.6725 30.0302C58.6485 30.0457 58.6208 30.0548 58.592 30.0566C58.5633 30.0584 58.5345 30.0527 58.5087 30.0403C58.483 30.0278 58.4611 30.0089 58.4453 29.9856C58.4295 29.9623 58.4204 29.9354 58.4189 29.9075V23.7408H54.7415C54.3298 23.7362 53.9362 23.576 53.6451 23.2945C53.3539 23.0129 53.1883 22.6323 53.1836 22.2341V4.52224C53.1836 4.12266 53.3477 3.73943 53.6399 3.45688C53.9321 3.17433 54.3283 3.01559 54.7415 3.01559H83.0916C83.5048 3.01559 83.901 3.17433 84.1932 3.45688C84.4853 3.73943 84.6495 4.12266 84.6495 4.52224V22.2341C84.6448 22.6323 84.4791 23.0129 84.188 23.2945C83.8968 23.576 83.5033 23.7362 83.0916 23.7408Z"
+          stroke="#002769" stroke-width="3" />
+      </svg>
+      <h5>Online Tutor</h5>
+      <p>Our platform offers personalized one-on-one tutoring sessions tailored to your child's individual learning pace
+        and needs. </p>
+      <a href="{% url 'about' %}">Learn more
+        <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+          <path d="M5.91797 12H21.0846" stroke="#71A20A" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M13.5 5L21.0833 12L13.5 19" stroke="#71A20A" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+    </li>
+
+    <li class="hover-lift animate-fade-up delay-200">
+      <svg xmlns="http://www.w3.org/2000/svg" width="78" height="78" viewBox="0 0 78 78" fill="none">
+        <path
+          d="M52.6082 45.6413C52.6085 47.5339 52.2314 49.4075 51.4989 51.1527C50.7664 52.8978 49.6932 54.4793 48.3421 55.8046C46.991 57.1299 45.3891 58.1725 43.6302 58.8713C41.8713 59.57 39.9907 59.911 38.0985 59.8742C34.3113 59.7241 30.7319 58.1029 28.1212 55.3552C25.5106 52.6075 24.0745 48.9499 24.1182 45.16V25.3325C24.1176 25.3044 24.1269 25.2769 24.1445 25.2549C24.1621 25.2329 24.1868 25.2178 24.2144 25.2122C29.0266 24.4865 33.8821 24.0846 38.7482 24.0091C43.4107 24.0826 48.0623 24.4847 52.6683 25.2122C52.6949 25.218 52.7183 25.2336 52.7339 25.2559C52.7495 25.2782 52.7562 25.3055 52.7525 25.3325L52.6082 45.6413Z"
+          stroke="#002769" stroke-width="3" />
+        <path
+          d="M24.1169 31.7813L11.3276 25.128C11.3073 25.1181 11.2901 25.1027 11.2781 25.0836C11.2661 25.0644 11.2598 25.0423 11.2598 25.0197C11.2598 24.9971 11.2661 24.975 11.2781 24.9558C11.2901 24.9367 11.3073 24.9213 11.3276 24.9114L38.3859 11.1597H38.4942L65.4683 24.767C65.4886 24.7769 65.5058 24.7923 65.5178 24.8114C65.5298 24.8306 65.5361 24.8527 65.5361 24.8753C65.5361 24.8979 65.5298 24.9201 65.5178 24.9392C65.5058 24.9584 65.4886 24.9738 65.4683 24.9836L52.7512 31.7813"
+          stroke="#002769" stroke-width="3" />
+        <path
+          d="M24.117 39.2286H21.795C21.795 39.2286 18.2578 39.2286 18.2578 44.6667C18.2578 49.6837 21.783 49.6837 21.783 49.6837L24.8028 49.6236"
+          stroke="#002769" stroke-width="3" />
+        <path
+          d="M52.5945 39.8422H54.9166C54.9166 39.8422 58.5259 39.8422 58.5259 45.2923C58.5259 50.3094 54.9887 50.3094 54.9887 50.3094H51.8125"
+          stroke="#002769" stroke-width="3" />
+        <path d="M63.9297 54.6888V25.8017" stroke="#002769" stroke-width="3" />
+        <path
+          d="M63.9296 60.2592C65.4645 60.2592 66.7088 59.0149 66.7088 57.48C66.7088 55.9451 65.4645 54.7008 63.9296 54.7008C62.3947 54.7008 61.1504 55.9451 61.1504 57.48C61.1504 59.0149 62.3947 60.2592 63.9296 60.2592Z"
+          stroke="#002769" stroke-width="3" />
+        <path d="M45.9295 57.6845V66.8523H31.6484V58.1898" stroke="#002769" stroke-width="3" />
+        <path
+          d="M52.7516 36.7501C48.1426 35.9184 43.4665 35.5157 38.7833 35.547C33.8664 35.4495 28.9524 35.8526 24.1172 36.7501"
+          stroke="#002769" stroke-width="3" />
+      </svg>
+      <h5>Entrance Prep</h5>
+      <p>We provide targeted guidance and resources to help your child confidently approach these milestone exams,
+        increasing their chances of success.</p>
+      <a href="{% url 'about' %}">Learn more
+        <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+          <path d="M5.91797 12H21.0846" stroke="#71A20A" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M13.5 5L21.0833 12L13.5 19" stroke="#71A20A" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+    </li>
+
+    <li class="hover-lift animate-fade-up delay-300">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+        <path
+          d="M14.8398 11.08H48.2798C49.6059 11.08 50.8777 11.6068 51.8154 12.5445C52.7531 13.4821 53.2798 14.7539 53.2798 16.08V49.53C53.2798 50.8561 52.7531 52.1278 51.8154 53.0655C50.8777 54.0032 49.6059 54.53 48.2798 54.53H14.8398C13.5138 54.53 12.242 54.0032 11.3043 53.0655C10.3666 52.1278 9.83984 50.8561 9.83984 49.53V16.08C9.83984 14.7539 10.3666 13.4821 11.3043 12.5445C12.242 11.6068 13.5138 11.08 14.8398 11.08Z"
+          stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M20.8008 18.15V26.5" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M16.6309 22.32H24.9809" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M17.3691 40.37L24.0791 47.08" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M17.3691 47.08L24.0791 40.37" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M37.8008 22.32H47.2808" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M37.7402 40.37H47.2202" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M37.7402 46.22H47.2202" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M31.5703 11.08V54.53" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+        <path d="M9.83984 32.8H53.2898" stroke="#002769" stroke-width="3" stroke-linecap="round" />
+      </svg>
+      <h5>Homework Help</h5>
+      <p>We ensure that students receive the help they need to tackle assignments, reinforce classroom learning, and
+        build a strong foundation for future studies.</p>
+      <a href="{% url 'about' %}">Learn more
+        <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+          <path d="M5.91797 12H21.0846" stroke="#71A20A" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M13.5 5L21.0833 12L13.5 19" stroke="#71A20A" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+    </li>
+
+    <li class="hover-lift animate-fade-up delay-400">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+        <path
+          d="M32.0006 56.86C45.7304 56.86 56.8606 45.7298 56.8606 32C56.8606 18.2702 45.7304 7.14001 32.0006 7.14001C18.2708 7.14001 7.14062 18.2702 7.14062 32C7.14062 45.7298 18.2708 56.86 32.0006 56.86Z"
+          stroke="#002769" stroke-width="3" />
+        <path
+          d="M32 6.84C35.6367 10.0173 38.5568 13.9311 40.567 18.322C42.5771 22.713 43.6314 27.4809 43.66 32.31C43.66 48.5 36.38 53.31 32 56.55"
+          stroke="#002769" stroke-width="3" />
+        <path
+          d="M32.0005 6.84C28.3584 10.0146 25.4326 13.9271 23.4173 18.3182C21.4019 22.7093 20.3429 27.4786 20.3105 32.31C20.3105 48.5 27.5905 53.31 31.9705 56.55"
+          stroke="#002769" stroke-width="3" />
+        <path d="M10.3691 19.75H53.7491" stroke="#002769" stroke-width="3" />
+        <path d="M32 6.84V56.55" stroke="#002769" stroke-width="3" />
+        <path d="M11.0508 45.33H52.9808" stroke="#002769" stroke-width="3" />
+        <path d="M7.14062 32.31L56.8606 31.69" stroke="#002769" stroke-width="3" />
+      </svg>
+      <h5>Global Access</h5>
+      <p>With a diverse team of experienced tutors from around the world, Edukom Learning connects your child with
+        subject matter experts. </p>
+      <a href="{% url 'about' %}">Learn more
+        <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+          <path d="M5.91797 12H21.0846" stroke="#71A20A" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M13.5 5L21.0833 12L13.5 19" stroke="#71A20A" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+    </li>
+  </ul>
+  <br />
+</div>
+
+<div class="biggest">
+  <div>
+    <div class="bigger">
+      <div></div>
+      <img src="{% static 'IMG/header/kid3.jpg' %}" alt="Who We Are" style="max-width: 100%" />
+    </div>
+    <div class="big">
+      <h1 style="margin-bottom: 2rem;"><span style="border-bottom: 5px solid white;">Who</span> We Are</h1>
+      <p>
+        At Edukom Learning, we create a global platform where any tutor from any part of the world can embed knowledge
+        into your child without he/she leaving the comfort of their home.
+      </p>
+      <p>
+        We are passionate about children, learning and giving each child an opportunity to be the best they can be by
+        supported learning.
+      </p>
+      <p>
+        We understand that a classroom by its nature has divided attention to ensure that the majority are carried along
+        as teachers progress along the curriculum. However, in most cases some children are left behind, some are
+        alongside and some are held back to enable others catch up.
+      </p>
+      <br />
+
+      <a href="{% url 'GetATutor' %}" class=" btn btn-outline"
+        style=" padding: 10px 2rem;border: 3px #A9D156 solid ;background: #A9D156;color: #002769;">Get a Tutor
+        <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+          <path d="M5.91797 12H21.0846" stroke="#002769" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M13.5 5L21.0833 12L13.5 19" stroke="#002769" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="section2">
+  <div style="padding: 0 !important;position:relative;">
+    <div style="position: absolute;left: 0;top:-120px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="138" height="151" viewBox="0 0 138 151" fill="none">
+        <path
+          d="M114.833 45.005C112.992 44.2515 98.6667 51.883 98.4708 53.6568C98.3421 54.6352 101.692 53.567 107.324 50.7461C116.432 46.1846 117.093 45.7014 114.833 45.005Z"
+          fill="#E6C356" />
+        <path
+          d="M95.2215 31.8258C91.1819 36.4386 89.5391 39.851 91.816 38.7106C93.8533 37.6903 99.714 29.7281 99.2464 28.7437C98.9542 28.1284 97.1507 29.6409 95.2215 31.8258Z"
+          fill="#E6C356" />
+        <path
+          d="M111.14 75.6462C104.695 76.132 101.524 77.2633 104.259 78.0258C106.399 78.7823 116.313 77.1682 116.682 76.0697C116.924 75.6435 114.422 75.3733 111.14 75.6462Z"
+          fill="#E6C356" />
+        <path
+          d="M77.926 19.7712C76.067 20.8546 73.3133 28.1747 74.5613 28.616C75.2744 28.8681 76.546 26.8603 77.4668 24.1141C78.2678 21.428 78.5252 19.4711 77.926 19.7712Z"
+          fill="#E6C356" />
+        <path
+          d="M84.7081 39.9846C77.6089 34.0956 71.1291 32.0093 61.6446 32.3419C40.5271 33.169 20.1394 51.1487 20.3254 69.0307C20.2784 73.9289 19.2991 76.552 16.6479 79.4031C14.6603 81.4649 12.6113 83.7097 11.8893 84.376C11.3456 85.1053 9.91928 84.601 8.79698 83.4874C6.37703 80.8911 -0.386536 83.5169 -0.062301 87.0104C-0.0740624 88.235 -0.863308 89.6966 -2.0617 90.2968C-5.29736 91.9173 -7.79117 103.22 -5.86234 107.281C-3.93351 111.342 5.31987 116.457 9.38264 115.641C10.9961 115.29 13.1355 116.046 14.138 117.22C16.6134 120.245 22.6054 117.244 21.8077 113.378C20.671 107.55 31.3599 106.005 43.4806 110.598C55.841 115.07 64.1389 114.113 76.8507 106.833C91.1233 98.466 99.308 84.4653 98.8033 68.7232C98.5992 58.9239 92.2808 46.2459 84.7081 39.9846ZM96.272 71.5143C96.0025 80.9415 91.1821 92.3433 84.8626 98.4026C82.8165 100.341 76.997 104.018 72.2034 106.418C61.0584 112 53.9588 112.357 42.1947 107.89C35.7179 105.498 31.9065 104.969 27.1861 105.962C23.1818 106.902 20.56 106.691 20.034 105.584C19.3326 104.107 20.1744 103.381 23.4042 102.373C25.6752 101.845 31.1206 99.879 35.4289 98.3306C42.6104 95.6478 43.6247 95.5969 47.5937 98.3313C52.1561 101.378 59.238 102.858 61.0444 101.039C61.6465 100.433 59.3288 99.6136 56.0523 99.2742C52.7174 98.8118 49.4497 97.5541 48.684 96.5666C47.3893 94.7777 48.0499 94.2946 53.3169 92.266L59.3615 90.0003L53.2089 91.1014C46.5184 92.3196 43.0258 89.6512 45.0984 84.9572C46.1332 82.7633 47.2702 82.3462 52.8762 82.2805C61.2237 82.365 69.3114 78.4668 71.6266 73.3467C73.0882 70.1774 72.9158 69.502 70.8377 68.5625C65.4365 65.936 54.6656 69.8071 47.1419 77.0789C45.6365 78.5944 44.3856 78.4593 42.1965 76.6614C39.4755 74.3682 39.4784 74.0621 43.4478 70.5507C48.8611 65.7069 48.2767 64.4763 42.5126 68.5818C38.8502 71.1777 38.1925 71.3548 37.912 69.5149C37.8653 68.1673 38.7832 65.7273 40.1132 63.8426C41.3234 62.0178 41.6917 60.9194 40.6746 61.2765C39.8357 61.6966 38.2543 64.9259 37.2077 68.3444C35.4858 73.7767 33.8577 75.6584 24.9018 83.0382C19.1932 87.5728 14.0898 91.1951 13.5549 91.006C11.2372 90.1865 12.5848 86.465 16.4987 82.5244C18.7874 80.1595 20.9096 76.507 21.2283 74.3671C23.9768 55.1677 30.7466 45.6839 46.4952 38.8629C60.0282 32.9991 70.7579 33.4139 80.2976 39.7563C84.1497 42.2446 88.1713 45.7144 89.2878 47.4402C93.584 53.3621 96.3513 63.2487 96.272 71.5143ZM68.2711 75.0272C65.0178 78.4846 57.959 80.8012 52.5986 80.1345C49.1439 79.7322 49.027 79.486 50.2985 77.4782C53.5051 72.6733 68.7596 67.623 70.2793 70.8225C70.63 71.5608 69.718 73.3886 68.2711 75.0272ZM43.1254 85.4883C42.6255 87.8714 42.599 90.6266 43.0666 91.6111C43.7096 92.9647 42.9876 93.631 41.0147 94.1621C39.2814 94.5732 33.5379 96.5357 28.2709 98.5643L18.5143 102.384L16.5855 98.3235C14.4228 93.7703 13.9405 94.3165 27.7603 83.4345C37.1926 76.1208 37.4323 76.0008 40.2206 77.4986C43.8389 79.4947 44.2481 80.3561 43.1254 85.4883ZM18.4522 115.059C16.2951 116.139 15.7077 115.215 9.16131 101.432C2.61497 87.6499 2.26721 86.6054 4.42432 85.525C6.46159 84.5047 7.2887 85.3091 9.9862 90.0514C11.7456 93.1309 14.9018 99.776 17.0001 104.818C20.3229 112.751 20.4895 114.039 18.4522 115.059ZM9.28632 113.252C7.31338 113.783 6.25247 112.486 2.27791 104.118C-1.69666 95.7502 -2.03853 94.0935 -0.416294 92.824C1.20595 91.5545 1.97167 92.542 6.47228 102.017C10.9729 111.493 11.2593 112.721 9.28632 113.252ZM1.91216 111.156C-0.244951 112.237 -4.4886 107.05 -4.86834 103.127C-5.46718 97.1816 -2.9682 97.758 0.188073 104.403C1.82466 107.849 2.51135 110.856 1.91216 111.156Z"
+          fill="#E6C356" />
+        <path
+          d="M66.5337 38.5766C62.4242 38.0451 49.5753 40.9767 47.7075 42.9784C47.1054 43.5847 49.6716 43.3657 53.4977 42.3635C57.3822 41.4843 62.6374 40.6803 65.0809 40.8275C70.6255 40.9449 71.7743 39.3032 66.5337 38.5766Z"
+          fill="#E6C356" />
+        <path
+          d="M54.5499 44.5775C52.8166 44.9886 51.2558 46.075 50.9488 46.9903C50.5191 48.2719 51.6532 48.1609 54.1698 46.9005C58.6039 44.6798 58.791 43.8244 54.5499 44.5775Z"
+          fill="#E6C356" />
+        <path
+          d="M104.566 95.8468C99.501 95.4893 97.8876 95.8404 99.8429 97.1461C101.74 98.3287 110.087 98.4133 109.503 97.1827C109.269 96.6904 107.068 96.1171 104.566 95.8468Z"
+          fill="#E6C356" />
+        <path
+          d="M56.4577 19.8605C56.3261 21.145 56.5452 23.168 57.0128 24.1524C57.7727 25.7522 57.8925 25.6922 58.2112 23.5522C58.3428 22.2677 58.1237 20.2448 57.6561 19.2603C56.8963 17.6605 56.7764 17.7206 56.4577 19.8605Z"
+          fill="#E6C356" />
+        <path
+          d="M93.1456 105.223C91.1348 103.488 89.2964 102.428 88.9924 103.038C88.5013 104.502 95.5303 111.493 96.8485 110.833C98.2866 110.112 97.6991 109.188 93.1456 105.223Z"
+          fill="#E6C356" />
+      </svg>
+
+    </div>
+  </div>
+
+  <div class="subjectsgrid">
+
+    <div class="second">
+
+      <a name="ourCourses" id="ourCourses"></a>
+
+      <div class="good" style="margin-bottom: 2rem;">
+        <h1>Subjects We Take</h1>
+        <ul class="course-list">
+          <li id="elementary"><a onclick="opencourse('elementary')">Reception</a></li>
+          <li id="science"><a onclick="opencourse('science')">KS 1-2</a></li>
+          <li id="commercial"><a onclick="opencourse('commercial')">KS 3 (Year 7-9)</a></li>
+          <li id="art"><a onclick="opencourse('art')">KS 4 (Year 10 - Year 12)</a></li>
+          <li id="coding"><a onclick="opencourse('coding')">A-Levels</a></li>
+        </ul>
+      </div>
+      <ul class="courses">
+        <li class="elementary art science commercial coding">
+          <p>English</p>
+        </li>
+        <li class="art science elementary commercial coding">
+          <p>Maths</p>
+        </li>
+        <li class="art commercial">
+          <p>Lit. In Eng. </p>
+        </li>
+
+        <li class="art commercial">
+          <p>History </p>
+        </li>
+        <li class="art">
+          <p>ICT </p>
+        </li>
+        <li class="art">
+          <p>French </p>
+        </li>
+        <li class="art">
+          <p>Government </p>
+        </li>
+        <li class="art">
+          <p>Business </p>
+        </li>
+        <li class="art coding">
+          <p>Physics </p>
+        </li>
+        <li class="art coding">
+          <p>Chemistry </p>
+        </li>
+
+        <li class="commercial">
+          <p>Commercial </p>
+        </li>
+        <li class="art coding">
+          <p>Biology </p>
+        </li>
+        <li class="science commercial">
+          <p>Basic Science</p>
+        </li>
+        <li class="art">
+          <p>Coding</p>
+        </li>
+        <li class="coding">
+          <p>Calculus</p>
+        </li>
+        <li class="coding science art">
+          <p>E.T.C.</p>
+        </li>
+      </ul>
+      <script>
+        function opencourse(course) {
+          const courses = document.getElementsByClassName(course);
+          const courseId = document.getElementById(course);
+          const alltab = document.querySelectorAll('.course-list > li');
+          const all = document.querySelectorAll('.courses > li');
+          for (let i = 0; i < alltab.length; i++) {
+            if (alltab[i] == courseId) {
+              alltab[i].classList.add('active')
+            } else {
+              alltab[i].classList.remove('active')
+            }
+          }
+          if (course == "all") {
+            for (let i = 0; i < all.length; i++) {
+              all[i].style.display = "flex";
+            }
+          } else {
+            for (let i = 0; i < all.length; i++) {
+              all[i].style.display = "none";
+              for (let i = 0; i < courses.length; i++) {
+                courses[i].style.display = "flex";
+              }
+            }
+          }
+        }
+        opencourse('all')
+      </script>
+    </div>
+    <div style="width: 300px;align-self: center;text-align: center;position: relative; z-index: 99;">
+      <img src="{% static 'IMG/section2/93.png' %}" style="width: 300px;" alt="">
+    </div>
+  </div>
+</div>
+
+
+
+<div class="whole">
+  <div>
+    <a name="ourExams" id="ourExams"></a>
+    <center>
+      <h1>Exams we <span style="color: red;">Prep</span> for</h1>
+      <p>We offer examination preparation classes targeted particularly towards success in specific exams.</p>
+    </center>
+    <div class="special" style="justify-content: center;">
+      <ul class="exams">
+        <li>
+          <p>WASSCE</p>
+        </li>
+        <li>
+          <p>GCE</p>
+        </li>
+        <li>
+          <p>NECO</p>
+        </li>
+        <li>
+          <p>UTME</p>
+        </li>
+        <li>
+          <p>BECE</p>
+        </li>
+        <li>
+          <p>IELTS</p>
+        </li>
+        <li>
+          <p>SAT</p>
+        </li>
+        <li>
+          <p>GCSE/IGSCE</p>
+        </li>
+        <li>
+          <p>Cambridge Checkpoint</p>
+        </li>
+        <li>
+          <p>Primary Checkpoint</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="fifth">
+  <h1>
+    In the 21st century,
+    <span style="color: #002769" ;>learning</span> isn't confined to
+    <span style="color: rgb(236, 15, 15)">classrooms</span>
+  </h1>
+  <small> Professional Private Tutoring at the click of a button. </small>
+  <ul>
+    <li>
+      <img src="{% static 'IMG/header/young-woman-working-with-her-headphones.jpg' %}" alt="" />
+      <div>
+        <a href="{% url 'GetATutor' %}">
+          <p>Get Your Ward a Tutor</p>
+        </a>
+      </div>
+    </li>
+    <li>
+      <img src="{% static 'IMG/header/lesson-online-english-courses-home.jpg' %}" alt="" />
+      <div>
+        <a href="{% url 'community' %}">
+          <p>Teach on Edukom</p>
+        </a>
+      </div>
+    </li>
+  </ul>
+  <br />
+</div>
+<div class="fourth">
+  <center style="margin-bottom:2rem;display: flex; justify-content: center;gap: 2rem;">
+    <svg style=" margin-top:-10px;" xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 91 60"
+      fill="none">
+      <path
+        d="M40.9105 46.1014C40.9105 42.33 39.6572 39.1671 37.1505 36.6C35.374 34.8343 32.9654 33.6729 29.9193 33.12C26.9221 32.5714 24.0885 32.5329 21.5273 33C20.6554 28.9286 22.0723 24.6171 25.6688 20.0486C29.2653 15.4843 33.9245 12.0471 39.6081 9.75L30.9928 0C26.6333 1.69714 22.4918 3.84857 18.6773 6.45C14.8083 9.05143 11.3753 12.0429 8.32364 15.4243C5.27203 18.8057 2.98332 22.6243 1.51201 26.9529C0.0406929 31.2814 -0.368005 35.6957 0.334956 40.2386C1.25044 46.2386 3.71353 51.0386 7.72422 54.5957C11.7295 58.2 16.7265 60 22.6989 60C27.9575 60 32.3224 58.7571 35.7773 56.2371C39.1994 53.7686 40.8996 50.3871 40.8996 46.0886L40.9105 46.1014ZM90.63 46.1014C90.63 42.33 89.3767 39.1671 86.87 36.6C85.0935 34.8 82.674 33.6343 79.6387 33.0986C76.5871 32.5671 73.7916 32.5414 71.2468 33.0043C70.3749 28.9757 71.7373 24.6471 75.3447 20.0614C78.9412 15.5186 83.5895 12.09 89.2731 9.77571L80.6796 0C76.3201 1.69714 72.2059 3.84857 68.3641 6.45C64.4599 9.08998 60.9924 12.105 58.0431 15.4243C55.0133 18.81 52.7573 22.6243 51.286 26.9529C49.7973 31.2788 49.3956 35.7917 50.1035 40.2386C51.0081 46.2386 53.4603 51.0386 57.4601 54.5957C61.4544 58.17 66.4351 59.9614 72.4075 59.9614C77.677 59.9614 82.0419 58.7186 85.4968 56.2029C88.9135 53.7343 90.63 50.3529 90.63 46.0543V46.1014Z"
+        fill="white" />
+    </svg>
+    <h1>Hear from the parents </h1>
+  </center>
+
+  <div class="good" style="display: flex;gap: 4rem;">
+    <a onclick="previous()">
+      <div class="svg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="33" viewBox="0 0 36 33" fill="none">
+          <g clip-path="url(#clip0_671_231)">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M11.91 17.9577C11.4886 17.571 11.252 17.0468 11.252 16.5002C11.252 15.9537 11.4886 15.4294 11.91 15.0427L20.394 7.26298C20.8161 6.87624 21.3885 6.65905 21.9853 6.65918C22.2808 6.65924 22.5733 6.71266 22.8463 6.81638C23.1193 6.9201 23.3673 7.07208 23.5762 7.26367C23.7851 7.45525 23.9508 7.68267 24.0638 7.93295C24.1769 8.18323 24.235 8.45147 24.2349 8.72234C24.2348 8.99321 24.1766 9.26142 24.0634 9.51165C23.9503 9.76189 23.7845 9.98924 23.5755 10.1807L16.6815 16.5002L23.5755 22.8197C23.7905 23.0099 23.962 23.2374 24.08 23.489C24.1981 23.7406 24.2603 24.0112 24.263 24.285C24.2658 24.5589 24.209 24.8305 24.096 25.084C23.983 25.3375 23.816 25.5679 23.6049 25.7616C23.3937 25.9554 23.1426 26.1086 22.8661 26.2125C22.5896 26.3163 22.2934 26.3686 21.9946 26.3664C21.6959 26.3641 21.4006 26.3073 21.1261 26.1994C20.8515 26.0914 20.6031 25.9344 20.3955 25.7375L11.907 17.9577H11.91Z"
+              fill="white" />
+          </g>
+          <defs>
+            <clipPath id="clip0_671_231">
+              <rect width="36" height="33" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      </div>
+    </a>
+    <div class="parent-comments" style="display: flex;">
+      {% if testimonials %}
+      {% for testimonial in testimonials %}
+      <div id="{{ forloop.counter }}">
+        <p>
+          {{ testimonial.content }}
+        </p>
+        <br>
+        <div>
+          <p><strong>{{ testimonial.name }}</strong> - {{ testimonial.location }}</p>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div id="1">
+        <p>No testimonials loaded yet. Please add them in the admin panel.</p>
+        <div>
+          <p><strong>Admin</strong></p>
+        </div>
+      </div>
+
+      {% endif %}
+    </div>
+    <style>
+      .parent-comments {
+        min-width: 70%;
+
+      }
+
+      .parent-comments>div {
+        display: none;
+        width: 0;
+        transition: all ease-in 2s 2s;
+      }
+    </style>
+
+    <a onclick="next()">
+      <div class="svg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="33" viewBox="0 0 36 33" fill="none">
+          <g clip-path="url(#clip0_671_227)">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M24.0906 15.0426C24.5119 15.4293 24.7486 15.9536 24.7486 16.5001C24.7486 17.0467 24.5119 17.5709 24.0906 17.9576L15.6066 25.7374C15.1845 26.1241 14.6121 26.3413 14.0153 26.3412C13.4185 26.341 12.8462 26.1236 12.4243 25.7367C12.0024 25.3498 11.7655 24.8251 11.7656 24.278C11.7658 23.731 12.003 23.2064 12.4251 22.8196L19.3191 16.5001L12.4251 10.1806C12.015 9.79181 11.7879 9.27091 11.7928 8.73013C11.7976 8.18934 12.034 7.67194 12.451 7.28935C12.8679 6.90676 13.4322 6.68961 14.0221 6.68466C14.6121 6.6797 15.1805 6.88735 15.6051 7.26287L24.0921 15.0412L24.0906 15.0426Z"
+              fill="white" />
+          </g>
+          <defs>
+            <clipPath id="clip0_671_227">
+              <rect width="36" height="33" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="sixth faqbody">
+  <div>
+    <h3>NEED HELP?</h3>
+    <h2 style="color: #A9D156;">FAQs</h2>
+    <p>
+      Have a question? We have the answers. Explore our frequently asked
+      questions to find comprehensive information about our tutoring
+      services and how we support your educational journey.
+    </p>
+  </div>
+  <ul>
+    <li>
+      <div>
+        <a onclick="faq(1)">How are the tutors selected for the platform?</a>
+        <a onclick="faq(1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path
+              d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z"
+              fill="#002769" />
+          </svg></a>
+      </div>
+      <p id="Q1">
+        Our tutors undergo a rigorous screening process, including evaluations, interviews, and competency-based
+        recommendations to ensure they have the necessary qualifications, expertise, and experience in their respective
+        fields.
+      </p>
+    </li>
+    <li>
+      <div>
+        <a onclick="faq(2)">What is the process for matching students with the right tutor?</a>
+        <a onclick="faq(2)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path
+              d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z"
+              fill="#002769" />
+          </svg>
+        </a>
+      </div>
+      <p id="Q2">
+        We carefully assess each student's learning requirements, academic goals, upcoming examinations, and preferred
+        learning style to match them with a suitable tutor who possesses the relevant expertise and teaching approach to
+        best meet their needs.
+      </p>
+    </li>
+    <li>
+      <div>
+        <a onclick="faq(3)">How do you track and communicate student progress to parents or guardians?</a>
+        <a onclick="faq(3)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path
+              d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z"
+              fill="#002769" />
+          </svg>
+        </a>
+      </div>
+      <p id="Q3">
+        We have an ongoing feedback relationship with the parents/guardians of the learners. This helps us to track
+        improvements, challenges, upcoming assessments, need for re-design of teaching method etc. The openness of an
+        ongoing open communication makes it easy to stay on track to consolidate improvements and correct challenges,
+        enabling parents or guardians to stay informed about their child's academic development and address any concerns
+        or inquiries.
+      </p>
+    </li>
+    <li>
+      <div>
+        <a onclick="faq(4)">What subjects and grade level do you offer tutoring for?</a>
+        <a onclick="faq(4)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path
+              d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z"
+              fill="#002769" />
+          </svg>
+        </a>
+      </div>
+      <p id="Q4">
+        We offer tutoring services for a wide range of subjects, including Mathematics, Add/Further Mathematics,
+        English, Science, Physics, Chemistry, Biology, Literature, Government, History, Geography, Information
+        Communication Technology (ICT), Languages, and more, catering to students from Reception (Age 4) to A-Levels/6th
+        Form (Age 18).
+      </p>
+    </li>
+    <li>
+      <div>
+        <a onclick="faq(5)">Is there a restriction to your scheduling of lessons due to different time zones across the
+          world?</a>
+        <a onclick="faq(5)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path
+              d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z"
+              fill="#002769" />
+          </svg>
+        </a>
+      </div>
+      <p id="Q5">
+        No. There are no restrictions by time zone. Aside from the fact that we have tutors from all over the world
+        available to tutor at your specified time, we have some tutors who do not run a regular 8am – 4pm job, making
+        them expressly available to teach at any allocated time within the daily 24hours.
+      </p>
+    </li>
+    <li>
+      <div>
+        <a onclick="faq(6)">Do you offer exam preparatory classes?</a>
+        <a onclick="faq(6)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path
+              d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z"
+              fill="#002769" />
+          </svg></a>
+      </div>
+      <p id="Q6">
+        Yes, we do. We offer examination preparatory classes for IGCSE/GCSE, WASSCE, NECO, GCE, JAMB, SATs, IELTS,
+        Junior WASSCE, Cambridge Checkpoint, Common Entrance etc.
+      </p>
+    </li>
+  </ul>
+  <br />
+  <center><a href="{% url 'faq' %}">See more FAQs</a></center>
+  <script src="{% static 'JS/scripts.js' %}"></script>
+  <script>
+    $('.nav-item-list #home').addClass('active')
+
+  </script>
+</div>
+{% endblock main %}

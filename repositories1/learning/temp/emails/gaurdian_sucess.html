@@ -1,0 +1,79 @@
+{% autoescape on %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congratulations on Your Tutorship Application!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #002769;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        h1, h3 {
+            color: #ffffff;
+        }
+        .content {
+            padding: 20px;
+            color: #555555;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #A9D156;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #555555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>Congratulations on Your Tutorship Application!</h1>
+        </div>
+
+        <div class="content">
+            <p>Dear {{guardian.full_name}},</p>
+            <p>Congratulations! We are thrilled to inform you that your application for online tutorship for your ward has been successfully received and is currently under review.</p>
+            <p>Our team will carefully assess your application to ensure it aligns with our requirements. If successful, we will reach out to you for the next steps in the process.</p>
+            <p>If you have any questions or need further assistance, feel free to contact us at info@edukom.ng, +2348033310626  for counseling purposes.</p>
+            <p>Thank you for choosing Edukom Learning. We look forward to the possibility of assisting your ward in their educational journey.</p>
+            <a href="https://www.edukom.ng" class="button">Visit Our Website</a>
+        </div>
+
+        <div class="footer">
+            <p>Best regards,<br>Edukom Learning Team<br><a href="https://www.edukom.ng" style="color: #002769; text-decoration: none;">www.edukom.ng</a></p>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+{% endautoescape %}

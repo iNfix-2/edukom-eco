@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+<style>
+  .header-cover .community {
+    background: #FFF;
+    color: black !important;
+  }
+
+  .nav-item-list ul li a {
+    color: black !important;
+  }
+ 
+.header-cover{
+  margin-top: 20px;
+  background-color: #FFF !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+@media screen and (max-width: 960px){
+.header-cover {
+    margin-left:0;
+    margin-right:0;
+}
+.main{
+  padding: 0 !important;
+}
+.main > div {
+    margin-top: 1rem !important;
+}
+.section4 > div{
+  padding: 1rem !important;
+}
+.section4 div > ul > li {
+    padding: 1rem 0 !important;
+}
+}
+</style>
+<link rel="stylesheet" href="{% static 'CSS/community.css' %}">
+<div class="community" style="position: relative;">
+  <div class="splatter">
+    <img src="{% static 'IMG/community/Splatter - 18.png' %}" alt="">
+  </div>
+  <div class="fhdi">
+    <div>
+      <small>Join Our </small>
+      <h2>
+        Network Of <span style="color: #002769;">Expert</span> Tutors
+        Today!
+      </h2>
+      <p>Our platform takes out the worry of finding students and managing your business. Start earning with us today.</p>
+      <a href="{% url 'BecomeATutor' %}" style="display: flex;" class="btn-sa">Apply Now <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+          <path d="M5.91797 12H21.0846" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M13.5 5L21.0833 12L13.5 19" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+    <div>
+      <img src="{% static 'IMG/community/1.png' %}" alt="">
+    </div>
+  </div>
+  </div>
+  <style>
+    .section1 {
+      margin: 5%;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .section1>h1 {
+      color: #000;
+      text-align: center;
+      font-family: Mouse Memoirs;
+      font-style: normal;
+      font-weight: 400;
+      /* 125.714% */
+      letter-spacing: 2.1px;
+    }
+
+    .section1>p {
+      color: #000;
+
+      text-align: center;
+      font-family: 'Montserrat';
+      font-style: normal;
+      font-weight: 400;
+      /* 165.217% */
+      letter-spacing: 0.69px;
+    }
+
+    .section2 {
+      justify-content: space-between;
+      padding: 5%;
+    }
+
+    .section2>div>h1 {
+      color: #71A20A;
+
+      text-align: center;
+      font-family: Mouse Memoirs;
+      font-style: normal;
+      font-weight: 400;
+      letter-spacing: 2.1px;
+    }
+
+    .section2 p {
+      color: #002769;
+
+      text-align: center;
+      font-family: Montserrat;
+      font-style: normal;
+      font-weight: 400;
+    }
+  </style>
+  {% endblock header %}
+  {% block main %}
+  <div class="main">
+    <div class="section1">
+      <h1>Get Access to a large <span style="color:#88C50B;"> Community</span> Of Professional Tutors
+      </h1>
+      <p>
+        Within EduKom, tutoring becomes a professionally enriched and efficient endeavor, strategically eliminating the knowledge gap for enhanced educational outcomes.
+      </p>
+    </div>
+  
+    <div class="section3">
+      <div>
+        <h3>Enhance Your Teaching Experience: Gain Access to a Broad Commmunity of Students as a Tutor</h3>
+        <a href="{% url 'BecomeATutor' %}"class="btn-sa">Apply Now  <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+            <path d="M5.91797 12H21.0846" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M13.5 5L21.0833 12L13.5 19" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        </a>
+      </div>
+      <ul>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="82" height="44" viewBox="0 0 82 44" fill="none">
+            <path d="M23.7273 40.0775V36.9877C23.7273 32.8904 25.5471 28.9609 28.7863 26.0636C32.0256 23.1664 36.419 21.5387 41 21.5387M41 21.5387C45.581 21.5387 49.9744 23.1664 53.2137 26.0636C56.4529 28.9609 58.2727 32.8904 58.2727 36.9877V40.0775M41 21.5387C43.7486 21.5387 46.3846 20.5621 48.3282 18.8238C50.2718 17.0855 51.3636 14.7278 51.3636 12.2694C51.3636 9.81098 50.2718 7.45328 48.3282 5.71494C46.3846 3.97659 43.7486 3 41 3C38.2514 3 35.6154 3.97659 33.6718 5.71494C31.7282 7.45328 30.6364 9.81098 30.6364 12.2694C30.6364 14.7278 31.7282 17.0855 33.6718 18.8238C35.6154 20.5621 38.2514 21.5387 41 21.5387ZM3 40.0775V36.9877C3 34.5293 4.09188 32.1716 6.03544 30.4332C7.979 28.6949 10.615 27.7183 13.3636 27.7183M13.3636 27.7183C15.196 27.7183 16.9534 27.0673 18.2491 25.9084C19.5448 24.7495 20.2727 23.1777 20.2727 21.5387C20.2727 19.8998 19.5448 18.328 18.2491 17.1691C16.9534 16.0102 15.196 15.3592 13.3636 15.3592C11.5312 15.3592 9.77388 16.0102 8.47817 17.1691C7.18247 18.328 6.45455 19.8998 6.45455 21.5387C6.45455 23.1777 7.18247 24.7495 8.47817 25.9084C9.77388 27.0673 11.5312 27.7183 13.3636 27.7183ZM79 40.0775V36.9877C79 34.5293 77.9081 32.1716 75.9646 30.4332C74.021 28.6949 71.385 27.7183 68.6364 27.7183M68.6364 27.7183C70.4688 27.7183 72.2261 27.0673 73.5218 25.9084C74.8175 24.7495 75.5455 23.1777 75.5455 21.5387C75.5455 19.8998 74.8175 18.328 73.5218 17.1691C72.2261 16.0102 70.4688 15.3592 68.6364 15.3592C66.804 15.3592 65.0466 16.0102 63.7509 17.1691C62.4552 18.328 61.7273 19.8998 61.7273 21.5387C61.7273 23.1777 62.4552 24.7495 63.7509 25.9084C65.0466 27.0673 66.804 27.7183 68.6364 27.7183Z" stroke="#081EE4" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <h3>Thousands of Students</h3>
+          <p>At Edukom We’ll help you find the right students without investing your time and money in advertising.</p>
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="96" height="58" viewBox="0 0 96 58" fill="none">
+            <path d="M50.0013 23.8078H61.192V19.1071H54.7973V16.7567H48.4027V19.2246C46.4601 19.5146 44.7333 20.3248 43.5577 21.498C42.382 22.6712 41.8413 24.1237 42.0405 25.5735C42.2397 27.0233 43.1646 28.3669 44.6357 29.3436C46.1068 30.3203 48.0191 30.8603 50.0013 30.8588H53.1987C53.6227 30.8588 54.0293 30.9826 54.3291 31.203C54.6289 31.4234 54.7973 31.7223 54.7973 32.034C54.7973 32.3457 54.6289 32.6446 54.3291 32.865C54.0293 33.0854 53.6227 33.2092 53.1987 33.2092H42.0081V37.9099H48.4027V40.2602H54.7973V37.7924C56.7399 37.5024 58.4667 36.6922 59.6423 35.519C60.818 34.3458 61.3587 32.8933 61.1595 31.4435C60.9603 29.9937 60.0354 28.65 58.5643 27.6734C57.0932 26.6967 55.1809 26.1567 53.1987 26.1581H50.0013C49.5774 26.1581 49.1707 26.0343 48.8709 25.8139C48.5711 25.5935 48.4027 25.2946 48.4027 24.9829C48.4027 24.6713 48.5711 24.3724 48.8709 24.152C49.1707 23.9316 49.5774 23.8078 50.0013 23.8078Z" fill="#081EE4" />
+            <path d="M92.5714 21.405H85.6457C85.5471 19.5259 84.8938 17.6809 83.7262 15.984C82.5585 14.2871 80.9013 12.7745 78.8571 11.5397V2.37833C78.8571 1.93665 78.6798 1.50369 78.3451 1.12797C78.0103 0.752251 77.5314 0.448616 76.9619 0.251088C76.3924 0.0535607 75.7548 -0.0300545 75.1207 0.00961125C74.4865 0.049277 73.8808 0.210656 73.3714 0.475667L60.5726 7.135H44.5714C25.68 7.135 12.1269 14.8432 10.464 26.1617H10.2857C9.3764 26.1617 8.50433 25.9111 7.86135 25.4651C7.21837 25.019 6.85714 24.4141 6.85714 23.7833V19.0267H0V23.7833C0.00272302 25.6751 1.08727 27.4888 3.01562 28.8265C4.94398 30.1641 7.55861 30.9164 10.2857 30.9183H10.5257C11.0229 34.037 12.4841 37.0445 14.8094 39.7358C17.1347 42.427 20.2695 44.7387 24 46.5131V54.7017C24 55.3324 24.3612 55.9374 25.0042 56.3834C25.6472 56.8294 26.5193 57.08 27.4286 57.08H41.1429C42.0522 57.08 42.9242 56.8294 43.5672 56.3834C44.2102 55.9374 44.5714 55.3324 44.5714 54.7017V49.945H54.8571V54.7017C54.8571 55.3324 55.2184 55.9374 55.8613 56.3834C56.5043 56.8294 57.3764 57.08 58.2857 57.08H72C72.9093 57.08 73.7814 56.8294 74.4244 56.3834C75.0674 55.9374 75.4286 55.3324 75.4286 54.7017V46.7033C77.9052 45.8889 80.0707 44.6814 81.7497 43.1787C83.4288 41.676 84.5744 39.9202 85.0937 38.0533H92.5714C93.4807 38.0533 94.3528 37.8028 94.9958 37.3567C95.6388 36.9107 96 36.3058 96 35.675V23.7833C96 23.1526 95.6388 22.5476 94.9958 22.1016C94.3528 21.6556 93.4807 21.405 92.5714 21.405ZM89.1429 33.2967H79.2823C78.2366 39.8442 76.4571 41.5852 68.5714 43.5592V52.3233H61.7143V45.1883H37.7143V52.3233H30.8571V43.709C26.7288 42.3466 23.246 40.196 20.8169 37.5093C18.3879 34.8226 17.1134 31.7113 17.1429 28.54C17.1429 17.0408 30.9189 11.8917 44.5714 11.8917H62.856L72 7.135V13.7373C80.2903 18.161 78.5589 21.3146 78.9189 26.1617H89.1429V33.2967Z" fill="#081EE4" />
+          </svg>
+          <h3>Stress-free payments</h3>
+          <p>Edukom will pay you while she deals with the clients, and you get paid when you teach</p>
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" width="96" height="58" viewBox="0 0 96 58" fill="none">
+            <path d="M78.6 48.3991L81.4 46.7343L74 42.3344V35.675H70V43.2857L78.6 48.3991ZM40 14.2701H56V9.51338H40V14.2701ZM72 54.7017C66.4667 54.7017 61.7493 53.5419 57.848 51.2222C53.9467 48.9025 51.9973 46.0985 52 42.8101C52 39.52 53.9507 36.7152 57.852 34.3955C61.7533 32.0758 66.4693 30.9168 72 30.9184C77.5333 30.9184 82.2507 32.0782 86.152 34.3979C90.0533 36.7176 92.0027 39.5216 92 42.8101C92 46.1001 90.0493 48.9049 86.148 51.2246C82.2467 53.5443 77.5307 54.7033 72 54.7017ZM16 49.945C13.8 49.945 11.916 49.4789 10.348 48.5466C8.78001 47.6143 7.99734 46.4949 8.00001 45.1884V19.0267C8.00001 17.7186 8.78401 16.5984 10.352 15.6661C11.92 14.7338 13.8027 14.2685 16 14.2701H32V9.51338C32 8.2053 32.784 7.08511 34.352 6.1528C35.92 5.22049 37.8027 4.75513 40 4.75672H56C58.2 4.75672 60.084 5.22287 61.652 6.15518C63.22 7.08748 64.0027 8.20689 64 9.51338V14.2701H80C82.2 14.2701 84.084 14.7362 85.652 15.6685C87.22 16.6008 88.0027 17.7202 88 19.0267V29.1941C85.6667 28.2031 83.1333 27.45 80.4 26.9347C77.6667 26.4194 74.8667 26.1617 72 26.1617C64.2667 26.1617 57.6667 27.7869 52.2 31.0373C46.7333 34.2877 44 38.2119 44 42.8101C44 44.0389 44.2173 45.2581 44.652 46.4679C45.0867 47.6777 45.7693 48.8367 46.7 49.945H16Z" fill="#081EE4"/>
+            </svg>
+          <h3>Manage your business</h3>
+          <p>You decide how much you want to earn and when you want to teach.</p>
+        </li>
+      </ul>
+    </div>
+  
+    <div class="section4">
+      <div>
+        <h1>How to become a Tutor</h1>
+      <ul>
+        <li>
+          <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <path d="M17.418 6.33337H6.33464C5.49478 6.33337 4.68933 6.667 4.09546 7.26087C3.5016 7.85473 3.16797 8.66019 3.16797 9.50004V31.6667C3.16797 32.5066 3.5016 33.312 4.09546 33.9059C4.68933 34.4997 5.49478 34.8334 6.33464 34.8334H28.5013C29.3412 34.8334 30.1466 34.4997 30.7405 33.9059C31.3343 33.312 31.668 32.5066 31.668 31.6667V20.5834" stroke="#002769" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M29.293 3.95837C29.9229 3.32848 30.7772 2.97461 31.668 2.97461C32.5588 2.97461 33.4131 3.32848 34.043 3.95837C34.6729 4.58826 35.0267 5.44257 35.0267 6.33337C35.0267 7.22416 34.6729 8.07848 34.043 8.70837L19.0013 23.75L12.668 25.3334L14.2513 19L29.293 3.95837Z" stroke="#002769" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div>
+            <p>Step 1
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
+              <path d="M2.61719 10.129C2.61719 8.70103 2.97419 7.37803 3.68119 6.16703C4.38819 4.95603 5.34719 3.99703 6.55819 3.29003C7.76919 2.58303 9.08519 2.23303 10.5062 2.23303C11.5702 2.23303 12.5922 2.44303 13.5652 2.85603C14.5382 3.26903 15.3712 3.83603 16.0782 4.53603C16.7852 5.23603 17.3452 6.07603 17.7582 7.05603C18.1712 8.03603 18.3812 9.05103 18.3812 10.129C18.3812 11.193 18.1712 12.215 17.7582 13.188C17.3452 14.161 16.7782 15.001 16.0782 15.701C15.3782 16.401 14.5382 16.961 13.5652 17.374C12.5922 17.787 11.5772 17.997 10.5062 17.997C9.43519 17.997 8.40619 17.787 7.43319 17.374C6.46019 16.961 5.62019 16.394 4.91319 15.694C4.20619 14.994 3.65319 14.154 3.23319 13.188C2.81319 12.222 2.61719 11.2 2.61719 10.129ZM4.35319 10.129C4.35319 11.788 4.95519 13.23 6.16619 14.455C7.37719 15.666 8.81919 16.268 10.5062 16.268C11.6122 16.268 12.6412 15.995 13.5792 15.442C14.5172 14.889 15.2732 14.147 15.8262 13.202C16.3792 12.257 16.6592 11.235 16.6592 10.129C16.6592 9.02303 16.3792 7.99403 15.8262 7.04903C15.2732 6.10403 14.5242 5.35503 13.5792 4.80203C12.6342 4.24903 11.6122 3.97603 10.5062 3.97603C9.40019 3.97603 8.37119 4.24903 7.43319 4.80203C6.49519 5.35503 5.73919 6.10403 5.17919 7.04903C4.61919 7.99403 4.35319 9.02303 4.35319 10.129ZM9.89719 10.129V5.46703C9.89719 5.30603 9.95319 5.16603 10.0652 5.05403C10.1772 4.94203 10.3172 4.88603 10.4782 4.88603C10.6392 4.88603 10.7792 4.94203 10.8912 5.05403C11.0032 5.16603 11.0592 5.30603 11.0592 5.46703V9.54103H13.7052C13.8662 9.54103 14.0062 9.59703 14.1182 9.70903C14.2302 9.82103 14.2862 9.96103 14.2862 10.122C14.2862 10.276 14.2302 10.416 14.1182 10.535C14.0062 10.654 13.8662 10.71 13.7052 10.71H10.5972C10.5762 10.717 10.5342 10.717 10.4712 10.717C10.3942 10.7184 10.3178 10.7041 10.2466 10.6748C10.1754 10.6456 10.1109 10.6021 10.0572 10.547C10.0034 10.492 9.96146 10.4265 9.93395 10.3546C9.90644 10.2827 9.89393 10.2059 9.89719 10.129Z" fill="#00338A" />
+            </svg> <small>10 mins</small></p>
+    
+            <h3>Submit An Application:</h3>
+            <p>Completing our hassle-free application is a straightforward process that requires less than 10 minutes of your time, ensuring a quick and efficient experience for those interested in joining our team.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <path d="M22.957 3.16675H9.4987C8.65885 3.16675 7.85339 3.50038 7.25953 4.09424C6.66566 4.68811 6.33203 5.49356 6.33203 6.33341V31.6667C6.33203 32.5066 6.66566 33.3121 7.25953 33.9059C7.85339 34.4998 8.65885 34.8334 9.4987 34.8334H28.4987C29.3386 34.8334 30.144 34.4998 30.7379 33.9059C31.3317 33.3121 31.6654 32.5066 31.6654 31.6667V11.8751L22.957 3.16675Z" stroke="#002769" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22.168 3.16675V12.6667H31.668" stroke="#002769" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14.25 23.7499L17.4167 26.9166L23.75 20.5833" stroke="#002769" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <p>Step 2 
+          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
+            <path d="M2.61719 10.129C2.61719 8.70103 2.97419 7.37803 3.68119 6.16703C4.38819 4.95603 5.34719 3.99703 6.55819 3.29003C7.76919 2.58303 9.08519 2.23303 10.5062 2.23303C11.5702 2.23303 12.5922 2.44303 13.5652 2.85603C14.5382 3.26903 15.3712 3.83603 16.0782 4.53603C16.7852 5.23603 17.3452 6.07603 17.7582 7.05603C18.1712 8.03603 18.3812 9.05103 18.3812 10.129C18.3812 11.193 18.1712 12.215 17.7582 13.188C17.3452 14.161 16.7782 15.001 16.0782 15.701C15.3782 16.401 14.5382 16.961 13.5652 17.374C12.5922 17.787 11.5772 17.997 10.5062 17.997C9.43519 17.997 8.40619 17.787 7.43319 17.374C6.46019 16.961 5.62019 16.394 4.91319 15.694C4.20619 14.994 3.65319 14.154 3.23319 13.188C2.81319 12.222 2.61719 11.2 2.61719 10.129ZM4.35319 10.129C4.35319 11.788 4.95519 13.23 6.16619 14.455C7.37719 15.666 8.81919 16.268 10.5062 16.268C11.6122 16.268 12.6412 15.995 13.5792 15.442C14.5172 14.889 15.2732 14.147 15.8262 13.202C16.3792 12.257 16.6592 11.235 16.6592 10.129C16.6592 9.02303 16.3792 7.99403 15.8262 7.04903C15.2732 6.10403 14.5242 5.35503 13.5792 4.80203C12.6342 4.24903 11.6122 3.97603 10.5062 3.97603C9.40019 3.97603 8.37119 4.24903 7.43319 4.80203C6.49519 5.35503 5.73919 6.10403 5.17919 7.04903C4.61919 7.99403 4.35319 9.02303 4.35319 10.129ZM9.89719 10.129V5.46703C9.89719 5.30603 9.95319 5.16603 10.0652 5.05403C10.1772 4.94203 10.3172 4.88603 10.4782 4.88603C10.6392 4.88603 10.7792 4.94203 10.8912 5.05403C11.0032 5.16603 11.0592 5.30603 11.0592 5.46703V9.54103H13.7052C13.8662 9.54103 14.0062 9.59703 14.1182 9.70903C14.2302 9.82103 14.2862 9.96103 14.2862 10.122C14.2862 10.276 14.2302 10.416 14.1182 10.535C14.0062 10.654 13.8662 10.71 13.7052 10.71H10.5972C10.5762 10.717 10.5342 10.717 10.4712 10.717C10.3942 10.7184 10.3178 10.7041 10.2466 10.6748C10.1754 10.6456 10.1109 10.6021 10.0572 10.547C10.0034 10.492 9.96146 10.4265 9.93395 10.3546C9.90644 10.2827 9.89393 10.2059 9.89719 10.129Z" fill="#00338A" />
+          </svg> <small>20 mins</small></p>
+  
+          <h3>Schedule A Mock Session:</h3>
+          <p>Demonstrate and showcase your tutoring prowess by engaging in a comprehensive 20 minute session.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <path d="M6.33203 30.8751V7.12508C6.33203 6.07527 6.74907 5.06845 7.4914 4.32612C8.23373 3.58379 9.24055 3.16675 10.2904 3.16675H31.6654V34.8334H10.2904C9.24055 34.8334 8.23373 34.4164 7.4914 33.674C6.74907 32.9317 6.33203 31.9249 6.33203 30.8751ZM6.33203 30.8751C6.33203 29.8253 6.74907 28.8184 7.4914 28.0761C8.23373 27.3338 9.24055 26.9167 10.2904 26.9167H31.6654" stroke="#002769" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M15.8346 15.8333C17.5835 15.8333 19.0013 14.4156 19.0013 12.6667C19.0013 10.9178 17.5835 9.5 15.8346 9.5C14.0857 9.5 12.668 10.9178 12.668 12.6667C12.668 14.4156 14.0857 15.8333 15.8346 15.8333Z" stroke="#002769" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M31.6677 21.6917L28.3427 18.3667C27.076 17.1001 25.176 17.1001 23.9094 18.3667L15.3594 26.9167" stroke="#002769" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div>
+            <p>Step 3
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
+              <path d="M2.61719 10.129C2.61719 8.70103 2.97419 7.37803 3.68119 6.16703C4.38819 4.95603 5.34719 3.99703 6.55819 3.29003C7.76919 2.58303 9.08519 2.23303 10.5062 2.23303C11.5702 2.23303 12.5922 2.44303 13.5652 2.85603C14.5382 3.26903 15.3712 3.83603 16.0782 4.53603C16.7852 5.23603 17.3452 6.07603 17.7582 7.05603C18.1712 8.03603 18.3812 9.05103 18.3812 10.129C18.3812 11.193 18.1712 12.215 17.7582 13.188C17.3452 14.161 16.7782 15.001 16.0782 15.701C15.3782 16.401 14.5382 16.961 13.5652 17.374C12.5922 17.787 11.5772 17.997 10.5062 17.997C9.43519 17.997 8.40619 17.787 7.43319 17.374C6.46019 16.961 5.62019 16.394 4.91319 15.694C4.20619 14.994 3.65319 14.154 3.23319 13.188C2.81319 12.222 2.61719 11.2 2.61719 10.129ZM4.35319 10.129C4.35319 11.788 4.95519 13.23 6.16619 14.455C7.37719 15.666 8.81919 16.268 10.5062 16.268C11.6122 16.268 12.6412 15.995 13.5792 15.442C14.5172 14.889 15.2732 14.147 15.8262 13.202C16.3792 12.257 16.6592 11.235 16.6592 10.129C16.6592 9.02303 16.3792 7.99403 15.8262 7.04903C15.2732 6.10403 14.5242 5.35503 13.5792 4.80203C12.6342 4.24903 11.6122 3.97603 10.5062 3.97603C9.40019 3.97603 8.37119 4.24903 7.43319 4.80203C6.49519 5.35503 5.73919 6.10403 5.17919 7.04903C4.61919 7.99403 4.35319 9.02303 4.35319 10.129ZM9.89719 10.129V5.46703C9.89719 5.30603 9.95319 5.16603 10.0652 5.05403C10.1772 4.94203 10.3172 4.88603 10.4782 4.88603C10.6392 4.88603 10.7792 4.94203 10.8912 5.05403C11.0032 5.16603 11.0592 5.30603 11.0592 5.46703V9.54103H13.7052C13.8662 9.54103 14.0062 9.59703 14.1182 9.70903C14.2302 9.82103 14.2862 9.96103 14.2862 10.122C14.2862 10.276 14.2302 10.416 14.1182 10.535C14.0062 10.654 13.8662 10.71 13.7052 10.71H10.5972C10.5762 10.717 10.5342 10.717 10.4712 10.717C10.3942 10.7184 10.3178 10.7041 10.2466 10.6748C10.1754 10.6456 10.1109 10.6021 10.0572 10.547C10.0034 10.492 9.96146 10.4265 9.93395 10.3546C9.90644 10.2827 9.89393 10.2059 9.89719 10.129Z" fill="#00338A" />
+            </svg> <small>5 mins</small></p>
+    
+            <h3>Complete The Orientation Process:</h3>
+            <p>After an orientation meeting introducing Edukom, site navigation, and lesson instruction, onboarding into the Edukom community takes place.</p>
+          </div>
+        </li>
+      </ul>
+      <a href="{% url 'BecomeATutor' %}" style="display: flex;" class="btn-sa">Get Started Now <svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 27 24" fill="none">
+          <path d="M5.91797 12H21.0846" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M13.5 5L21.0833 12L13.5 19" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      </a>
+      </div>
+      <img src="{% static 'IMG/header/kid3.jpg' %}" alt="Teacher" />
+    </div>
+  
+    <div class="sixth section6 faqbody">
+      <h1>Read Our FAQs</h1>
+     <ul>
+      <li>
+        <div>
+          <a onclick="faq(10)">How do I apply as a tutor with Edukom?</a>
+          <a onclick="faq(10)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q10">
+          Go to the website and fill an application form while also submitting a current CV. It will be reviewed and if you qualify, you will be contacted and scheduled for a virtual assessment and interview meeting. If you are selected, a virtual orientation and onboarding process will take place. Once this is completed and all forms are filled, signed and submitted, you will be assigned to students when one or more needing your unique skills and knowledge are contracted.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(11)">How are classes conducted?</a>
+          <a onclick="faq(11)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q11">
+          Currently at Edukom we use Zoom, Google Meet, Google classroom etc. pending when we finish creation of our online portal. Until then, all tutors are required to be highly conversant in the above listed virtual learning platforms. Classes are expected to be interactive and engaging for all learners.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(12)">Who pays for the internet data used for teaching?</a>
+          <a onclick="faq(12)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q12">
+          Both sides cover their data costs. The client covers his/her cost and the tutor covers his/her cost. Every class-related expense is factored into the payment made to the tutors at the end of each tutoring cycle (usually the end of the month).
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(13)">If a tutor realizes that they cannot be available for a class, what should he/she do?</a>
+          <a onclick="faq(13)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q13">
+          The tutor should notify Edukom Admin immediately. They will then be advised to discuss with the parent to arrange an alternate time to reschedule that class to hold. The tutor must be willing to be flexible and accommodate the proposed new time provided by the client to make up the cancelled class within that same payment cycle. The newly arranged class time must be communicated to Edukom Admin as soon as possible.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(14)">If a tutor realizes that they cannot be available for a class, what should he/she do?</a>
+          <a onclick="faq(14)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q14">
+          The tutor should notify Edukom Admin immediately. They will then be advised to discuss with the parent to arrange an alternate time to reschedule that class to hold. The tutor must be willing to be flexible and accommodate the proposed new time provided by the client to make up the cancelled class within that same payment cycle. The newly arranged class time must be communicated to Edukom Admin as soon as possible.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(15)">If for some reason, a Tutor cannot continue with Edukom and has to disengage?</a>
+          <a onclick="faq(15)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q15">
+          If life gets busier, family responsibilities, longer work hours etc. makes it impossible to continue as a Tutor, Edukom will expect the Tutor to kindly finish up that month for the sake of continuity of learning for the student’s sake. It is important for there not to be Tutor changes in the middle of concepts or specific topics being taught.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(16)">How many students do you have in a session?</a>
+          <a onclick="faq(16)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q16">
+          One tutor, one student per class. One of the goals of Edukom is to attend to the learning needs of each child, covering their specific gaps and learning at their own pace. This cannot take place if the Tutor’s attention is divided by the presence of more than one child.        
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(17)">How do Tutors get paid?</a>
+          <a onclick="faq(17)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q17">
+          Tutors are paid per hour for tutoring. At the end of each month, the total sum they have earned for all hours taught are paid by bank transfer to their accounts. Verification that all classes were taught for the entire contracted duration must take place before payment is made.         
+        </p>
+      </li>
+     </ul>
+     <br />
+     <center><a href="{% url 'faq' %}">See more FAQs</a></center>
+      <br />
+     <script src="{% static 'JS/scripts.js' %}"></script>
+    </div>
+  </div>
+
+{% endblock main %}

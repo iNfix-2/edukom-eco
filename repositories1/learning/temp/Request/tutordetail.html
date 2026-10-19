@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+<!DOCTYPE html>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<div class="container mt-5">
+    <div class="content">
+        <p>Hello Admin,</p> 
+        <p>A new tutor has just signed up for tutorship for their ward. Below are the details:</p>
+        <ul>
+            <li><strong>Name:</strong> {{ tutor.first_name }} {{ tutor.last_name }}</li>
+            <li><strong>Email:</strong> {{ tutor.email }}</li>
+            <li><strong>Phone:</strong> {{ tutor.phone }}</li>
+            <li><strong>Preferred Lesson Type:</strong> {{ tutor.lesson_type }}</li>
+        </ul>
+        <p>Please take the necessary steps to review the information and contact the tutor if required. Thank you!</p>
+    </div>
+   
+    <div class="card">
+        <div class="card-body">
+
+            <!-- Tutor Information -->
+            <h4 class="card-title">Tutor Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">UID:</dt>
+                <dd class="col-sm-9">{{ tutor.uid }}</dd>
+
+                <dt class="col-sm-3">Full Name:</dt>
+                <dd class="col-sm-9">{{ tutor.first_name }} {{ tutor.last_name }}</dd>
+
+                <dt class="col-sm-3">Email:</dt>
+                <dd class="col-sm-9">{{ tutor.email }}</dd>
+
+                <dt class="col-sm-3">Phone:</dt>
+                <dd class="col-sm-9">{{ tutor.phone }}</dd>
+
+                <!-- Add more fields as needed -->
+
+                <dt class="col-sm-3">Curriculum:</dt>
+                <dd class="col-sm-9">{{ tutor.curriculum }}</dd>
+            </dl>
+
+            <!-- About Child Information -->
+            <h4 class="card-title">About Tutor Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">Tutor Class:</dt>
+                <dd class="col-sm-9">{{ tutor.AboutTutor.child_class }}</dd>
+
+                <dt class="col-sm-3">Goal:</dt>
+                <dd class="col-sm-9">{{ tutor.AboutTutor.goal }}</dd>
+
+                <dt class="col-sm-3">Subject:</dt>
+                <dd class="col-sm-9">{{ tutor.AboutTutor.subject }}</dd>
+
+                <!-- Add more fields as needed -->
+
+                <dt class="col-sm-3">About Tutor:</dt>
+                <dd class="col-sm-9">{{ tutor.AboutTutor.about }}</dd>
+            </dl>
+
+            <!-- Location Information -->
+            <h4 class="card-title">Location Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">State:</dt>
+                <dd class="col-sm-9">{{ tutor.Location.state }}</dd>
+
+                <dt class="col-sm-3">Street Address:</dt>
+                <dd class="col-sm-9">{{ tutor.Location.street_address }}</dd>
+            </dl>
+
+            <!-- tutor.Lesson Information -->
+            <h4 class="card-title">Lesson Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">Days:</dt>
+                <dd class="col-sm-9">{{ tutor.Lesson.days }}</dd>
+
+                <dt class="col-sm-3">Start Date:</dt>
+                <dd class="col-sm-9">{{ tutor.Lesson.start }}</dd>
+
+                <dt class="col-sm-3">Weeks:</dt>
+                <dd class="col-sm-9">{{ tutor.Lesson.weeks }}</dd>
+
+                <!-- Add more fields as needed -->
+
+                <dt class="col-sm-3">Hour Per Day:</dt>
+                <dd class="col-sm-9">{{ tutor.Lesson.hour_per_day }}</dd>
+
+                <dt class="col-sm-3">Start Time:</dt>
+                <dd class="col-sm-9">{{ tutor.Lesson.start_time }}</dd>
+            </dl>
+
+            <!-- Tutor Email Information -->
+            <h4 class="card-title">Tutor Email Information</h4>
+            <dl class="row">
+                <dt class="col-sm-3">Sent:</dt>
+                <dd class="col-sm-9">{{ tutor.TutorEmail.sent }}</dd>
+
+                <dt class="col-sm-3">Date Joined:</dt>
+                <dd class="col-sm-9">{{ tutor.TutorEmail.date_joined }}</dd>
+            </dl>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Bootstrap JS and dependencies (Popper.js and jQuery) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock main %}

@@ -1,0 +1,11 @@
+db.sqlite3
+
+edukom/__pycache__
+homepage/__pycache__
+tutors/__pycache__
+user/__pycache__
+
+edukom/migrations
+homepage/migrations
+tutors/migrations
+user/migrations

@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+<style>
+  .header-cover {
+    background: none;
+  }
+
+  .header-cover * {
+    color: black !important;
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .number1 h1 {
+    color: #FFF;
+    text-align: center;
+    font-family: 'Mouse Memoirs';
+    font-size: 45px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 1.35px;
+  }
+</style>
+<link rel="stylesheet" href="{% static 'CSS/about.css' %}">
+<div>
+  <div class="number1">
+    <div class="img1">
+      <img src="{% static 'IMG/community/Frame1.png' %}" alt="Teacher">
+      <img src="{% static 'IMG/community/Frame2.png' %}" alt="Teacher">
+    </div>
+    <div class="text">
+      <h1>ABOUT EDUKOM</h1>
+      <p>
+        Edukom is an online tutoring platform offering personalized and flexible education for students aged 4 to 18.
+        Led by <span style="color: red;">Ope Komolafe</span>, the platform covers a range of subjects following
+        different curricula.
+        <br>
+        Edukom prepares students for exams, addressing logistical and security concerns through online classes with a
+        team of experienced tutors fully dedicated to empowering students for global and execllence and a lasting
+        legacy.
+      </p>
+      <p>
+      <h1>Our Core Values</h1>
+      <ul>
+        <li>Knowledge</li>
+        <li>Resilience</li>
+        <li>Integrity</li>
+        <li>Strength</li>
+        <li>Dedication</li>
+      </ul>
+      </p>
+    </div>
+  </div>
+
+  <div class="number2" style="
+  display:flex;
+  justify-content:center;
+  flex-direction:column;
+  align-items:center;
+  ">
+    <h1>OUR VISION</h1>
+    <div class="number2Content" style="
+       {% comment %} background-color:red; {% endcomment %}
+       justify-content:center;
+       gap:2.5rem;
+       {% comment %} border:1px solid black; {% endcomment %}
+       width:100%;
+      
+      ">
+      <p>
+        To create an opportunity for every student left behind to catch up, compete globally and over take beyond their
+        borders.
+      </p>
+      <p>
+        To equip every learner to get ahead, excel in a global space and create a legacy in a chosen field of endeavor.
+      </p>
+      {% comment %} <p>
+        To create an opportunity for every student left behind to catch up, compete globally and over take beyond their
+        borders.
+      </p> {% endcomment %}
+    </div>
+  </div>
+  <style>
+    .number3 p {
+      display: flex;
+      gap: 1rem;
+    }
+  </style>
+  <div class="number3">
+    <div class="rect"></div>
+    <div class="text">
+      <div>
+        <h1>OUR MISSION</h1>
+      </div>
+      <div>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="51" viewBox="0 0 42 51" fill="none">
+            <path
+              d="M18.05 33.5858L30.3875 21.7139L27.9375 19.3564L18.05 28.8708L13.0625 24.0715L10.6125 26.429L18.05 33.5858ZM20.5 42.6792C18.0792 42.6792 15.8042 42.2369 13.675 41.3523C11.5458 40.4676 9.69375 39.2681 8.11875 37.7537C6.54375 36.2381 5.29717 34.4559 4.379 32.4071C3.46083 30.3583 3.00117 28.1691 3 25.8396C3 23.5101 3.45967 21.321 4.379 19.2722C5.29833 17.2233 6.54492 15.4412 8.11875 13.9256C9.69375 12.41 11.5458 11.2105 13.675 10.327C15.8042 9.44344 18.0792 9.00112 20.5 9C22.9208 9 25.1958 9.44232 27.325 10.327C29.4542 11.2116 31.3062 12.4111 32.8812 13.9256C34.4562 15.4412 35.7034 17.2233 36.6227 19.2722C37.5421 21.321 38.0012 23.5101 38 25.8396C38 28.1691 37.5403 30.3583 36.621 32.4071C35.7017 34.4559 34.4551 36.2381 32.8812 37.7537C31.3062 39.2692 29.4542 40.4693 27.325 41.354C25.1958 42.2386 22.9208 42.6804 20.5 42.6792Z"
+              fill="#00338A" />
+          </svg>
+          To ensure that knowledge gaps in selected learning areas are closed.
+        </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="51" viewBox="0 0 42 51" fill="none">
+            <path
+              d="M18.05 33.5858L30.3875 21.7139L27.9375 19.3564L18.05 28.8708L13.0625 24.0715L10.6125 26.429L18.05 33.5858ZM20.5 42.6792C18.0792 42.6792 15.8042 42.2369 13.675 41.3523C11.5458 40.4676 9.69375 39.2681 8.11875 37.7537C6.54375 36.2381 5.29717 34.4559 4.379 32.4071C3.46083 30.3583 3.00117 28.1691 3 25.8396C3 23.5101 3.45967 21.321 4.379 19.2722C5.29833 17.2233 6.54492 15.4412 8.11875 13.9256C9.69375 12.41 11.5458 11.2105 13.675 10.327C15.8042 9.44344 18.0792 9.00112 20.5 9C22.9208 9 25.1958 9.44232 27.325 10.327C29.4542 11.2116 31.3062 12.4111 32.8812 13.9256C34.4562 15.4412 35.7034 17.2233 36.6227 19.2722C37.5421 21.321 38.0012 23.5101 38 25.8396C38 28.1691 37.5403 30.3583 36.621 32.4071C35.7017 34.4559 34.4551 36.2381 32.8812 37.7537C31.3062 39.2692 29.4542 40.4693 27.325 41.354C25.1958 42.2386 22.9208 42.6804 20.5 42.6792Z"
+              fill="#00338A" />
+          </svg>
+          To make certain that learners are equipped for cross-border academic opportunities.
+        </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="51" viewBox="0 0 42 51" fill="none">
+            <path
+              d="M18.05 33.5858L30.3875 21.7139L27.9375 19.3564L18.05 28.8708L13.0625 24.0715L10.6125 26.429L18.05 33.5858ZM20.5 42.6792C18.0792 42.6792 15.8042 42.2369 13.675 41.3523C11.5458 40.4676 9.69375 39.2681 8.11875 37.7537C6.54375 36.2381 5.29717 34.4559 4.379 32.4071C3.46083 30.3583 3.00117 28.1691 3 25.8396C3 23.5101 3.45967 21.321 4.379 19.2722C5.29833 17.2233 6.54492 15.4412 8.11875 13.9256C9.69375 12.41 11.5458 11.2105 13.675 10.327C15.8042 9.44344 18.0792 9.00112 20.5 9C22.9208 9 25.1958 9.44232 27.325 10.327C29.4542 11.2116 31.3062 12.4111 32.8812 13.9256C34.4562 15.4412 35.7034 17.2233 36.6227 19.2722C37.5421 21.321 38.0012 23.5101 38 25.8396C38 28.1691 37.5403 30.3583 36.621 32.4071C35.7017 34.4559 34.4551 36.2381 32.8812 37.7537C31.3062 39.2692 29.4542 40.4693 27.325 41.354C25.1958 42.2386 22.9208 42.6804 20.5 42.6792Z"
+              fill="#00338A" />
+          </svg>
+          To guarantee that each learner is heard and has a customized learning system specific for them.
+        </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="51" viewBox="0 0 42 51" fill="none">
+            <path
+              d="M18.05 33.5858L30.3875 21.7139L27.9375 19.3564L18.05 28.8708L13.0625 24.0715L10.6125 26.429L18.05 33.5858ZM20.5 42.6792C18.0792 42.6792 15.8042 42.2369 13.675 41.3523C11.5458 40.4676 9.69375 39.2681 8.11875 37.7537C6.54375 36.2381 5.29717 34.4559 4.379 32.4071C3.46083 30.3583 3.00117 28.1691 3 25.8396C3 23.5101 3.45967 21.321 4.379 19.2722C5.29833 17.2233 6.54492 15.4412 8.11875 13.9256C9.69375 12.41 11.5458 11.2105 13.675 10.327C15.8042 9.44344 18.0792 9.00112 20.5 9C22.9208 9 25.1958 9.44232 27.325 10.327C29.4542 11.2116 31.3062 12.4111 32.8812 13.9256C34.4562 15.4412 35.7034 17.2233 36.6227 19.2722C37.5421 21.321 38.0012 23.5101 38 25.8396C38 28.1691 37.5403 30.3583 36.621 32.4071C35.7017 34.4559 34.4551 36.2381 32.8812 37.7537C31.3062 39.2692 29.4542 40.4693 27.325 41.354C25.1958 42.2386 22.9208 42.6804 20.5 42.6792Z"
+              fill="#00338A" />
+          </svg>
+          To create learning avenues for those who for some reasons cannot learn within the walls of a classroom.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="number4">
+    <a name="ourServices" id="ourServices"></a>
+    <h1>We offer tutoring services to learners from <span style="color:#002769 ;">Reception class</span> to <span
+        style="color: #002769;">A Level</span></h1>
+    <p class="p-first">Classes are predominantly online or virtual, however, exceptions can be made based on extenuating
+      circumstances which necessitate a physical class.
+    </p>
+    <p>
+      Our online classes are created to provide solutions to the following:
+    <ul class="p-first">
+      <li>
+        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+          <path
+            d="M7.74645 13.4137L14.0967 6.93656L12.8357 5.65031L7.74645 10.8412L5.17931 8.22281L3.91826 9.50906L7.74645 13.4137ZM9.0075 18.375C7.76146 18.375 6.59049 18.1337 5.49457 17.651C4.39866 17.1684 3.44537 16.5139 2.63469 15.6877C1.82402 14.8608 1.18238 13.8884 0.709791 12.7706C0.237198 11.6528 0.0006005 10.4584 0 9.1875C0 7.91656 0.236597 6.72219 0.709791 5.60437C1.18298 4.48656 1.82462 3.51422 2.63469 2.68734C3.44537 1.86047 4.39866 1.20601 5.49457 0.723975C6.59049 0.241938 7.76146 0.0006125 9.0075 0C10.2535 0 11.4245 0.241325 12.5204 0.723975C13.6163 1.20662 14.5696 1.86108 15.3803 2.68734C16.191 3.51422 16.8329 4.48656 17.3061 5.60437C17.7793 6.72219 18.0156 7.91656 18.015 9.1875C18.015 10.4584 17.7784 11.6528 17.3052 12.7706C16.832 13.8884 16.1904 14.8608 15.3803 15.6877C14.5696 16.5145 13.6163 17.1693 12.5204 17.6519C11.4245 18.1346 10.2535 18.3756 9.0075 18.375Z"
+            fill="#002769" />
+        </svg>
+        Logistic problems of getting a tutor to the class location irrespective of the distance.
+      </li>
+      <li>
+        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+          <path
+            d="M7.74645 13.4137L14.0967 6.93656L12.8357 5.65031L7.74645 10.8412L5.17931 8.22281L3.91826 9.50906L7.74645 13.4137ZM9.0075 18.375C7.76146 18.375 6.59049 18.1337 5.49457 17.651C4.39866 17.1684 3.44537 16.5139 2.63469 15.6877C1.82402 14.8608 1.18238 13.8884 0.709791 12.7706C0.237198 11.6528 0.0006005 10.4584 0 9.1875C0 7.91656 0.236597 6.72219 0.709791 5.60437C1.18298 4.48656 1.82462 3.51422 2.63469 2.68734C3.44537 1.86047 4.39866 1.20601 5.49457 0.723975C6.59049 0.241938 7.76146 0.0006125 9.0075 0C10.2535 0 11.4245 0.241325 12.5204 0.723975C13.6163 1.20662 14.5696 1.86108 15.3803 2.68734C16.191 3.51422 16.8329 4.48656 17.3061 5.60437C17.7793 6.72219 18.0156 7.91656 18.015 9.1875C18.015 10.4584 17.7784 11.6528 17.3052 12.7706C16.832 13.8884 16.1904 14.8608 15.3803 15.6877C14.5696 16.5145 13.6163 17.1693 12.5204 17.6519C11.4245 18.1346 10.2535 18.3756 9.0075 18.375Z"
+            fill="#002769" />
+        </svg>
+        Limitation of qualified, experienced, and personable Tutors in your city.
+      </li>
+      <li>
+        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+          <path
+            d="M7.74645 13.4137L14.0967 6.93656L12.8357 5.65031L7.74645 10.8412L5.17931 8.22281L3.91826 9.50906L7.74645 13.4137ZM9.0075 18.375C7.76146 18.375 6.59049 18.1337 5.49457 17.651C4.39866 17.1684 3.44537 16.5139 2.63469 15.6877C1.82402 14.8608 1.18238 13.8884 0.709791 12.7706C0.237198 11.6528 0.0006005 10.4584 0 9.1875C0 7.91656 0.236597 6.72219 0.709791 5.60437C1.18298 4.48656 1.82462 3.51422 2.63469 2.68734C3.44537 1.86047 4.39866 1.20601 5.49457 0.723975C6.59049 0.241938 7.76146 0.0006125 9.0075 0C10.2535 0 11.4245 0.241325 12.5204 0.723975C13.6163 1.20662 14.5696 1.86108 15.3803 2.68734C16.191 3.51422 16.8329 4.48656 17.3061 5.60437C17.7793 6.72219 18.0156 7.91656 18.015 9.1875C18.015 10.4584 17.7784 11.6528 17.3052 12.7706C16.832 13.8884 16.1904 14.8608 15.3803 15.6877C14.5696 16.5145 13.6163 17.1693 12.5204 17.6519C11.4245 18.1346 10.2535 18.3756 9.0075 18.375Z"
+            fill="#002769" />
+        </svg>
+        Security concerns of having strangers in your home with access to your children.
+      </li>
+      <li>
+        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+          <path
+            d="M7.74645 13.4137L14.0967 6.93656L12.8357 5.65031L7.74645 10.8412L5.17931 8.22281L3.91826 9.50906L7.74645 13.4137ZM9.0075 18.375C7.76146 18.375 6.59049 18.1337 5.49457 17.651C4.39866 17.1684 3.44537 16.5139 2.63469 15.6877C1.82402 14.8608 1.18238 13.8884 0.709791 12.7706C0.237198 11.6528 0.0006005 10.4584 0 9.1875C0 7.91656 0.236597 6.72219 0.709791 5.60437C1.18298 4.48656 1.82462 3.51422 2.63469 2.68734C3.44537 1.86047 4.39866 1.20601 5.49457 0.723975C6.59049 0.241938 7.76146 0.0006125 9.0075 0C10.2535 0 11.4245 0.241325 12.5204 0.723975C13.6163 1.20662 14.5696 1.86108 15.3803 2.68734C16.191 3.51422 16.8329 4.48656 17.3061 5.60437C17.7793 6.72219 18.0156 7.91656 18.015 9.1875C18.015 10.4584 17.7784 11.6528 17.3052 12.7706C16.832 13.8884 16.1904 14.8608 15.3803 15.6877C14.5696 16.5145 13.6163 17.1693 12.5204 17.6519C11.4245 18.1346 10.2535 18.3756 9.0075 18.375Z"
+            fill="#002769" />
+        </svg>
+        Restrictions on scheduling classes when you are out of the country on holiday or visiting family across the
+        country.
+      </li>
+    </ul>
+    </p>
+    <div class="gpt"
+      style="display: flex;flex-direction: column;width: max-content;text-align: right;align-items: flex-end;">
+      <svg style="margin-right: 2rem;" xmlns="http://www.w3.org/2000/svg" width="51" height="38" viewBox="0 0 51 38"
+        fill="none">
+        <path
+          d="M22.9453 15.0495C23.7912 10.6546 26.1216 7.39607 29.1594 4.55751C30.468 3.34329 31.9601 2.39091 33.5805 1.74265C37.3576 0.20971 41.3118 -0.111429 45.3055 0.622432C47.6934 1.06562 49.6283 2.24147 50.5467 4.66999C50.6699 5.01304 50.8015 5.36712 50.8443 5.71939C50.9626 6.62631 50.3844 7.33257 49.4267 7.38474C48.9882 7.40622 48.5337 7.24733 48.0579 7.17479C47.4746 6.41461 48.1236 5.32151 47.1998 4.66506C46.3403 4.04679 45.4332 3.64012 44.4097 3.51526C40.6579 3.05093 36.9637 3.27756 33.6011 5.12258C30.2386 6.9676 27.9932 9.88079 26.5209 13.391C26.4505 13.5501 26.4833 13.7525 26.4881 13.9413C26.4974 14.0217 26.5371 14.0963 26.6029 14.2733C27.3919 14.298 28.2199 14.3278 29.0454 14.3771C31.0882 14.5074 33.0867 14.8993 34.933 15.8456C38.3938 17.6185 39.7381 20.6479 38.7465 24.4194C38.2906 26.152 37.5107 27.7131 36.3873 29.1003C34.9051 30.9552 32.9043 31.8604 30.5742 31.8804C28.0554 31.9053 26.1348 30.7709 24.9708 28.4784C23.9572 26.4731 23.3975 24.3295 23.1453 22.1076C23.0313 21.0923 22.9148 20.0964 22.785 18.9008C19.9853 19.4037 17.8625 21.0851 15.6333 22.4455C12.9322 24.0805 9.87574 27.7386 8.371 30.8187C9.30966 31.0611 10.1654 30.5796 11.0128 30.6119C11.8298 30.6502 12.6637 30.7105 13.4492 30.9129C14.0425 31.0703 14.2323 31.6598 14.1528 32.2634C14.0844 32.8585 13.7951 33.3255 13.1575 33.4297C12.4284 33.5516 11.6842 33.5625 10.9584 33.7344C8.33471 34.3298 5.74822 35.0192 3.42837 36.4667C3.19113 36.6137 2.9539 36.7608 2.70232 36.8663C2.05262 37.1373 1.41341 37.1026 0.880561 36.6363C0.33926 36.159 0.287564 35.4985 0.533022 34.8376C1.00191 33.5326 1.56557 32.2599 1.98706 30.9387C2.63121 28.9041 3.12216 26.8295 2.89272 24.6601C2.85917 24.3883 2.86713 24.1021 2.90301 23.8295C2.98708 22.8898 3.43903 22.3155 4.152 22.241C4.876 22.158 5.56639 22.556 5.87531 23.3692C6.10406 23.9638 6.18629 24.6184 6.29052 25.2561C6.38221 25.7633 6.43238 26.2849 6.54814 27.2113C8.94081 24.3076 10.9684 21.544 13.8865 19.69C16.741 17.8672 19.6791 16.3129 22.9453 15.0495ZM25.902 17.7167C25.8371 20.3921 25.9994 22.7706 26.7748 25.0813C27.0389 25.8588 27.3504 26.6525 27.783 27.3533C28.7531 28.9369 29.9938 29.3677 31.8223 28.9449C33.0579 28.6619 34.0586 27.9815 34.683 26.9248C35.2336 25.9772 35.7444 24.9551 36.0301 23.9132C36.735 21.3418 35.8879 19.5763 33.4737 18.5057C31.1457 17.4564 28.6932 17.2028 25.902 17.7167Z"
+          fill="#002769" />
+      </svg>
+      <a href="{% url 'GetATutor' %}" class="btn" style="background-color: #002769; color: #FFF;padding: 1rem;">Get a
+        Private Tutor</a>
+    </div>
+  </div>
+  <div class="third">
+    <a name="Method_of_teching" id="Method_of_teching"></a>
+    <div class="h1">
+      <h1>Our Method of <span style="color: rgb(236, 15, 15);">Instruction</span> </h1>
+    </div>
+    <div class="our">
+      <div class="good" style="width: 100%;">
+        <img src="{% static 'IMG/121.png' %}" alt="Grad" />
+      </div>
+      <div class="best">
+
+        <p class="one">
+          At Edukom we teach classes online using virtual platforms to ensure limitless teaching can take place. We use
+          technological tools to share videos for learning support and make use of white boards for subjects/topics
+          requiring calculations or annotations.
+        </p>
+        <p style="font-weight:800 ;">
+          The Major Benefits of Our Method Of Online Instruction Include :
+        </p>
+        <ul>
+          <li>
+            <span>Global Accessibility:</span> Location is no longer a barrier; scheduled lessons can be conducted
+            worldwide.
+          </li>
+          <li>
+            <span>Expertise Diversity:</span> Our team comprises tutors from diverse backgrounds, ensuring a wealth of
+            competence and experience.
+          </li>
+          <li>
+            <span>Security Assurance:</span> Conducting classes online eliminates the need for strangers in your home,
+            prioritizing the safety of your family and assets.
+          </li>
+          <li>
+            <span>Parental Oversight:</span> Parents can actively participate by logging into their child’s virtual
+            class, serving as observers and appraisers of tutors.
+          </li>
+          <li>
+            <span>Technological Proficiency:</span> use of virtual tools facilitates the enhancement of your child's
+            technological capabilities, preparing them for success in their classes.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="number5">
+      <ul>
+          <li>
+              <P>82K +</P>
+              <P>Enrolled Students</P>
+          </li>
+          <li>
+              <P>450K +</P>
+              <P>Academic Programs</P>
+          </li>
+          <li>
+              <P>50K</P>
+              <P>Happy Parents</P>
+          </li>
+          <li>
+              <P>10K +</P>
+              <P>Award Winnibg</P>
+          </li>
+      </ul>
+  </div> -->
+
+  <div class="number6">
+    <img src="{% static 'IMG/contact/IMG_9618.jpg' %}" alt="Teacher" style="max-height: 500px;width:min-content">
+
+    <div>
+      <div>
+        <h1>MEET OUR CEO</h1>
+        <h3>OPE KOMOLAFE <sub><small>(GPHR PHRi ACIPM)</small></sub></h3>
+      </div>
+      <p>An internationally certified Human Resource Management Professional, is deeply passionate about teaching,
+        learning, and training. Her extensive career in education administration has led her to identify and address
+        specific needs in the field. making her a mentor to young individuals while still remaining a manager of the
+        employee life cycle, contributing to the achievement of corporate goals.</p>
+
+      <p>Every child deserves <span style="color: red;">quality education</span>, and here at Edukom, we are dedicated
+        to bridging <span style="color: red;">knowledge gaps</span> to make it a reality.</p>
+
+    </div>
+  </div>
+</div>
+<script>
+  $('.nav-item-list #about').addClass('active')
+</script>
+{% endblock main %}

@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+<style>
+    .faqpage.search{
+        display: grid;
+        height: 70px;
+        width: 100%;
+        grid-template-columns: 15% 85%;
+        background: #e3e3e3;
+        border-radius: 10px;
+    }
+    #faqList{
+        padding: 0;
+    }
+</style>
+  <a name="FAQ" id="FAQ"></a>
+  <div class="sixth" style="padding-top: 0 !important;">
+    <div>
+      <h3>NEED HELP?</h3>
+      <h2 style="color: #A9D156;">FAQs</h2>
+      <p>
+        Have a question? We have the answers. Explore our frequently asked
+        questions to find comprehensive information about our tutoring
+        services and how we support your educational journey.
+      </p>
+      <div class="search faqpage" style="display: grid !important;">
+        <i class="fa fa-search" style="font-size: larger;"></i
+        ><input type="text"  style="font-size: larger;" id="searchInput" placeholder="Search for a question..." />
+      </div>
+    </div>
+<br>
+    <ul id="faqList">
+      <li>
+          <div>
+            <a onclick="faq(1)">How are the tutors selected for the platform?</a>
+            <a onclick="faq(1)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+                <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+              </svg></a>
+          </div>
+          <p id="Q1">
+            Our tutors undergo a rigorous screening process, including evaluations, interviews, and competency-based recommendations to ensure they have the necessary qualifications, expertise, and experience in their respective fields.
+          </p>
+      </li>
+      <li>
+       <div>
+        <a onclick="faq(2)">What is the process for matching students with the right tutor?</a>
+        <a onclick="faq(2)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+          </svg>
+        </a>
+       </div>
+       <p id="Q2">
+        We carefully assess each student's learning requirements, academic goals, upcoming examinations, and preferred learning style to match them with a suitable tutor who possesses the relevant expertise and teaching approach to best meet their needs.
+       </p>
+      </li>
+      <li>
+       <div>
+        <a onclick="faq(3)">How do you track and communicate student progress to parents or guardians?</a>
+        <a onclick="faq(3)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+          </svg>
+        </a>
+       </div>
+       <p id="Q3">
+        We have an ongoing feedback relationship with the parents/guardians of the learners. This helps us to track improvements, challenges, upcoming assessments, need for re-design of teaching method etc. The openness of an ongoing open communication makes it easy to stay on track to consolidate improvements and correct challenges, enabling parents or guardians to stay informed about their child's academic development and address any concerns or inquiries.
+       </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(4)">What subjects and grade level do you offer tutoring for?</a>
+          <a onclick="faq(4)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q4">
+          We offer tutoring services for a wide range of subjects, including Mathematics, Add/Further Mathematics, English, Science, Physics, Chemistry, Biology, Literature, Government, History, Geography, Information Communication Technology (ICT), Languages, and more, catering to students from Reception (Age 4) to A-Levels/6th Form (Age 18).
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(5)">Is there a restriction to your scheduling of lessons due to different time zones across the world?</a>
+          <a onclick="faq(5)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q5">
+          No. There are no restrictions by time zone. Aside from the fact that we have tutors from all over the world available to tutor at your specified time, we have some tutors who do not run a regular 8am – 4pm job, making them expressly available to teach at any allocated time within the daily 24hours. 
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(6)">Do you offer exam preparatory classes?</a>
+          <a onclick="faq(6)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg></a>
+        </div>
+        <p id="Q6">
+          Yes, we do. We offer examination preparatory classes for IGCSE/GCSE, WASSCE, NECO, GCE, JAMB, SATs, IELTS, Junior WASSCE, Cambridge Checkpoint, Common Entrance etc.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(7)">What is the procedure for scheduling and rescheduling tutoring sessions?</a>
+          <a onclick="faq(7)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q7">
+          Students can easily schedule or reschedule tutoring sessions through our online platform or by contacting our support team, ensuring convenience and flexibility to accommodate any changes in their learning schedules or preferences.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(8)">Do you provide home tutoring services?</a>
+          <a onclick="faq(8)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q8">
+          If there are extenuating circumstances that make it impossible or unwise to conduct online classes productively, special arrangements can be made for face-to-face tutoring in at a location provided by the parent or guardian.
+        </p>
+      </li>
+      <li>
+        <div>
+        <a onclick="faq(9)">How much do the classes cost?</a>
+        <a onclick="faq(9)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+            <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+          </svg>
+        </a>
+        </div>
+        <p id="Q9">
+          The tutoring costs are determined by various factors: 
+          <br>
+            1. The class of the child.<br> 
+            2. The curriculum being run by the child’s school. <br>
+            3. The age of the child. <br>
+            4. Special educational needs. <br>
+            5. If examinations are being prepped. <br>
+            6. Which examination are being prepped.<br>
+            7. How extensive the time difference etc.<br>
+          When you are in the process of booking a tutor, based on your identified needs and classification, your specially curated fee will be communicated to you.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(10)">How do I apply as a tutor with Edukom?</a>
+          <a onclick="faq(10)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q10">
+          Go to the website and fill an application form while also submitting a current CV. It will be reviewed and if you qualify, you will be contacted and scheduled for a virtual assessment and interview meeting. If you are selected, a virtual orientation and onboarding process will take place. Once this is completed and all forms are filled, signed and submitted, you will be assigned to students when one or more needing your unique skills and knowledge are contracted.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(11)">How are classes conducted?</a>
+          <a onclick="faq(11)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q11">
+          Currently at Edukom we use Zoom, Google Meet, Google classroom etc. pending when we finish creation of our online portal. Until then, all tutors are required to be highly conversant in the above listed virtual learning platforms. Classes are expected to be interactive and engaging for all learners.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(12)">Who pays for the internet data used for teaching?</a>
+          <a onclick="faq(12)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q12">
+          Both sides cover their data costs. The client covers his/her cost and the tutor covers his/her cost. Every class-related expense is factored into the payment made to the tutors at the end of each tutoring cycle (usually the end of the month).
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(13)">If a tutor realizes that they cannot be available for a class, what should he/she do?</a>
+          <a onclick="faq(13)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q13">
+          The tutor should notify Edukom Admin immediately. They will then be advised to discuss with the parent to arrange an alternate time to reschedule that class to hold. The tutor must be willing to be flexible and accommodate the proposed new time provided by the client to make up the cancelled class within that same payment cycle. The newly arranged class time must be communicated to Edukom Admin as soon as possible.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(14)">If a tutor realizes that they cannot be available for a class, what should he/she do?</a>
+          <a onclick="faq(14)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q14">
+          The tutor should notify Edukom Admin immediately. They will then be advised to discuss with the parent to arrange an alternate time to reschedule that class to hold. The tutor must be willing to be flexible and accommodate the proposed new time provided by the client to make up the cancelled class within that same payment cycle. The newly arranged class time must be communicated to Edukom Admin as soon as possible.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(15)">If for some reason, a Tutor cannot continue with Edukom and has to disengage?</a>
+          <a onclick="faq(15)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q15">
+          If life gets busier, family responsibilities, longer work hours etc. makes it impossible to continue as a Tutor, Edukom will expect the Tutor to kindly finish up that month for the sake of continuity of learning for the student’s sake. It is important for there not to be Tutor changes in the middle of concepts or specific topics being taught.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(16)">How many students do you have in a session?</a>
+          <a onclick="faq(16)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q16">
+          One tutor, one student per class. One of the goals of Edukom is to attend to the learning needs of each child, covering their specific gaps and learning at their own pace. This cannot take place if the Tutor’s attention is divided by the presence of more than one child.        
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(17)">How do Tutors get paid?</a>
+          <a onclick="faq(17)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q17">
+          Tutors are paid per hour for tutoring. At the end of each month, the total sum they have earned for all hours taught are paid by bank transfer to their accounts. Verification that all classes were taught for the entire contracted duration must take place before payment is made.         
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(18)">Is there a maximum number of hours a Tutor can take per month?</a>
+          <a onclick="faq(18)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q18">
+          There is no maximum as long as the content and quality of teaching does not diminish and the classes do not clash, Tutors may be assigned as my hours as they can conveniently take within their skillset and experience level.        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(19)">What happens if I relocate?</a>
+          <a onclick="faq(19)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q19">
+          Nothing. The classes are taught online so you can still conduct your classes from wherever you are in the world.
+        </p>
+      </li>
+      <li>
+        <div>
+          <a onclick="faq(20)">What happens if my student is in a region with a significant time difference?</a>
+          <a onclick="faq(20)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+              <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+            </svg>
+          </a>
+        </div>
+        <p id="Q20">
+          While discussing with the parent to find a suitable time at your location and theirs to have productive teaching and learning hours, weekends are recommended. Due to the flexibility of time and lack of fixed working hours, it is easier to handle lessons across extreme time differences on weekends and school holidays.        </p>
+      </li>
+    </ul>
+   
+    <br />
+  </div>
+    <script>
+    // Array to store FAQ data
+    const faqData = [];
+
+    // Function to initialize the FAQ list
+    function maininitFAQList() {
+      const faqListElement = document.getElementById("faqList");
+
+      // Retrieve FAQ list items from HTML
+      const faqItems = document.querySelectorAll("#faqList li");
+
+      // Populate FAQ data array
+      faqItems.forEach((item, index) => {
+        const questionElement = item.querySelector("a");
+        const answerElement = item.querySelector("p");
+
+        const question = questionElement.textContent.trim();
+        const answer = answerElement.textContent.trim();
+
+        faqData.push({ question, answer });
+
+        // Create list item for display
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+          <div>
+            <a onclick="faq(${index + 1})">${question}</a>
+            <a onclick="faq(${index + 1})">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+                <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+              </svg>
+            </a>
+          </div>
+          <p id="Q${index + 1}">${answer}</p>
+        `;
+
+        // Append the list item to the displayed FAQ list
+        faqListElement.appendChild(listItem);
+      });
+    }
+
+    // Function to perform search
+    function mainsearchFAQ(query) {
+      const faqListElement = document.getElementById("faqList");
+
+      // Clear previous search results
+      faqListElement.innerHTML = "";
+
+      // Filter FAQ items based on the query
+      const filteredFAQ = faqData.filter(faq =>
+        faq.question.toLowerCase().includes(query.toLowerCase()) ||
+        faq.answer.toLowerCase().includes(query.toLowerCase())
+      );
+
+      // Display filtered FAQ items
+      filteredFAQ.forEach((faq, index) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+          <div>
+            <a onclick="faq(${index + 1})">${faq.question}</a>
+            <a onclick="faq(${index + 1})">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="49" viewBox="0 0 48 49" fill="none">
+                <path d="M23.9999 30.6248L15.5139 21.9641L18.3439 19.0771L23.9999 24.851L29.6559 19.0771L32.4859 21.9641L23.9999 30.6269V30.6248Z" fill="black" />
+              </svg>
+            </a>
+          </div>
+          <p id="Q${index + 1}">${faq.answer}</p>
+        `;
+        // Append the list item to the displayed FAQ list
+        faqListElement.appendChild(listItem);
+      });
+    }
+
+    // Event listener for search input
+    document.getElementById("searchInput").addEventListener("input", function () {
+      mainsearchFAQ(this.value.trim());
+    });
+
+    // Initialize FAQ list on page load
+    window.onload = function () {
+      maininitFAQList();
+    };
+    </script>
+    
+   {% endblock main %}

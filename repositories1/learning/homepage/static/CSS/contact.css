@@ -1,0 +1,33 @@
+.contact{
+    gap: 30px;
+}
+.contact > div:first-child{
+    background-image: url(../IMG/contact/Rectangle\ 120.png);
+    background-repeat: no-repeat;
+    background-position-x: left;
+    background-position-y: bottom;
+    display: flex;
+    align-items: end;
+}
+.contact > div:first-child > div{
+    background-color: rgba(0, 39, 105, 0.49);
+    color: #fff;
+    padding: 5%;
+}
+.contact > div:last-child{
+    background-color: #fff;
+    padding: 5%;
+}
+
+.contact ul li{
+    display: grid;
+    grid-template-columns: 7% 88%;
+    grid-gap: 5%;
+}
+.contact .social{
+    display: flex;
+    gap:20px;
+}
+textarea{
+    height: 100px;
+}

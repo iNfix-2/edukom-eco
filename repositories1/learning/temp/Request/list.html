@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+<div>
+    <style>
+        @media screen and (max-width:960px) {
+            .phone{
+                display: none;
+            }
+        }
+    </style>
+    <div class="card text-center">
+       
+        <div class="card-body">
+          <h5 class="card-title" style="font-family: 'Montserrat' !important; font-weight: 900;">Request from guardians/Tutor</h5>
+          <p class="card-text">Accept and decline request, based on the requirements.</p>
+          <a href="/" class="btn " style="background-color: #002769;color: #fff;" >Go to homepage</a>
+        </div>
+      </div>
+      <br>
+      <div>
+        <h3>Guardian Request List</h3>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Guardian Name</th>
+                <th>Student Class</th>
+                <th class="phone">Subject</th>
+                <th class="phone">Expectation for child</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for guardian in guardian %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{guardian.last_name}} {{guardian.first_name}}</td>
+                <td>{{guardian.AboutChild.child_class}}</td>
+                <td class="phone">{{guardian.AboutChild.subject}}</td>
+                <td class="phone">{{guardian.AboutChild.goal}}</td>
+                <td><a href="{% url 'detailGuardian' guardian.uid %}">view</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <h3>Tutor Request List</h3>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Tutor Name</th>
+                <th>Tutor Class</th>
+                <th class="phone">Subject</th>
+                <th class="phone">Expectation for child</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tutor in tutor %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{tutor.last_name}} {{tutor.first_name}}</td>
+                <td>{{tutor.AboutTutor.teacher_class}}</td>
+                <td class="phone">{{tutor.AboutTutor.subject}}</td>
+                <td class="phone">{{tutor.AboutTutor.goal}}</td>
+                <td><a href="{% url 'detailTutor' tutor.uid %}">view</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endblock main %}

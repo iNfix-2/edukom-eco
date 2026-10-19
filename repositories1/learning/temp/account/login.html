@@ -1,0 +1,27 @@
+{% extends "Forms/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block main %}
+<div class="body p-3 ">
+    <div class="container-xxl">
+
+
+        <form class="my-4" style="max-width: 500px;margin: auto;" method="post" id="myForm">
+            <div class="d-flex">
+                <img src="{% static 'IMG/logo.png' %}" style="width: 50px;" alt="">
+                <h1>Sign in</h1>
+            </div>
+            {% csrf_token %}
+            <div class="form-control">
+                {{ form | crispy }}
+            <div class="col-12 text-center mt-4">
+                <button type="submit" class="btn  lift text-uppercase" style="background-color: #002769;color: #fff;" atl="signin">SIGN IN</button>
+            </div>
+            </div>
+            <div class="col-12 text-center mt-4">
+                <span class="text-muted">Don't have an account yet?  <a href="{% url 'contact' %}" class="text-secondary"> Please contact us</a></span>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock main %}

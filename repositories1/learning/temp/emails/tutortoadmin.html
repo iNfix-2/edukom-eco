@@ -1,0 +1,86 @@
+{% autoescape on %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor Details</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h2 {
+            color: #002769;
+        }
+        p {
+            color: #555555;
+        }
+    </style>
+</head>
+<body>
+    <div style="padding: 20px; color: #555555;">
+
+        <h2>Meet Our New Applicant: {{tutor.full_name |title}}</h2>
+
+        <p><strong>Tutor ID:</strong> {{tutor.uid}}</p>
+
+        <p><strong>Joining Date:</strong> {{tutor.date_joined}}</p>
+        <p><strong>Contact Information:</strong></p>
+        <ul>
+            <li><strong>Email:</strong> {{tutor.email}}</li>
+            <li><strong>Phone Number:</strong> {{tutor.phone}}</li>
+        </ul>
+        <p><strong>Lesson Preferences:</strong></p>
+        <ul>
+            <li><strong>Lesson Type:</strong> {{tutor.lesson_type}}</li>
+            <li><strong>Preferred Curriculum:</strong>{{tutor.curriculum}}</li>
+        </ul>
+
+        <p><strong>About the Tutor:</strong></p>
+        <p>{{tutor.about}}</p>
+        <ul>
+            <li><strong>Teacher Class:</strong> {{tutor.AboutTutor.teacher_class}}</li>
+            <li><strong>Teaching Subject:</strong> {{tutor.AboutTutor.subject}}</li>
+        </ul>
+
+        <p><strong>Location:</strong></p>
+        <ul>
+            <li><strong>State:</strong> {{tutor.Location.state}}</li>
+            <li><strong>Street Address:</strong> {{tutor.Location.street_address}}</li>
+        </ul>
+
+        <p><strong>Lesson Schedule:</strong></p>
+        <ul>
+            <li><strong>Days Available:</strong> {{tutor.Lesson.days}}</li>
+            <li><strong>Number of Weeks in the Month:</strong> {{tutor.Lesson.weeks}}</li>
+            <li><strong>Hours per Day:</strong> {{tutor.Lesson.hour_per_day}}</li>
+            <li><strong>Start Time:</strong> {{tutor.Lesson.start_time}}</li>
+        </ul>
+
+        <p><strong>Email Communication:</strong></p>
+        <ul>
+            <li><strong>Email Sent:</strong>{{tutor.TutorEmail.sent}}</li>
+            <li><strong>Last Communication Date:</strong> {{tutor.TutorEmail.date_joined}}</li>
+        </ul>
+
+        <h2>Mail sent to {{tutor.full_name | lower}}</h2>
+        <p>Congratulations on taking the first step to become a tutor with Edukom!</p>
+        <p>Your journey with us is about to begin, opening doors to a world of educational possibilities.</p>
+        <p>Here are the next steps in the application process:</p>
+        <ol>
+            <li><strong style="color: #002769;">Application Review:</strong> Our team will carefully review your application to ensure it aligns with our requirements.</li>
+            <li><strong style="color: #002769;">Interview:</strong> If your application is successful, we will reach out to schedule an interview to discuss your qualifications and teaching approach.</li>
+            <li><strong style="color: #002769;">Orientation:</strong> Upon a successful interview, we will provide you with an orientation to familiarize you with our platform and policies.</li>
+        </ol>
+        <p>We look forward to the possibility of having you on board as part of our esteemed team of tutors.</p>
+        <p>If you have any questions or need further assistance, feel free to reply to this email.</p>
+        <br>
+            <a href="https://www.edukom.ng{% url 'detailTutor' tutor.uid %}">View full details</a>
+    </div>
+
+</body>
+</html>
+
+{% endautoescape %}

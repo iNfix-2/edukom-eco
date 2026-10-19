@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Delete Post — Edukom HR{% endblock %}
+{% block meta_description %}<meta name="description" content="Confirm deletion of a blog post." />{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:700px">
+  <div class="bg-white p-4 rounded-4 shadow-sm">
+    <h1 class="h4">Delete Post</h1>
+    <p>Are you sure you want to delete "<strong>{{ post.title }}</strong>"?</p>
+    <form method="post">
+      {% csrf_token %}
+      <a href="{% url 'blog_manage' %}" class="btn btn-secondary">Cancel</a>
+      <button class="btn btn-danger" type="submit">Delete</button>
+    </form>
+  </div>
+  
+</div>
+{% endblock %}
+

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}New Post — Edukom HR{% endblock %}
+{% block meta_description %}<meta name="description" content="Create or edit a blog post." />{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:800px">
+  <h1 class="h3 mb-4">{% if post %}Edit Post{% else %}New Post{% endif %}</h1>
+  <form method="post" novalidate enctype="multipart/form-data" class="bg-white p-4 rounded-4 shadow-sm">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      {{ form.title.errors }}
+      {{ form.title }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Author</label>
+      {{ form.author.errors }}
+      {{ form.author }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Content</label>
+      {{ form.content.errors }}
+      {{ form.content }}
+      <div id="contentError" class="text-danger small mt-1 d-none"></div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Cover Image</label>
+      {{ form.cover.errors }}
+      {{ form.cover }}
+      <div class="form-text">Optional. JPG/PNG/GIF. Recommended size 1200x675.</div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Category</label>
+        {{ form.category.errors }}
+        {{ form.category }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Tags</label>
+        {{ form.tags.errors }}
+        {{ form.tags }}
+      </div>
+    </div>
+    <div class="form-check my-3">
+      {{ form.published.errors }}
+      {{ form.published }}
+      <label class="form-check-label">Published</label>
+    </div>
+    <button class="btn btn-primary" type="submit">{% if post %}Save Changes{% else %}Publish{% endif %}</button>
+  </form>
+  <div class="small text-muted mt-3">Tip: Use the toolbar above the content box for formatting, lists, tables, and links.</div>
+  
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+  <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const el = document.getElementById('id_content');
+      if (!el) return;
+      // Prevent HTML5 required on hidden textarea used by editor
+      el.removeAttribute('required');
+      const form = el.closest('form');
+      ClassicEditor
+        .create(el, {
+          toolbar: [
+            'heading','|','bold','italic','link','bulletedList','numberedList','blockQuote','insertTable','undo','redo'
+          ],
+          link: { addTargetToExternalLinks: true }
+        })
+        .then(editor => {
+          window.postEditor = editor;
+          if (form) {
+            form.addEventListener('submit', function(e){
+              const msg = document.getElementById('contentError');
+              const data = editor.getData().replace(/<[^>]*>/g,'').trim();
+              if (!data) {
+                e.preventDefault();
+                if (msg) { msg.textContent = 'Content is required.'; msg.classList.remove('d-none'); }
+                editor.editing.view.focus();
+              } else {
+                if (msg) msg.classList.add('d-none');
+              }
+            });
+          }
+        })
+        .catch(err => console.error(err));
+    });
+  </script>
+{% endblock %}

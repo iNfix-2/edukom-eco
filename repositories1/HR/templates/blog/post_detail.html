@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} — Blog — Edukom HR{% endblock %}
+{% block meta_description %}
+<meta name="description" content="{{ post.content|truncatewords:32|striptags }}" />
+{% endblock %}
+{% block content %}
+  <div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/blog/">Blog</a></li>
+        {% if post.category %}<li class="breadcrumb-item"><a href="{{ post.category.get_absolute_url }}">{{ post.category.name }}</a></li>{% endif %}
+        <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+      </ol>
+    </nav>
+    <div class="mb-4">
+      <a class="text-decoration-none" href="/blog/">← Back to blog</a>
+    </div>
+
+    <article class="bg-white rounded-4 shadow-sm p-4 p-md-5">
+      <header class="mb-3">
+        <h1 class="fw-bold">{{ post.title }}</h1>
+        <div class="small text-muted">{{ post.created_at|date:"M d, Y" }}{% if post.author %} • {{ post.author }}{% endif %}</div>
+      </header>
+      <div class="content">{{ post.content|safe }}</div>
+    </article>
+  </div>
+{% endblock %}

@@ -1,0 +1,239 @@
+version: '3.8'
+
+# ==============================================================================
+# Edukom Enterprise LMS - Production Orchestration Topology
+# Architecture:
+# - DMZ: Nginx Reverse Proxy (Frontend Network)
+# - App Layer: Gunicorn Web Cluster & Celery Async Workers
+# - Data Layer: Multi-AZ PostgreSQL 16 & Redis 7 (Isolated Backend Network)
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # Database Service (PostgreSQL 16)
+  # ----------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: edukom_postgres_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-edukom_production}
+      POSTGRES_USER: ${POSTGRES_USER:-edukom_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Database password required}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - edukom_backend_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ----------------------------------------------------------------------------
+  # In-Memory Cache & Message Broker (Redis 7)
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: edukom_redis_prod
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass "${REDIS_PASSWORD:?Redis password required}"
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - edukom_backend_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  # ----------------------------------------------------------------------------
+  # Core Django Application Service (Gunicorn WSGI)
+  # ----------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    container_name: edukom_web_prod
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      GUNICORN_WORKERS: 4
+      GUNICORN_THREADS: 2
+    volumes:
+      - static_volume:/app/public/Assets
+      - media_volume:/app/media
+    networks:
+      - edukom_frontend_net
+      - edukom_backend_net
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ----------------------------------------------------------------------------
+  # Celery Asynchronous Task Worker
+  # ----------------------------------------------------------------------------
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    container_name: edukom_celery_worker
+    restart: unless-stopped
+    command: celery -A edukom worker -l INFO -c 4 --without-heartbeat --without-gossip
+    env_file:
+      - .env.production
+    environment:
+      POSTGRES_HOST: db
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+    networks:
+      - edukom_backend_net
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1024M
+
+  # ----------------------------------------------------------------------------
+  # Celery Beat Periodic Scheduler (24h/1h/10m Reminders & Subscription Alerts)
+  # ----------------------------------------------------------------------------
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    container_name: edukom_celery_beat
+    restart: unless-stopped
+    command: celery -A edukom beat -l INFO
+    env_file:
+      - .env.production
+    environment:
+      POSTGRES_HOST: db
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+    networks:
+      - edukom_backend_net
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  # ----------------------------------------------------------------------------
+  # Hardened Nginx Reverse Proxy (SSL, CSP, Rate-Limiting)
+  # ----------------------------------------------------------------------------
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: edukom_nginx_prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy_params:/etc/nginx/proxy_params:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - certbot_challenge:/var/www/certbot:ro
+      - certbot_etc:/etc/letsencrypt:ro
+      - static_volume:/var/www/static:ro
+      - media_volume:/var/www/media:ro
+    networks:
+      - edukom_frontend_net
+    depends_on:
+      - web
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+
+  # ----------------------------------------------------------------------------
+  # Automated Let's Encrypt SSL/TLS Certificate Provisioner & Renewal
+  # ----------------------------------------------------------------------------
+  certbot:
+    image: certbot/certbot:v2.11.0
+    container_name: edukom_certbot_prod
+    restart: unless-stopped
+    volumes:
+      - certbot_etc:/etc/letsencrypt
+      - certbot_var:/var/lib/letsencrypt
+      - certbot_challenge:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done;'"
+    networks:
+      - edukom_frontend_net
+
+# ==============================================================================
+# Volume & Network Specifications
+# ==============================================================================
+volumes:
+  postgres_data:
+    name: edukom_postgres_data_prod
+  redis_data:
+    name: edukom_redis_data_prod
+  static_volume:
+    name: edukom_static_prod
+  media_volume:
+    name: edukom_media_prod
+  certbot_etc:
+    name: edukom_certbot_etc_prod
+  certbot_var:
+    name: edukom_certbot_var_prod
+  certbot_challenge:
+    name: edukom_certbot_challenge_prod
+
+networks:
+  # Isolated frontend DMZ: only Nginx, Web, and Certbot communicate here
+  edukom_frontend_net:
+    name: edukom_frontend_net
+    driver: bridge
+
+  # Isolated backend subnet: database and redis are never exposed to public internet
+  edukom_backend_net:
+    name: edukom_backend_net
+    driver: bridge
+    internal: true

@@ -1,0 +1,155 @@
+
+.section3{
+    background: #002769;
+    padding:5%;
+}
+.section3 h3{
+    color: #FFF;
+    font-family: 'Montserrat';
+    font-weight: 400;
+    letter-spacing: 1.83px;
+}
+.section3 a.btn-sa{
+padding:10px 20px;
+border-radius: 5px;
+width: fit-content;
+min-width: fit-content;
+border: 2px solid #FFF;
+height: fit-content;
+background-color: #FFF;
+color: #002769;
+}
+
+.section3 a.btn-sa svg{
+    color: #002769;
+    margin-left: 10px;
+}
+
+.section3  a.btn-sa svg > path{
+    stroke: #002769 !important;
+}
+
+.section3 > div:first-child{
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+.section3 > ul{
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: space-between;
+    padding: 0;
+    margin-top: 2rem;
+    
+}
+.section3 > ul > li p{
+    margin-bottom: 0;
+}
+.section3 > ul > li{
+    width: 300px;
+    color: #E3E3E3;
+    font-family: 'Montserrat';
+    font-weight: 400;
+    line-height: 33px; /* 165% */
+    letter-spacing: 0.6px;
+}
+.section3 > ul > li > h3{
+    font-weight: 900;
+}
+.section3 > ul > li > svg{
+    width: 100%;
+    margin:20px 0;
+}
+
+.section4{
+    display: flex;
+    padding: 5% 0;
+    color: #002769;
+}
+.section4 > div{
+    background: #A9D156;
+    padding: 1rem;
+}
+.section4 div > ul{
+    padding: 0;
+}
+.section4 div > ul > li {
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.section4 div > ul  h3{
+    font-weight: 600;
+}
+
+
+.section4 div > ul > li >svg{
+    width: 100px;    
+
+}
+.section4 > div {
+    padding: 3rem;
+}
+.section4 > img{
+    max-width:600px;
+}
+.section4 a.btn-sa{
+    padding: 1.25rem 2rem;
+}
+.section6{
+    padding-top: 5% !important;
+}
+
+.main > div{
+    margin-top: 5rem;
+}
+@media screen and (max-width:960px) {
+    .fhdi{
+        flex-direction: column;
+    }
+    .fhdi >div:first-child{
+        width: 100% !important;
+    }
+   
+    .section3 > div {
+        flex-direction: column;
+        align-items: start !important;
+        text-align: left;
+        
+    }
+   
+    .section4 {
+        flex-direction: column-reverse;
+    }
+    .section4 a{
+        margin: auto;
+    }
+    .splatter{
+        grid-template-columns: 100% !important;
+    }
+    .nav-item-list ul li a {
+        color: white !important;
+      }
+}
+.fhdi > div > h2{
+    -webkit-text-stroke-width:4px;
+    font-family: 'Montserrat' !important;
+    font-size: 50px;
+}
+.fhdi small {
+    font-family: "Ribeye Marrow";
+    font-size: 1.5rem;
+    color: #002769;
+}
+.fhdi p{
+    font-family: 'Montserrat' !important;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.72px;
+}

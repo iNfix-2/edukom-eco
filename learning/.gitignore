@@ -1,0 +1,29 @@
+# Databases & Secrets
+db.sqlite3
+.env
+*.env
+*.log
+
+# Environments
+.venv/
+venv/
+venv_linux/
+__pycache__/
+*.pyc
+
+# Cache & Temporary
+temp/
+tmp/
+.cache/
+
+# Media / Uploaded files
+media/
+public/Assets/
+
+# App-specific pycache
+edukom/__pycache__/
+homepage/__pycache__/
+tutors/__pycache__/
+user/__pycache__/
+payments/__pycache__/
+payroll/__pycache__/
