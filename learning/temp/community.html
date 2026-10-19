@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Become a Tutor | Edukom Learning{% endblock %}
+
+{% block main %}
+<main class="overflow-x-hidden">
+
+  <!-- Hero Section -->
+  <section class="relative bg-canvas-gray overflow-hidden py-16 md:py-24 border-b border-outline-variant/20">
+    <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-12 top-6 w-44 md:w-64 opacity-40 pointer-events-none z-0 select-none" alt="">
+    <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -right-12 bottom-6 w-48 md:w-72 opacity-35 pointer-events-none z-0 select-none" alt="">
+    <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle, #c4c6d2 1px, transparent 1px); background-size: 32px 32px;"></div>
+    <div class="max-w-container-max mx-auto px-gutter relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div class="space-y-8">
+        <div>
+          <span class="font-label-md text-label-md text-primary tracking-[0.2em] uppercase block mb-4 font-bold text-deep-navy">Join Our</span>
+          <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-6">
+            Network Of <span class="text-deep-navy border-b-4 border-vibrant-lime">Expert Tutors</span> Today!
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+            Our platform takes out the worry of finding students and managing your business. Start earning with us today through a streamlined, professional teaching ecosystem.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="{% url 'become_a_tutor' %}" class="bg-primary text-pure-white px-8 py-4 rounded-xl font-headline-md text-label-md flex items-center justify-center gap-2 hover:bg-deep-navy transition-all transform active:scale-95 group shadow-lg">
+            Apply Now
+            <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+          </a>
+          <a href="#how-to-become" class="border-2 border-primary text-primary px-8 py-4 rounded-xl font-headline-md text-label-md flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all transform active:scale-95">
+            Learn More
+          </a>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-vibrant-lime/20 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/10 rounded-full blur-3xl"></div>
+        <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform md:rotate-2 hover:rotate-0 transition-transform duration-500">
+          <img class="w-full aspect-[4/5] object-cover" alt="Professional Tutor using laptop" src="{% static 'IMG/black-student-wearing-headphone-having-audio-business-course-laptop.jpg' %}">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Proposition (Bento Grid) -->
+  <section class="py-20 md:py-28 bg-pure-white">
+    <div class="max-w-container-max mx-auto px-gutter">
+      <div class="text-center mb-16">
+        <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4 text-center" style="text-align: center !important;">
+          Get Access to a large <span class="text-vibrant-lime font-bold">Community</span> Of Professional Tutors
+        </h2>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto text-center" style="text-align: center !important;">
+          Within Edukom, tutoring becomes a professionally enriched and efficient endeavor, strategically eliminating the knowledge gap for enhanced educational outcomes.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Card 1 -->
+        <div class="bg-canvas-gray p-8 rounded-2xl border border-outline-variant/30 hover:border-vibrant-lime hover:shadow-xl transition-all duration-300 group">
+          <div class="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 text-pure-white shadow-md group-hover:bg-vibrant-lime group-hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-3xl">group</span>
+          </div>
+          <h3 class="font-headline-md text-headline-md text-primary mb-4">Thousands of Students</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            At Edukom, we'll help you find the right students without investing your time and money in advertising. Our matching algorithm connects you to learners who value your expertise.
+          </p>
+        </div>
+        <!-- Card 2 -->
+        <div class="bg-primary p-8 rounded-2xl shadow-xl transform md:-translate-y-4 group">
+          <div class="w-14 h-14 bg-vibrant-lime rounded-xl flex items-center justify-center mb-6 text-primary shadow-md">
+            <span class="material-symbols-outlined text-3xl">payments</span>
+          </div>
+          <h3 class="font-headline-md text-headline-md text-pure-white mb-4">Stress-free payments</h3>
+          <p class="font-body-md text-body-md text-pure-white/80">
+            Edukom handles client management and billing transparently. Get paid reliably at the end of every tutoring cycle for all hours taught directly to your bank account.
+          </p>
+        </div>
+        <!-- Card 3 -->
+        <div class="bg-canvas-gray p-8 rounded-2xl border border-outline-variant/30 hover:border-vibrant-lime hover:shadow-xl transition-all duration-300 group">
+          <div class="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6 text-pure-white shadow-md group-hover:bg-vibrant-lime group-hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-3xl">business_center</span>
+          </div>
+          <h3 class="font-headline-md text-headline-md text-primary mb-4">Manage your business</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            You decide how much you want to earn and when you want to teach. Our platform gives you full flexibility over your schedule and curriculum planning.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section -->
+  <section id="how-to-become" class="py-20 md:py-28 bg-primary overflow-hidden">
+    <div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div class="relative order-2 lg:order-1">
+        <div class="absolute inset-0 bg-vibrant-lime opacity-10 rounded-3xl -rotate-3 scale-105"></div>
+        <img class="relative w-full rounded-3xl shadow-2xl z-10 object-cover aspect-[4/3]" alt="Male tutor working on laptop" src="{% static 'IMG/medium-shot-man-waving-laptop.jpg' %}">
+      </div>
+      <div class="order-1 lg:order-2 space-y-10">
+        <div class="space-y-4">
+          <h2 class="font-display-lg text-display-lg-mobile md:text-headline-lg text-pure-white">How to become a Tutor</h2>
+          <div class="w-24 h-1.5 bg-vibrant-lime rounded-full"></div>
+        </div>
+        <div class="space-y-8">
+          <!-- Step 1 -->
+          <div class="flex gap-6 group">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-lg">1</div>
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <h4 class="font-headline-md text-label-md text-pure-white uppercase tracking-wide">Submit An Application</h4>
+                <span class="text-vibrant-lime text-xs font-bold px-2.5 py-0.5 border border-vibrant-lime/60 rounded-full">10 MINS</span>
+              </div>
+              <p class="font-body-md text-body-md text-pure-white/70">
+                Completing our hassle-free application is a straightforward process that requires less than 10 minutes of your time, ensuring a quick entry into our network.
+              </p>
+            </div>
+          </div>
+          <!-- Step 2 -->
+          <div class="flex gap-6 group">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-lg">2</div>
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <h4 class="font-headline-md text-label-md text-pure-white uppercase tracking-wide">Schedule A Mock Session</h4>
+                <span class="text-vibrant-lime text-xs font-bold px-2.5 py-0.5 border border-vibrant-lime/60 rounded-full">20 MINS</span>
+              </div>
+              <p class="font-body-md text-body-md text-pure-white/70">
+                Demonstrate and showcase your tutoring prowess by engaging in a comprehensive 20-minute virtual session with our pedagogical team.
+              </p>
+            </div>
+          </div>
+          <!-- Step 3 -->
+          <div class="flex gap-6 group">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-lg">3</div>
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <h4 class="font-headline-md text-label-md text-pure-white uppercase tracking-wide">Complete Orientation</h4>
+                <span class="text-vibrant-lime text-xs font-bold px-2.5 py-0.5 border border-vibrant-lime/60 rounded-full">5 MINS</span>
+              </div>
+              <p class="font-body-md text-body-md text-pure-white/70">
+                After an orientation meeting introducing Edukom's ecosystem, site navigation, and lesson instruction, onboarding into the Edukom community takes place.
+              </p>
+            </div>
+          </div>
+        </div>
+        <a href="{% url 'become_a_tutor' %}" class="inline-flex bg-vibrant-lime text-primary px-10 py-4 rounded-xl font-headline-md text-label-md items-center justify-center gap-2 hover:bg-secondary-container transition-all transform active:scale-95 shadow-xl font-bold">
+          Get Started Now
+          <span class="material-symbols-outlined">rocket_launch</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-20 md:py-28 bg-canvas-gray">
+    <div class="max-w-container-max mx-auto px-gutter">
+      <div class="text-center mb-16">
+        <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary text-center" style="text-align: center !important;">Read Our FAQs</h2>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-2 text-center mx-auto" style="text-align: center !important;">Find answers to commonly asked questions about becoming a tutor with Edukom.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- FAQ 1 -->
+        <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
+          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-body-lg text-primary font-semibold">How do I apply as a tutor with Edukom?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          </button>
+          <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
+            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+              Simply click the "Get Started Now" button, fill out your profile details and upload your credentials. Our recruitment team will review your application and schedule a virtual interview.
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 2 -->
+        <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
+          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-body-lg text-primary font-semibold">How are classes conducted?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          </button>
+          <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
+            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+              Classes are conducted via integrated virtual learning platforms (Zoom, Google Classroom, and Edukom's portal) with interactive whiteboards and screen sharing.
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 3 -->
+        <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
+          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-body-lg text-primary font-semibold">Who pays for the internet data used for teaching?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          </button>
+          <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
+            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+              Both sides cover their internet costs. Every class-related data expense is factored directly into the competitive hourly compensation paid to tutors.
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 4 -->
+        <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
+          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-body-lg text-primary font-semibold">How do Tutors get paid?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          </button>
+          <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
+            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+              Tutors are paid per hour for tutoring. At the end of each payment cycle, your total earnings are verified and transferred directly to your bank account.
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 5 -->
+        <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
+          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-body-lg text-primary font-semibold">What if I cannot make it to a scheduled class?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          </button>
+          <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
+            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+              Notify Edukom Admin immediately so we can help arrange an alternate rescheduled time with the parent within the same payment cycle.
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 6 -->
+        <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
+          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-body-lg text-primary font-semibold">How many students are in a tutoring session?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          </button>
+          <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
+            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+              One tutor, one student per class. Edukom focuses on 1-on-1 personalized learning tailored to the specific learning pace of each child.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-12 text-center">
+        <a class="font-label-md text-label-md text-primary font-bold hover:text-vibrant-lime underline underline-offset-4 transition-colors" href="{% url 'faq' %}">See all FAQs &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function toggleTutorAccordion(button) {
+    const item = button.closest('.accordion-item');
+    const content = item.querySelector('.accordion-content');
+    const icon = button.querySelector('.material-symbols-outlined');
+    const isOpen = item.classList.contains('active');
+
+    document.querySelectorAll('.accordion-item').forEach(i => {
+      i.classList.remove('active');
+      i.querySelector('.accordion-content').style.maxHeight = null;
+      const iIcon = i.querySelector('.material-symbols-outlined');
+      if (iIcon) iIcon.style.transform = 'rotate(0deg)';
+    });
+
+    if (!isOpen) {
+      item.classList.add('active');
+      content.style.maxHeight = content.scrollHeight + "px";
+      icon.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  // Open first FAQ by default
+  document.addEventListener('DOMContentLoaded', () => {
+    const firstBtn = document.querySelector('.accordion-item button');
+    if (firstBtn) toggleTutorAccordion(firstBtn);
+  });
+</script>
+{% endblock main %}

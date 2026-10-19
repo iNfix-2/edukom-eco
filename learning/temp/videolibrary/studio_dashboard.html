@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Creator Studio - Video Course & Resource Management - Edukom{% endblock %}
+
+{% block main %}
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- Top Header -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-700 text-white flex items-center justify-center text-2xl font-bold shadow-lg shadow-indigo-600/25">
+          <i class="fa-solid fa-photo-film"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Creator Studio</h1>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider {% if is_admin %}bg-purple-100 text-purple-700{% else %}bg-indigo-100 text-indigo-700{% endif %}">
+              {% if is_admin %}Admin Command{% else %}Tutor Studio{% endif %}
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">
+            Author video courses, upload DRM-protected masterclass lessons, and publish downloadable worksheets.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="{% url 'videolibrary:catalog' %}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-2">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Student Catalog</span>
+        </a>
+        <a href="{% url 'videolibrary:studio_course_create' %}" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-2">
+          <i class="fa-solid fa-plus"></i>
+          <span>Create New Course</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    {% if messages %}
+      <div class="space-y-2">
+        {% for message in messages %}
+          <div class="p-4 rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-sm {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border border-rose-200{% elif message.tags == 'success' %}bg-emerald-50 text-emerald-800 border border-emerald-200{% else %}bg-indigo-50 text-indigo-800 border border-indigo-200{% endif %}">
+            <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-rose-500{% elif message.tags == 'success' %}fa-circle-check text-emerald-500{% else %}fa-circle-info text-indigo-500{% endif %} text-base"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- KPI Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Courses</p>
+          <p class="text-2xl font-black text-slate-900 mt-1">{{ total_courses }}</p>
+          <p class="text-[11px] text-slate-500 mt-1">
+            <span class="text-emerald-600 font-bold">{{ published_courses }}</span> Published &bull; <span class="text-amber-600 font-bold">{{ draft_courses }}</span> Draft
+          </p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Video Lessons</p>
+          <p class="text-2xl font-black text-slate-900 mt-1">{{ total_lessons }}</p>
+          <p class="text-[11px] text-indigo-600 font-semibold mt-1">AES-128 Encrypted Stream Ready</p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-video"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Attached Resources</p>
+          <p class="text-2xl font-black text-slate-900 mt-1">{{ total_resources }}</p>
+          <p class="text-[11px] text-slate-500 mt-1">Worksheets, Notes & Slides</p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-folder-open"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">DRM & Security</p>
+          <p class="text-lg font-black text-emerald-600 mt-1">Active Protected</p>
+          <p class="text-[11px] text-slate-500 mt-1">Dynamic Watermark & Key-Exchange</p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Courses Management Listing -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+      <div class="p-6 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-black text-slate-900">Your Video Courses</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Manage lessons, upload curriculum videos, and attach worksheets.</p>
+        </div>
+        <div>
+          <a href="{% url 'videolibrary:studio_course_create' %}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl transition">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+            <span>New Course</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="divide-y divide-slate-100">
+        {% for course in courses %}
+          <div class="p-6 hover:bg-slate-50/60 transition flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            
+            <!-- Left Info & Thumbnail -->
+            <div class="flex items-start space-x-4 flex-1">
+              <div class="w-28 h-20 rounded-xl bg-slate-900 shrink-0 overflow-hidden relative border border-slate-200 shadow-sm flex items-center justify-center text-slate-500">
+                {% if course.thumbnail_display %}
+                  <img src="{{ course.thumbnail_display }}" alt="{{ course.title }}" class="w-full h-full object-cover">
+                {% else %}
+                  <i class="fa-solid fa-clapperboard text-2xl text-slate-600"></i>
+                {% endif %}
+                <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold">
+                  {{ course.class_level }}
+                </span>
+              </div>
+
+              <div class="space-y-1.5">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h3 class="text-base font-bold text-slate-900">{{ course.title }}</h3>
+                  {% if course.is_published %}
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
+                      <i class="fa-solid fa-circle text-[6px]"></i> Published
+                    </span>
+                  {% else %}
+                    <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
+                      <i class="fa-solid fa-circle text-[6px]"></i> Draft Mode
+                    </span>
+                  {% endif %}
+                </div>
+
+                <p class="text-xs text-slate-500 line-clamp-1 max-w-2xl">
+                  {{ course.description|default:"Curriculum masterclass with step-by-step video tutorials and practice resources." }}
+                </p>
+
+                <div class="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
+                  <span class="font-medium text-slate-600">
+                    <i class="fa-solid fa-book-bookmark text-indigo-500 mr-1"></i>
+                    {{ course.subject.name|default:"General Subject" }}
+                  </span>
+                  <span>&bull;</span>
+                  <span>
+                    <i class="fa-solid fa-video text-emerald-500 mr-1"></i>
+                    <strong class="text-slate-700">{{ course.lessons.count }}</strong> Lessons
+                  </span>
+                  <span>&bull;</span>
+                  <span>
+                    <i class="fa-solid fa-paperclip text-amber-500 mr-1"></i>
+                    <strong class="text-slate-700">{{ course.resources.count }}</strong> Resources
+                  </span>
+                  {% if course.created_by %}
+                    <span>&bull;</span>
+                    <span class="text-slate-500">By <strong>{{ course.created_by.get_full_name|default:course.created_by.username }}</strong></span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Action Controls -->
+            <div class="flex flex-wrap items-center gap-2 self-end lg:self-center shrink-0">
+              <!-- Manage Curriculum (Primary) -->
+              <a href="{% url 'videolibrary:studio_course_curriculum' course.id %}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Manage Curriculum & Worksheets</span>
+              </a>
+
+              <!-- Edit Metadata -->
+              <a href="{% url 'videolibrary:studio_course_edit' course.id %}" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition" title="Edit Course Details">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </a>
+
+              <!-- Toggle Publish Form -->
+              <form action="{% url 'videolibrary:studio_course_toggle_publish' course.id %}" method="POST" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="px-3 py-2 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 {% if course.is_published %}border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100{% else %}border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100{% endif %}" title="{% if course.is_published %}Unpublish to Draft{% else %}Publish to Catalog{% endif %}">
+                  <i class="fa-solid {% if course.is_published %}fa-eye-slash{% else %}fa-globe{% endif %}"></i>
+                  <span>{% if course.is_published %}Unpublish{% else %}Publish{% endif %}</span>
+                </button>
+              </form>
+
+              <!-- Preview in Student View -->
+              <a href="{% url 'videolibrary:course_detail' course.id %}" target="_blank" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition" title="Preview Student View">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            </div>
+
+          </div>
+        {% empty %}
+          <div class="py-16 text-center text-slate-400 space-y-4">
+            <div class="w-16 h-16 rounded-3xl bg-slate-100 text-slate-400 flex items-center justify-center text-3xl mx-auto">
+              <i class="fa-solid fa-photo-film"></i>
+            </div>
+            <div>
+              <p class="text-base font-bold text-slate-700">No courses created yet</p>
+              <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                Get started by creating your first video masterclass module. You can upload lessons and worksheets immediately after!
+              </p>
+            </div>
+            <a href="{% url 'videolibrary:studio_course_create' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition">
+              <i class="fa-solid fa-plus"></i>
+              <span>Create Your First Course</span>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock main %}

@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block main %}
+
+<style>
+  /* Form Step Navigation Styling */
+  .step-tab {
+    transition: all 0.3s ease;
+  }
+  .step-tab.active-step {
+    background-color: #002769 !important;
+    color: #ffffff !important;
+    border-color: #002769 !important;
+  }
+  .step-tab.active-step .step-number {
+    background-color: #A9D156 !important;
+    color: #002769 !important;
+  }
+  .step-tab.completed-step {
+    background-color: #f3f3f3;
+    color: #002769;
+  }
+  .step-tab.completed-step .step-number {
+    background-color: #002769;
+    color: #ffffff;
+  }
+  
+  /* Custom form field tweaks inside Crispy forms */
+  .form-step-content input[type="text"],
+  .form-step-content input[type="email"],
+  .form-step-content input[type="tel"],
+  .form-step-content input[type="number"],
+  .form-step-content select,
+  .form-step-content textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #c4c6d2;
+    background-color: #ffffff;
+    font-size: 1rem;
+    color: #1a1c1c;
+    transition: all 0.2s ease;
+  }
+  .form-step-content input:focus,
+  .form-step-content select:focus,
+  .form-step-content textarea:focus {
+    outline: none;
+    border-color: #002769;
+    box-shadow: 0 0 0 4px rgba(169, 209, 86, 0.25);
+  }
+  .form-step-content label {
+    font-weight: 600;
+    color: #00143f;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 0.95rem;
+  }
+  .form-step-content .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  /* Crisp Checkbox & Radio Alignment Fix */
+  .form-step-content #div_id_subject > div,
+  .form-step-content #div_id_curriculum > div,
+  .form-step-content #div_id_days > div,
+  .form-step-content #div_id_lesson_type > div,
+  .form-step-content .controls > div,
+  .form-step-content ul {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)) !important;
+    gap: 0.75rem !important;
+    padding: 0 !important;
+    margin-top: 0.5rem !important;
+    list-style: none !important;
+  }
+
+  .form-step-content .form-check,
+  .form-step-content .checkbox,
+  .form-step-content .radio,
+  .form-step-content ul li {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    background-color: #f9f9f9;
+    border: 1px solid #e2e2e2;
+    padding: 0.6rem 0.85rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin: 0 !important;
+  }
+
+  .form-step-content .form-check:hover,
+  .form-step-content .checkbox:hover,
+  .form-step-content .radio:hover,
+  .form-step-content ul li:hover {
+    border-color: #002769;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 39, 105, 0.06);
+  }
+
+  .form-step-content input[type="checkbox"],
+  .form-step-content input[type="radio"] {
+    width: 1.15rem !important;
+    height: 1.15rem !important;
+    accent-color: #002769 !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .form-step-content .form-check-label,
+  .form-step-content #div_id_subject label:not(#id_subject),
+  .form-step-content #div_id_curriculum label:not(#id_curriculum),
+  .form-step-content #div_id_days label:not(#id_days),
+  .form-step-content #div_id_lesson_type label:not(#id_lesson_type),
+  .form-step-content ul li label {
+    display: inline-block !important;
+    margin-bottom: 0 !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    color: #1a1c1c !important;
+    cursor: pointer !important;
+    user-select: none;
+    line-height: 1.2 !important;
+  }
+</style>
+
+<!-- Hero Section -->
+<section class="relative min-h-[580px] bg-deep-navy flex items-center overflow-hidden py-16 lg:py-24">
+  <!-- Subtle Background Gradient Overlay -->
+  <div class="absolute inset-0 opacity-20 pointer-events-none">
+    <div class="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-vibrant-lime via-transparent to-transparent"></div>
+  </div>
+
+  <!-- Edge Splatters -->
+  <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -left-12 bottom-4 w-44 md:w-64 opacity-25 pointer-events-none z-0 select-none" alt="">
+  <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -right-12 top-4 w-48 md:w-72 opacity-25 pointer-events-none z-0 select-none" alt="">
+
+  <div class="max-w-container-max mx-auto px-gutter relative z-10 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      
+      <!-- Text Content -->
+      <div class="lg:col-span-6 space-y-8 text-center lg:text-left">
+        <div class="inline-block border-b-2 border-vibrant-lime pb-1">
+          <span class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs">Empowering Personalized Education</span>
+        </div>
+        <h1 class="font-headline-lg text-3xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
+          Find the Perfect Tutor for Your Child's Success.
+        </h1>
+        <p class="font-body-lg text-lg text-primary-fixed/90 max-w-2xl leading-relaxed mx-auto lg:mx-0">
+          Personalized 1-on-1 learning tailored to your child's unique needs, curriculum, and academic goals. Empowering the next generation with expert guidance.
+        </p>
+        <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
+          <a href="#tutor-form" class="bg-vibrant-lime text-deep-navy px-8 py-4 rounded-xl font-bold text-base shadow-lg hover:brightness-105 transition-all active:scale-95">
+            Get Tutor Now
+          </a>
+          <a href="{% url 'homepage' %}#how-it-works" class="border-2 border-white/40 text-white px-8 py-4 rounded-xl font-bold text-base hover:bg-white/10 transition-all">
+            How It Works
+          </a>
+        </div>
+      </div>
+
+      <!-- Hero Image -->
+      <div class="lg:col-span-6 relative">
+        <div class="relative mx-auto max-w-xl lg:max-w-none">
+          <!-- Glow Effect behind image -->
+          <div class="absolute -inset-6 bg-vibrant-lime/30 rounded-3xl blur-3xl -z-10"></div>
+
+          <!-- Main Hero Image Card -->
+          <div class="relative overflow-hidden rounded-3xl border-2 border-white/25 shadow-2xl bg-deep-navy/40">
+            <img src="{% static 'IMG/community/WhatsApp_Image_2026-06-23_at_13.39.08.jpeg' %}" onerror="this.onerror=null; this.src='/media/blog_images/WhatsApp_Image_2026-06-23_at_13.39.08.jpeg';" alt="Edukom Expert Tutor" class="w-full h-auto min-h-[380px] sm:min-h-[480px] lg:max-h-[680px] object-cover hover:scale-105 transition-transform duration-500">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Value Proposition Section -->
+<section class="py-20 md:py-28 bg-white">
+  <div class="max-w-container-max mx-auto px-gutter">
+    <div class="text-center mb-16 space-y-4 max-w-3xl mx-auto">
+      <span class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs">Why Edukom?</span>
+      <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-deep-navy tracking-tight">Why Choose Edukom Tutors?</h2>
+      <p class="font-body-lg text-on-surface-variant text-base sm:text-lg">We bridge the gap between academic potential and peak performance through high-quality, personalized education.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Card 1 -->
+      <div class="bg-surface-bright p-8 rounded-2xl border border-surface-variant/60 shadow-xs hover:border-vibrant-lime hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-deep-navy/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-vibrant-lime transition-colors">
+          <span class="material-symbols-outlined text-deep-navy text-2xl">school</span>
+        </div>
+        <h3 class="font-headline-md text-xl font-bold text-deep-navy mb-3">Expert Educators</h3>
+        <p class="font-body-sm text-on-surface-variant leading-relaxed">Top-tier professionals from prestigious institutions dedicated to academic excellence.</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-surface-bright p-8 rounded-2xl border border-surface-variant/60 shadow-xs hover:border-vibrant-lime hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-deep-navy/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-vibrant-lime transition-colors">
+          <span class="material-symbols-outlined text-deep-navy text-2xl">verified_user</span>
+        </div>
+        <h3 class="font-headline-md text-xl font-bold text-deep-navy mb-3">Vetted & Verified</h3>
+        <p class="font-body-sm text-on-surface-variant leading-relaxed">Rigorous background checks and skill assessments to ensure the safest, highest quality learning environment.</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-surface-bright p-8 rounded-2xl border border-surface-variant/60 shadow-xs hover:border-vibrant-lime hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-deep-navy/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-vibrant-lime transition-colors">
+          <span class="material-symbols-outlined text-deep-navy text-2xl">calendar_month</span>
+        </div>
+        <h3 class="font-headline-md text-xl font-bold text-deep-navy mb-3">Flexible Scheduling</h3>
+        <p class="font-body-sm text-on-surface-variant leading-relaxed">Learning that fits your life. Morning, noon, or night — our tutors adapt to your family's busy schedule.</p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="bg-surface-bright p-8 rounded-2xl border border-surface-variant/60 shadow-xs hover:border-vibrant-lime hover:shadow-md transition-all group">
+        <div class="w-14 h-14 bg-deep-navy/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-vibrant-lime transition-colors">
+          <span class="material-symbols-outlined text-deep-navy text-2xl">trending_up</span>
+        </div>
+        <h3 class="font-headline-md text-xl font-bold text-deep-navy mb-3">Proven Results</h3>
+        <p class="font-body-sm text-on-surface-variant leading-relaxed">Measurable progress tracking and consistent grade improvements for students at all levels.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The Request Form Section -->
+<section class="py-20 md:py-28 bg-canvas-gray" id="tutor-form">
+  <div class="max-w-container-max mx-auto px-gutter">
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-surface-variant/60">
+      
+      <!-- Form Header -->
+      <div class="bg-deep-navy p-8 sm:p-12 text-center text-white relative">
+        <span class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs mb-2 block">Step-by-Step Request</span>
+        <h2 class="font-headline-lg text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Request a Private Tutor</h2>
+        <p class="text-primary-fixed/90 font-body-md text-base max-w-xl mx-auto">Fill out the details below and we'll match you with the ideal educator within 24 hours.</p>
+      </div>
+
+      <!-- Step Navigation Bar -->
+      <div class="bg-surface-container-low border-b border-surface-variant p-4 sm:p-6">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto" id="tab-nav">
+          
+          <button type="button" onclick="openform(1)" id="Tab1" class="step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white active-step text-left cursor-pointer">
+            <span id="Span1" class="step-number w-8 h-8 rounded-lg bg-deep-navy text-white flex items-center justify-center font-bold text-sm shrink-0">1</span>
+            <span class="text-xs font-bold leading-tight">About Child</span>
+          </button>
+
+          <button type="button" onclick="openform(2)" id="Tab2" class="step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white text-left cursor-pointer">
+            <span id="Span2" class="step-number w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-sm shrink-0">2</span>
+            <span class="text-xs font-bold leading-tight">Contact Info</span>
+          </button>
+
+          <button type="button" onclick="openform(3)" id="Tab3" class="step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white text-left cursor-pointer">
+            <span id="Span3" class="step-number w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-sm shrink-0">3</span>
+            <span class="text-xs font-bold leading-tight">Location</span>
+          </button>
+
+          <button type="button" onclick="openform(4)" id="Tab4" class="step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white text-left cursor-pointer">
+            <span id="Span4" class="step-number w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-sm shrink-0">4</span>
+            <span class="text-xs font-bold leading-tight">Schedule</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Form Body -->
+      <form method="post" class="p-6 sm:p-12">
+        {% csrf_token %}
+
+        <!-- Step 1: About Child -->
+        <div id="form1" class="form-step-content space-y-6">
+          <div class="border-b border-surface-variant pb-4 mb-6">
+            <h3 class="font-headline-md text-xl font-bold text-deep-navy">Tell us about your child's need</h3>
+            <p class="font-body-sm text-on-surface-variant text-sm">What's your goal and what subjects do your kids need help with?</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4">
+            {{ Abform|crispy }}
+          </div>
+          <div class="pt-6 flex justify-end">
+            <button type="button" class="px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center gap-2" onclick="fnext(1)">
+              Next: Contact Info
+              <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Contact Information -->
+        <div id="form2" class="form-step-content space-y-6" style="display: none;">
+          <div class="border-b border-surface-variant pb-4 mb-6">
+            <h3 class="font-headline-md text-xl font-bold text-deep-navy">Personal / Guardian Information</h3>
+            <p class="font-body-sm text-on-surface-variant text-sm">This is used to contact you regarding tutor matches and lessons.</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4">
+            {{ Guform|crispy }}
+          </div>
+          <div class="pt-6 flex justify-between gap-4">
+            <button type="button" class="px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center gap-2" onclick="openform(1)">
+              <span class="material-symbols-outlined text-lg">arrow_back</span>
+              Back
+            </button>
+            <button type="button" class="px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center gap-2" onclick="fnext(2)">
+              Next: Location Info
+              <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Location Information -->
+        <div id="form3" class="form-step-content space-y-6" style="display: none;">
+          <div class="border-b border-surface-variant pb-4 mb-6">
+            <h3 class="font-headline-md text-xl font-bold text-deep-navy">Where do you stay?</h3>
+            <p class="font-body-sm text-on-surface-variant text-sm">This helps us assign tutors in your time zone or region.</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4">
+            {{ Loform|crispy }}
+          </div>
+          <div class="pt-6 flex justify-between gap-4">
+            <button type="button" class="px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center gap-2" onclick="openform(2)">
+              <span class="material-symbols-outlined text-lg">arrow_back</span>
+              Back
+            </button>
+            <button type="button" class="px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center gap-2" onclick="fnext(3)">
+              Next: Lesson Schedule
+              <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 4: Lesson Schedule -->
+        <div id="form4" class="form-step-content space-y-6" style="display: none;">
+          <div class="border-b border-surface-variant pb-4 mb-6">
+            <h3 class="font-headline-md text-xl font-bold text-deep-navy">Lesson Schedule & Preferences</h3>
+            <p class="font-body-sm text-on-surface-variant text-sm">Specify duration, preferred days, and class timings.</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4">
+            {{ Leform|crispy }}
+          </div>
+          <div class="pt-6 flex justify-between gap-4">
+            <button type="button" class="px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center gap-2" onclick="openform(3)">
+              <span class="material-symbols-outlined text-lg">arrow_back</span>
+              Back
+            </button>
+            <button type="submit" class="px-10 py-4 bg-vibrant-lime text-deep-navy font-bold rounded-xl hover:brightness-105 shadow-md transition-all flex items-center gap-2 text-base">
+              Submit Request
+              <span class="material-symbols-outlined text-xl">send</span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Trust & Social Proof Section -->
+<section class="py-20 bg-white">
+  <div class="max-w-container-max mx-auto px-gutter">
+    <div class="text-center mb-16 space-y-3">
+      <span class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs">Global Impact</span>
+      <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-deep-navy tracking-tight">Trusted by Families Worldwide</h2>
+      <p class="font-body-md text-on-surface-variant text-base">Proudly supporting quality education across over 50+ countries.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      <!-- Testimonial Image Card 1 -->
+      <div class="group rounded-2xl bg-surface-bright border border-surface-variant/60 overflow-hidden shadow-sm hover:shadow-xl hover:border-vibrant-lime transition-all duration-300">
+        <div class="relative overflow-hidden bg-deep-navy/5 flex items-center justify-center p-2 min-h-[250px]">
+          <img src="{% static 'IMG/testimonial_images/WhatsApp_Image_2026-05-23_at_09.00.36.jpeg' %}" onerror="this.onerror=null; this.src='/media/testimonial_images/WhatsApp_Image_2026-05-23_at_09.00.36.jpeg';" alt="Edukom Testimonial 1" class="w-full h-auto max-h-[450px] object-contain rounded-xl group-hover:scale-[1.02] transition-transform duration-500">
+        </div>
+      </div>
+
+      <!-- Testimonial Image Card 2 -->
+      <div class="group rounded-2xl bg-surface-bright border border-surface-variant/60 overflow-hidden shadow-sm hover:shadow-xl hover:border-vibrant-lime transition-all duration-300">
+        <div class="relative overflow-hidden bg-deep-navy/5 flex items-center justify-center p-2 min-h-[250px]">
+          <img src="{% static 'IMG/testimonial_images/testimonial2.jpeg' %}" onerror="this.onerror=null; this.src='/media/testimonial_images/testimonial2.jpeg';" alt="Edukom Testimonial 2" class="w-full h-auto max-h-[450px] object-contain rounded-xl group-hover:scale-[1.02] transition-transform duration-500">
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust Badges -->
+    <div class="mt-16 pt-8 border-t border-surface-variant flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-75">
+      <div class="flex items-center gap-3 text-deep-navy font-bold text-sm">
+        <span class="material-symbols-outlined text-vibrant-lime text-2xl">public</span>
+        <span>GLOBAL REACH</span>
+      </div>
+      <div class="flex items-center gap-3 text-deep-navy font-bold text-sm">
+        <span class="material-symbols-outlined text-vibrant-lime text-2xl">shield</span>
+        <span>SECURE PROCESS</span>
+      </div>
+      <div class="flex items-center gap-3 text-deep-navy font-bold text-sm">
+        <span class="material-symbols-outlined text-vibrant-lime text-2xl">verified</span>
+        <span>CERTIFIED TUTORS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Form Switcher Script -->
+<script>
+  function openform(key) {
+    const totalSteps = 4;
+    
+    // Hide all forms
+    for (let i = 1; i <= totalSteps; i++) {
+      const stepForm = document.getElementById(`form${i}`);
+      const stepTab = document.getElementById(`Tab${i}`);
+      const stepSpan = document.getElementById(`Span${i}`);
+
+      if (stepForm) {
+        if (i === key) {
+          stepForm.style.display = 'block';
+        } else {
+          stepForm.style.display = 'none';
+        }
+      }
+
+      if (stepTab && stepSpan) {
+        if (i === key) {
+          stepTab.className = 'step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white active-step text-left cursor-pointer';
+          stepSpan.className = 'step-number w-8 h-8 rounded-lg bg-vibrant-lime text-deep-navy flex items-center justify-center font-bold text-sm shrink-0';
+        } else if (i < key) {
+          stepTab.className = 'step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant completed-step text-left cursor-pointer';
+          stepSpan.className = 'step-number w-8 h-8 rounded-lg bg-deep-navy text-white flex items-center justify-center font-bold text-sm shrink-0';
+        } else {
+          stepTab.className = 'step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white text-left cursor-pointer';
+          stepSpan.className = 'step-number w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-sm shrink-0';
+        }
+      }
+    }
+  }
+
+  function fnext(key) {
+    openform(key + 1);
+  }
+
+  // Initialize step 1 and clean up select placeholders
+  document.addEventListener('DOMContentLoaded', function() {
+    openform(1);
+
+    // Replace '---------' option texts with friendly context-based placeholders
+    document.querySelectorAll('.form-step-content select').forEach(function(select) {
+      const firstOpt = select.options[0];
+      if (firstOpt && (firstOpt.text.includes('---') || firstOpt.value === '')) {
+        const fieldGroup = select.closest('.form-group') || select.parentElement;
+        const label = fieldGroup ? fieldGroup.querySelector('label') : null;
+        if (label && label.innerText) {
+          const labelText = label.innerText.replace('*', '').trim();
+          firstOpt.text = 'Select ' + labelText;
+        } else {
+          firstOpt.text = 'Select Option';
+        }
+      }
+    });
+  });
+</script>
+
+{% endblock main %}

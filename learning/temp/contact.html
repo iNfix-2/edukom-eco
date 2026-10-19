@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book a Consultation | Edukom Academic Consulting{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@29.1.2/dist/css/intlTelInput.min.css">
+
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(224, 224, 224, 0.3);
+    }
+    .custom-shadow {
+        box-shadow: 0 4px 20px rgba(0, 39, 105, 0.05);
+    }
+    .iti {
+        width: 100%;
+    }
+    .iti__country-list {
+        color: #1a1c1c;
+        z-index: 50;
+    }
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="tel"],
+    form select,
+    form textarea {
+        width: 100%;
+        background-color: #f3f3f3;
+        border: 1px solid transparent;
+        border-radius: 0.75rem;
+        padding: 0.875rem 1.25rem;
+        font-size: 0.95rem;
+        color: #1a1c1c;
+        transition: all 0.2s ease;
+    }
+    form input[type="text"]:focus,
+    form input[type="email"]:focus,
+    form input[type="tel"]:focus,
+    form select:focus,
+    form textarea:focus {
+        background-color: #ffffff;
+        border-color: #002769;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 39, 105, 0.15);
+    }
+    form label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #444650;
+        margin-bottom: 0.375rem;
+        display: block;
+    }
+    .asteriskField {
+        color: #ba1a1a;
+    }
+</style>
+
+<!-- Hero & Main Content Section -->
+<section class="pt-8 sm:pt-12 pb-16 sm:pb-24 bg-canvas-gray min-h-[85vh] relative overflow-hidden">
+    <!-- Ambient Splatter Decor -->
+    <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -right-16 top-10 w-48 sm:w-72 opacity-20 pointer-events-none z-0 select-none animate-floatSlow" alt="">
+    <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -left-16 bottom-20 w-52 sm:w-80 opacity-20 pointer-events-none z-0 select-none animate-floatSlow" alt="">
+
+    <div class="max-w-container-max mx-auto px-4 sm:px-6 md:px-8 relative z-10">
+        
+        <!-- Header Text -->
+        <div class="mb-10 sm:mb-14 text-center lg:text-left">
+            <span class="px-3.5 py-1 bg-deep-navy text-vibrant-lime rounded-full text-xs font-bold uppercase tracking-widest inline-block mb-3">Academic Excellence</span>
+            <h1 class="font-display-lg text-3xl sm:text-4xl md:text-5xl font-bold text-deep-navy mb-4 leading-tight">Book a Free Consultation</h1>
+            <p class="font-body-lg text-sm sm:text-base md:text-lg text-on-surface-variant max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                Start your journey toward academic excellence today. Our experts are ready to design a personalized learning path for your child's success.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            
+            <!-- Left Column: Contact Info Card & Photo -->
+            <div class="lg:col-span-5 space-y-6 sm:space-y-8">
+                
+                <!-- Contact Info Container -->
+                <div class="bg-primary-container p-6 sm:p-10 rounded-2xl sm:rounded-3xl text-pure-white shadow-xl relative overflow-hidden">
+                    <!-- Subtle background logo pattern -->
+                    <div class="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
+                        <span class="material-symbols-outlined text-[120px] text-white">school</span>
+                    </div>
+
+                    <h2 class="font-headline-md text-2xl sm:text-3xl font-bold text-white mb-8">Reach Out Directly</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Location -->
+                        <div class="flex gap-4 items-start">
+                            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-vibrant-lime text-xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                            </div>
+                            <div>
+                                <p class="font-label-md text-xs text-vibrant-lime uppercase tracking-wider font-bold mb-1">Our Office</p>
+                                <p class="font-body-md text-xs sm:text-sm text-white/90 leading-relaxed">
+                                    Plot D2, Maazi Fidelis Nwosu Close, Valley Hub Estate (beside River Park Estate), Lugbe, Abuja.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="flex gap-4 items-start">
+                            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-vibrant-lime text-xl" style="font-variation-settings: 'FILL' 1;">mail</span>
+                            </div>
+                            <div>
+                                <p class="font-label-md text-xs text-vibrant-lime uppercase tracking-wider font-bold mb-1">Email Us</p>
+                                <p class="font-body-md text-xs sm:text-sm text-white/90 leading-relaxed">
+                                    <a class="hover:text-vibrant-lime transition-colors block" href="mailto:ope.komolafe@edukom.ng">ope.komolafe@edukom.ng</a>
+                                    <a class="hover:text-vibrant-lime transition-colors block" href="mailto:info@edukom.ng">info@edukom.ng</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="flex gap-4 items-start">
+                            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-vibrant-lime text-xl" style="font-variation-settings: 'FILL' 1;">call</span>
+                            </div>
+                            <div>
+                                <p class="font-label-md text-xs text-vibrant-lime uppercase tracking-wider font-bold mb-1">Phone Support</p>
+                                <p class="font-body-md text-xs sm:text-sm text-white/90 leading-relaxed">
+                                    <a class="hover:text-vibrant-lime transition-colors block" href="tel:+2349042719410">+234(0) 904 2719 410</a>
+                                    <a class="hover:text-vibrant-lime transition-colors block" href="tel:+2348033310626">+234(0) 803 3310 626</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Icons -->
+                    <div class="mt-10 pt-6 border-t border-white/10 flex items-center justify-between">
+                        <p class="font-label-md text-xs text-pure-white/70">Connect with us:</p>
+                        <div class="flex gap-3">
+                            <a class="w-9 h-9 rounded-full bg-pure-white/10 flex items-center justify-center hover:bg-vibrant-lime transition-all duration-300 group" href="#">
+                                <span class="material-symbols-outlined text-pure-white group-hover:text-deep-navy text-sm">share</span>
+                            </a>
+                            <a class="w-9 h-9 rounded-full bg-pure-white/10 flex items-center justify-center hover:bg-vibrant-lime transition-all duration-300 group" href="#">
+                                <span class="material-symbols-outlined text-pure-white group-hover:text-deep-navy text-sm">public</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Educational Environment Banner -->
+                <div class="relative h-56 sm:h-64 rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg group">
+                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Edukom Academic Environment" src="{% static 'IMG/medium-shot-student-studying-with-laptop.jpg' %}" onerror="this.onerror=null; this.src='{% static 'IMG/header/lesson-online-english-courses-home.jpg' %}';"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-navy/80 via-deep-navy/20 to-transparent flex items-end p-6">
+                        <div class="text-white">
+                            <span class="px-2.5 py-0.5 bg-vibrant-lime text-deep-navy rounded text-[10px] font-bold uppercase tracking-wider mb-1 inline-block shadow-sm">Modern Facilities</span>
+                            <p class="font-bold text-sm sm:text-base">Personalized Learning & Mentorship Ecosystems</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Consultation Form -->
+            <div class="lg:col-span-7">
+                <div class="bg-pure-white p-6 sm:p-10 md:p-12 rounded-2xl sm:rounded-3xl shadow-xl border border-surface-variant/60">
+                    <div class="mb-8">
+                        <h2 class="font-headline-lg text-2xl sm:text-3xl font-bold text-deep-navy mb-2">
+                            Consultation <span class="text-vibrant-lime">Form</span>
+                        </h2>
+                        <p class="font-body-md text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                            Fill in the details below and an academic advisor will contact you within 24 hours.
+                        </p>
+                    </div>
+
+                    <form action="#" method="post" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        {% if form %}
+                            {{ form|crispy }}
+                        {% else %}
+                            <!-- Fallback Static Form Fields if Django Form Context is empty -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="space-y-1.5">
+                                    <label class="font-label-md text-xs font-semibold text-on-surface-variant">Full Name*</label>
+                                    <input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm" placeholder="John Doe" type="text" required/>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="font-label-md text-xs font-semibold text-on-surface-variant">Email Address*</label>
+                                    <input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm" placeholder="john@example.com" type="email" required/>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="font-label-md text-xs font-semibold text-on-surface-variant">Phone Number (with country code)*</label>
+                                <input id="id_phone_number" class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm" placeholder="803 000 0000" type="tel" required/>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="font-label-md text-xs font-semibold text-on-surface-variant">Preferred Consultation Topic</label>
+                                <select class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm">
+                                    <option>General Academic Advice</option>
+                                    <option>A-Level & Prep Programs</option>
+                                    <option>Tutor Placement</option>
+                                    <option>University Admissions</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="font-label-md text-xs font-semibold text-on-surface-variant">Your Message</label>
+                                <textarea class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm resize-none" placeholder="Tell us about your academic goals..." rows="4"></textarea>
+                            </div>
+                        {% endif %}
+
+                        <div class="pt-4">
+                            <button type="submit" class="w-full sm:w-auto px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold text-sm rounded-xl hover:bg-primary-container hover:text-white transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2">
+                                <span>Submit Consultation Request</span>
+                                <span class="material-symbols-outlined text-base">send</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="w-full py-12 px-4 sm:px-6 md:px-8 bg-surface-container-low border-t border-surface-variant/60">
+    <div class="max-w-container-max mx-auto overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl h-[380px] sm:h-[450px] relative border border-surface-variant/60">
+        <!-- Interactive Location Visual Container -->
+        <div class="w-full h-full bg-surface-container-highest relative flex items-center justify-center">
+            <!-- Abuja Map Image -->
+            <img src="{% static 'IMG/contact/wue.png' %}" class="w-full h-full object-cover" alt="Edukom Abuja Office Location Map">
+            <div class="absolute inset-0 bg-deep-navy/15 pointer-events-none"></div>
+
+            <!-- Location Badge Overlay -->
+            <div class="absolute top-6 left-6 z-10 glass-card p-4 sm:p-6 rounded-2xl custom-shadow max-w-xs">
+                <div class="flex items-center gap-3 mb-1.5">
+                    <div class="w-3 h-3 bg-vibrant-lime rounded-full animate-pulse"></div>
+                    <h4 class="font-headline-md text-deep-navy font-bold text-base sm:text-lg">Abuja Headquarters</h4>
+                </div>
+                <p class="font-body-sm text-xs sm:text-sm text-on-surface-variant font-medium">
+                    Plot D2, Maazi Fidelis Nwosu Close, Valley Hub Estate, Lugbe, Abuja
+                </p>
+            </div>
+
+            <!-- Animated Location Marker -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="flex flex-col items-center animate-bounce">
+                    <span class="material-symbols-outlined text-vibrant-lime text-5xl sm:text-6xl drop-shadow-2xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                    <div class="w-8 h-2 bg-black/40 rounded-full blur-xs mt-0.5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@29.1.2/dist/js/intlTelInputWithUtils.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var phoneInput = document.querySelector('#id_phone_number');
+        if (!phoneInput) return;
+
+        var iti = window.intlTelInput(phoneInput, {
+            initialCountry: 'ng',
+            separateDialCode: true,
+        });
+
+        var form = phoneInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                if (phoneInput.value.trim() && !iti.isValidNumber()) {
+                    e.preventDefault();
+                    phoneInput.setCustomValidity('Enter a valid international phone number including your country code.');
+                    phoneInput.reportValidity();
+                    return;
+                }
+                phoneInput.setCustomValidity('');
+                if (phoneInput.value.trim()) {
+                    phoneInput.value = iti.getNumber('E164');
+                }
+            });
+
+            phoneInput.addEventListener('input', function () {
+                phoneInput.setCustomValidity('');
+            });
+        }
+    });
+</script>
+{% endblock main %}

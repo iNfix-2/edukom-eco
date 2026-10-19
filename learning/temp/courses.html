@@ -1,0 +1,541 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+
+<style>
+  .no-scrollbar::-webkit-scrollbar,
+  .scrollbar-none::-webkit-scrollbar {
+      display: none !important;
+  }
+  .no-scrollbar,
+  .scrollbar-none {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+  }
+</style>
+
+<!-- Edge Decorative Background Splatters -->
+<img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-12 top-28 w-44 md:w-64 opacity-30 pointer-events-none z-0 select-none" alt="">
+<img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-12 top-10 w-44 md:w-64 opacity-35 pointer-events-none z-0 select-none" alt="">
+<img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -right-12 top-[700px] w-48 md:w-72 opacity-25 pointer-events-none z-0 select-none" alt="">
+<img src="{% static 'IMG/community/Splatter - 20.png' %}" class="absolute -left-16 bottom-24 w-52 md:w-80 opacity-30 pointer-events-none z-0 select-none" alt="">
+
+<main class="max-w-container-max mx-auto px-gutter py-12 md:py-20 relative z-10">
+  
+  <!-- Hero Header -->
+  <header class="mb-16">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
+      <div>
+        <div class="inline-block border-b-2 border-vibrant-lime pb-1 mb-3">
+          <span class="font-label-md uppercase tracking-wider text-deep-navy font-bold text-xs">Academic Programs & Curriculums</span>
+        </div>
+        <h1 class="font-headline-lg text-4xl sm:text-5xl font-bold text-deep-navy mb-4 tracking-tight">Master Your Future with Edukom</h1>
+        <p class="font-body-lg text-on-surface-variant max-w-3xl text-base sm:text-lg leading-relaxed">
+          Bridging traditional academic excellence with modern digital innovation. Explore our comprehensive selection of 1-on-1 private tutoring programs across British, Nigerian, American, and IPC Curriculums.
+        </p>
+      </div>
+      
+      <!-- Trust & Excellence Badge -->
+      <div class="flex items-center gap-3.5 bg-white px-5 py-3.5 rounded-2xl shadow-sm border border-surface-variant/60">
+        <div class="w-10 h-10 rounded-full bg-deep-navy text-vibrant-lime flex items-center justify-center shrink-0 shadow-sm">
+          <span class="material-symbols-outlined text-xl">workspace_premium</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-deep-navy text-sm leading-tight">100% Guaranteed Excellence</span>
+            <span class="material-symbols-outlined text-vibrant-lime text-sm">verified</span>
+          </div>
+          <span class="text-on-surface-variant text-xs font-medium">Top Tier Tutors & Customized Curriculums</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Category Bar -->
+    <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-sm border border-surface-variant/60 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-4 overflow-hidden">
+      
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-xl text-deep-navy font-bold text-sm shrink-0">
+          <span class="material-symbols-outlined text-xl">filter_list</span>
+          Filter Programs
+        </div>
+        <div class="h-6 w-px bg-surface-variant hidden md:block"></div>
+      </div>
+
+      <!-- Scrollable Filter Buttons Container -->
+      <div class="flex items-center gap-2.5 overflow-x-auto no-scrollbar scrollbar-none flex-1 py-1 scroll-smooth" id="categoryFilters">
+        <button data-category="all" class="course-filter-btn active-filter bg-deep-navy text-white px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shadow-md shrink-0 whitespace-nowrap">All Programs</button>
+        <button data-category="examprep" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">Exam Prep</button>
+        <button data-category="math" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">Mathematics</button>
+        <button data-category="science" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">Sciences & Tech</button>
+        <button data-category="humanities" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">English & Languages</button>
+        <button data-category="commercial" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">Commercial & Social Sciences</button>
+      </div>
+
+      <div class="hidden lg:flex items-center gap-2 shrink-0 border-l border-surface-variant/60 pl-3">
+        <select id="courseSort" class="bg-surface-container border-none rounded-xl font-body-sm text-on-surface-variant px-4 py-2.5 text-sm focus:ring-2 focus:ring-deep-navy cursor-pointer">
+          <option value="popular">Sort by: Popularity</option>
+          <option value="newest">Sort by: Level</option>
+          <option value="rating">Sort by: Success Rate</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- Bento Grid Courses & Programs -->
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-20">
+    
+    <!-- Featured Large Card: Exam Prep & Curriculums -->
+    <div class="md:col-span-8 group relative overflow-hidden rounded-3xl bg-deep-navy text-white shadow-xl min-h-[420px] flex flex-col justify-end p-8 sm:p-12">
+      <!-- Background Image & Gradient -->
+      <div class="absolute inset-0 opacity-30 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('{% static 'IMG/teenage-girl-using-laptop-online-school.jpg' %}');"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-deep-navy via-deep-navy/70 to-transparent"></div>
+      
+      <div class="relative z-10 max-w-2xl space-y-4">
+        <span class="inline-block px-3.5 py-1.5 bg-vibrant-lime text-deep-navy font-bold text-xs rounded-full uppercase tracking-wider">Featured Program</span>
+        <h2 class="font-headline-lg text-2xl sm:text-4xl font-bold text-white leading-tight">Specialized Exam Preparation & International Curriculums</h2>
+        <p class="text-white/80 font-body-md text-sm sm:text-base leading-relaxed">
+          Targeted 1-on-1 tutoring designed for outstanding performance in WASSCE, UTME/JAMB, IGCSE, SAT, IELTS, and A-Levels under British, Nigerian, American, and IPC Curriculums.
+        </p>
+        <div class="flex flex-wrap items-center gap-6 pt-2">
+          <a href="{% url 'GetATutor' %}" class="bg-vibrant-lime text-deep-navy px-8 py-3.5 rounded-xl font-bold text-sm hover:scale-105 transition-all shadow-lg">
+            Request a Private Tutor
+          </a>
+          <div class="flex items-center gap-2 text-vibrant-lime">
+            <span class="material-symbols-outlined text-lg">workspace_premium</span>
+            <span class="font-bold text-white text-sm">98% Exam Pass Rate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Learning Path Highlights Card -->
+    <div class="md:col-span-4 bg-white rounded-3xl p-8 shadow-sm border border-surface-variant/60 flex flex-col justify-between overflow-hidden relative group">
+      <div class="relative z-10 space-y-3">
+        <span class="text-vibrant-lime font-bold text-xs uppercase tracking-wider bg-deep-navy px-3 py-1 rounded-md">Curriculum Levels</span>
+        <h3 class="font-headline-md text-2xl font-bold text-deep-navy">Learning Path: Reception to A-Levels</h3>
+        <p class="text-on-surface-variant font-body-sm text-sm leading-relaxed">Tailored 1-on-1 tutoring for Reception Class, Year 1 to 11, SSS 1-3, and A-Levels mastery.</p>
+      </div>
+
+      <div class="relative h-44 my-4 flex items-center justify-center">
+        <img alt="Learning paths illustration" class="w-full h-full object-contain transform group-hover:rotate-3 group-hover:scale-105 transition-all duration-500" src="{% static 'IMG/globe.svg' %}">
+      </div>
+
+      <div class="relative z-10 pt-4 border-t border-surface-variant">
+        <a class="flex items-center justify-between group/link text-deep-navy font-bold text-sm hover:text-vibrant-lime transition-colors" href="{% url 'GetATutor' %}">
+          <span>Get Started Today</span>
+          <span class="material-symbols-outlined group-hover/link:translate-x-2 transition-transform text-base">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Actual Offered Courses Cards -->
+
+    <!-- Card 1: Exam Prep Track -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="examprep">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-3xl">verified</span>
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">WAEC • UTME • IGCSE • SAT</span>
+          <span class="font-bold text-vibrant-lime text-xs uppercase tracking-wider bg-deep-navy px-2 py-0.5 rounded">Exam Prep</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">Standardized Exam Prep Track</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">Intensive prep for WASSCE, UTME/JAMB, NECO, BECE, IGCSE, SAT, and IELTS with mock exam drills and proven strategies.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">event_repeat</span>
+            Flexible Schedules
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">groups</span>
+            1-on-1 Tutoring
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+    <!-- Card 2: Mathematics & Further Math -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="math">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-vibrant-lime text-deep-navy flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          ∑
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">Reception to A-Levels</span>
+          <span class="font-bold text-deep-navy text-xs">Foundation to Advanced</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">Mathematics & Further Mathematics</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">Building strong numerical foundations, algebra, calculus, geometry, statistics, and Further Math for senior levels.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">calculate</span>
+            All Curriculums
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">person</span>
+            Online & Physical
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+    <!-- Card 3: Pure & Applied Sciences -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="science">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-deep-navy text-white flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-3xl">science</span>
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">Physics • Chemistry • Biology</span>
+          <span class="font-bold text-deep-navy text-xs">KS3, KS4 & Senior</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">Pure Sciences (Physics, Chemistry & Biology)</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">In-depth coverage of scientific laws, laboratory concepts, chemical equations, and organic biology for school & exam success.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">biotech</span>
+            Basic & Advanced
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">check_circle</span>
+            Practical Mastery
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+    <!-- Card 4: Coding & ICT Technology -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="science">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-vibrant-lime text-deep-navy flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-3xl">code</span>
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">Beginner to Advanced</span>
+          <span class="font-bold text-deep-navy text-xs">Practical Tech</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">Coding & ICT Computer Science</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">Hands-on technology education covering Python programming, web development basics, ICT literacy, and algorithmic logic.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">terminal</span>
+            Project-Based
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">laptop_mac</span>
+            Interactive
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+    <!-- Card 5: English & Phonics -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="humanities">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-3xl">menu_book</span>
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">Phonics • Reading • Essay Writing</span>
+          <span class="font-bold text-deep-navy text-xs">All Grades</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">English Language, Phonics & Literature</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">Improving reading comprehension, phonics, grammar, essay composition, Literature in English, and Verbal Reasoning.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">edit_note</span>
+            Literacy Focus
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">record_voice_over</span>
+            Confidence Boost
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+    <!-- Card 6: Economics, Business & Commerce -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="commercial">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-vibrant-lime text-deep-navy flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-3xl">trending_up</span>
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">Economics • Accounting • Business</span>
+          <span class="font-bold text-deep-navy text-xs">Commercial Track</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">Economics, Accounting & Commerce</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">Understanding micro & macro economics, financial accounting, bookkeeping, trade laws, and commercial principles.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">payments</span>
+            SS1-3 & A-Levels
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">equalizer</span>
+            WAEC / IGCSE
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+    <!-- Card 7: History, Government & Law -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="commercial">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-deep-navy text-white flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-3xl">gavel</span>
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">Government • Law • Sociology</span>
+          <span class="font-bold text-deep-navy text-xs">Arts & Social Science</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">History, Government, Law & Sociology</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">Exploring political systems, civic education, historical events, constitutional law, and human behavior studies.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">account_balance</span>
+            Humanities Focus
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">public</span>
+            Global Context
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+    <!-- Card 8: Foreign Languages (French) -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="humanities">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-vibrant-lime text-deep-navy flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-3xl">translate</span>
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">French & Foreign Languages</span>
+          <span class="font-bold text-deep-navy text-xs">All Levels</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">French Language & International Communication</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">Developing conversational fluency, vocabulary, grammar, and listening comprehension in French for school and exams.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">language</span>
+            Multilingual
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">forum</span>
+            Conversational
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+    <!-- Card 9: Special Needs & Home Schooling -->
+    <div class="md:col-span-4 course-card group bg-white rounded-2xl shadow-sm border border-surface-variant/60 overflow-hidden flex flex-col transition-all hover:shadow-xl hover:-translate-y-1" data-category="all">
+      <div class="h-48 overflow-hidden relative bg-deep-navy/5 flex items-center justify-center p-6">
+        <div class="w-16 h-16 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center font-bold text-2xl shadow-md group-hover:scale-110 transition-transform">
+          <span class="material-symbols-outlined text-3xl">family_restroom</span>
+        </div>
+      </div>
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-deep-navy font-bold text-xs bg-canvas-gray px-2.5 py-1 rounded-md">Homeschooling & Special Support</span>
+          <span class="font-bold text-vibrant-lime text-xs uppercase tracking-wider bg-deep-navy px-2 py-0.5 rounded">Personalized</span>
+        </div>
+        <h4 class="font-headline-md text-lg font-bold text-deep-navy mb-2 group-hover:text-vibrant-lime transition-colors">Homeschooling & Special Educational Needs (SEN)</h4>
+        <p class="text-on-surface-variant font-body-sm text-sm mb-6 flex-grow">Dedicated full-time or part-time tutoring programs tailored for homeschooled students and learners needing special attention.</p>
+        <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs border-t border-surface-variant pt-4">
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">psychology</span>
+            Adaptive Pace
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">handshake</span>
+            Patient Guidance
+          </div>
+        </div>
+      </div>
+      <div class="h-1.5 w-full bg-vibrant-lime"></div>
+    </div>
+
+  </div>
+
+  <!-- Supported Curriculums Section -->
+  <section class="bg-white rounded-3xl p-8 sm:p-12 border border-surface-variant/60 shadow-sm mb-20">
+    <div class="text-center max-w-2xl mx-auto mb-10 space-y-2">
+      <span class="text-vibrant-lime font-bold text-xs uppercase tracking-wider bg-deep-navy px-3 py-1 rounded-md">Global Standards</span>
+      <h3 class="font-headline-lg text-3xl font-bold text-deep-navy">Supported Academic Curriculums</h3>
+      <p class="text-on-surface-variant text-sm sm:text-base">Our experienced tutors specialize in delivering lesson plans structured around major educational standards.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-canvas-gray p-6 rounded-2xl border border-surface-variant/60 text-center space-y-3 hover:border-vibrant-lime transition-colors">
+        <div class="w-12 h-12 rounded-xl bg-deep-navy text-vibrant-lime font-bold mx-auto flex items-center justify-center text-lg">NG</div>
+        <h4 class="font-bold text-deep-navy text-lg">Nigerian Curriculum</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">Primary, JSS, SSS, WAEC, NECO, BECE, and UTME alignment.</p>
+      </div>
+
+      <div class="bg-canvas-gray p-6 rounded-2xl border border-surface-variant/60 text-center space-y-3 hover:border-vibrant-lime transition-colors">
+        <div class="w-12 h-12 rounded-xl bg-vibrant-lime text-deep-navy font-bold mx-auto flex items-center justify-center text-lg">UK</div>
+        <h4 class="font-bold text-deep-navy text-lg">British Curriculum</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">KS1 to KS4, Key Stage 3, Checkpoint, IGCSE, and A-Levels.</p>
+      </div>
+
+      <div class="bg-canvas-gray p-6 rounded-2xl border border-surface-variant/60 text-center space-y-3 hover:border-vibrant-lime transition-colors">
+        <div class="w-12 h-12 rounded-xl bg-deep-navy text-white font-bold mx-auto flex items-center justify-center text-lg">US</div>
+        <h4 class="font-bold text-deep-navy text-lg">American Curriculum</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">Elementary, Middle School, High School, SAT & AP preparation.</p>
+      </div>
+
+      <div class="bg-canvas-gray p-6 rounded-2xl border border-surface-variant/60 text-center space-y-3 hover:border-vibrant-lime transition-colors">
+        <div class="w-12 h-12 rounded-xl bg-vibrant-lime text-deep-navy font-bold mx-auto flex items-center justify-center text-lg">IPC</div>
+        <h4 class="font-bold text-deep-navy text-lg">IPC Curriculum</h4>
+        <p class="text-xs text-on-surface-variant leading-relaxed">International Primary Curriculum focusing on foundational development.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tutor Banner Section -->
+  <section class="bg-deep-navy rounded-3xl overflow-hidden shadow-2xl mb-20 grid grid-cols-1 lg:grid-cols-12 text-white">
+    <div class="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex flex-col justify-center space-y-6">
+      <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest">Expert Guidance</span>
+      <h2 class="font-headline-lg text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">Learn from Experienced, Certified Tutors</h2>
+      <p class="text-primary-fixed/80 font-body-lg text-base sm:text-lg leading-relaxed">
+        Our tutors are vetted educators and subject experts who deliver engaging 1-on-1 virtual or in-person sessions tailored to your child's pace.
+      </p>
+
+      <div class="grid grid-cols-2 gap-6 pt-2 max-w-sm">
+        <div class="border-l-4 border-vibrant-lime pl-4">
+          <div class="text-vibrant-lime font-bold text-3xl sm:text-4xl">100%</div>
+          <div class="text-white/70 text-xs font-semibold uppercase tracking-wider">Personalized Tutoring</div>
+        </div>
+        <div class="border-l-4 border-vibrant-lime pl-4">
+          <div class="text-vibrant-lime font-bold text-3xl sm:text-4xl">98%</div>
+          <div class="text-white/70 text-xs font-semibold uppercase tracking-wider">Success Rate</div>
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <a href="{% url 'GetATutor' %}" class="inline-block bg-vibrant-lime text-deep-navy px-8 py-4 rounded-xl font-bold text-sm hover:brightness-105 transition-all shadow-md">
+          Find Your Tutor Now
+        </a>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 relative min-h-[300px] lg:min-h-full">
+      <img src="{% static 'IMG/Rectangle75.jpg' %}" alt="Edukom Tutors" class="w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-deep-navy via-transparent to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- Video Course Library Spotlight Banner -->
+  <section class="mb-20 bg-gradient-to-br from-deep-navy via-primary-container to-deep-navy rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden shadow-xl border border-white/10">
+    <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-vibrant-lime/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div class="lg:col-span-8 space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-vibrant-lime/20 text-vibrant-lime text-xs font-bold border border-vibrant-lime/30">
+          <span class="material-symbols-outlined text-sm">lock</span>
+          <span>AES-128 DRM Protected Streaming</span>
+        </div>
+        <h2 class="font-headline-lg text-2xl sm:text-4xl font-bold text-white tracking-tight">
+          Explore Our On-Demand Video Course Library
+        </h2>
+        <p class="font-body-md text-white/80 text-sm sm:text-base leading-relaxed max-w-2xl">
+          Missed a live session or need revision? Access encrypted, full-syllabus recorded classes, module breakdowns, and exam walk-throughs across STEM, Languages, and Humanities with resume-playback and data-saver streaming.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 pt-2">
+          <a href="{% url 'videolibrary:catalog' %}" class="bg-vibrant-lime hover:brightness-105 text-deep-navy px-8 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center gap-2 active:scale-95">
+            <span class="material-symbols-outlined text-lg">play_circle</span>
+            <span>Browse Video Course Catalog</span>
+          </a>
+          <span class="text-xs text-white/60 flex items-center gap-1.5">
+            <i class="fa-solid fa-cloud-arrow-down text-vibrant-lime"></i>
+            <span>Offline-Ready PWA Caching Available</span>
+          </span>
+        </div>
+      </div>
+      <div class="lg:col-span-4 flex justify-center">
+        <div class="w-44 h-44 sm:w-52 sm:h-52 rounded-3xl bg-white/5 border border-white/15 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm shadow-inner group hover:scale-105 transition-transform">
+          <div class="w-16 h-16 rounded-2xl bg-vibrant-lime text-deep-navy flex items-center justify-center mb-3 shadow-md group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-film text-2xl"></i>
+          </div>
+          <p class="text-white font-bold text-sm">Curriculum Recorded Lessons</p>
+          <p class="text-white/60 text-xs mt-1">Available 24/7 for Enrolled Students</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter / CTA Section -->
+  <section class="text-center py-16 px-6 bg-white rounded-3xl border border-surface-variant/60 shadow-sm max-w-4xl mx-auto">
+    <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest bg-deep-navy px-3 py-1 rounded-md mb-3 inline-block">Stay Connected</span>
+    <h3 class="font-headline-lg text-2xl sm:text-4xl font-bold text-deep-navy mb-3">Start Your Academic Journey Today</h3>
+    <p class="text-on-surface-variant max-w-xl mx-auto mb-8 text-sm sm:text-base">Connect with expert tutors for academic success. Subscribe for updates on learning resources and exam guides.</p>
+    
+    <form method="post" action="{% url 'subscribe_newsletter' %}" class="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+      {% csrf_token %}
+      <input class="flex-grow border border-surface-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-deep-navy" placeholder="Your academic email address" type="email" name="email" required>
+      <button type="submit" class="bg-deep-navy text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-primary-container transition-all shrink-0">
+        Subscribe
+      </button>
+    </form>
+  </section>
+
+</main>
+
+<!-- Interactive Filter Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.course-filter-btn');
+    const courseCards = document.querySelectorAll('.course-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const category = btn.getAttribute('data-category');
+
+        // Toggle active button class
+        filterBtns.forEach(b => {
+          b.className = 'course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2 rounded-full font-bold text-xs sm:text-sm transition-all';
+        });
+        btn.className = 'course-filter-btn active-filter bg-deep-navy text-white px-5 py-2 rounded-full font-bold text-xs sm:text-sm transition-all shadow-md';
+
+        // Filter cards
+        courseCards.forEach(card => {
+          const cardCategory = card.getAttribute('data-category');
+          if (category === 'all' || cardCategory === category) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>
+
+{% endblock main %}

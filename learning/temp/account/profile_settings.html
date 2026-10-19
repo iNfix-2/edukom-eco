@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Account Settings | Edukom LMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-canvas-gray py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-outline-variant/30">
+      
+      <div class="pb-6 border-b border-outline-variant/20 mb-6">
+        <h1 class="text-2xl font-bold text-deep-navy">Edit Profile & Account Settings</h1>
+        <p class="text-xs text-on-surface-variant mt-1">Update your academic information, contact details, and display preferences.</p>
+      </div>
+
+      <form method="post" enctype="multipart/form-data" class="space-y-6 text-xs font-semibold text-deep-navy">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-deep-navy mb-1">First Name</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-deep-navy mb-1">Last Name</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-deep-navy mb-1">Phone Number (WhatsApp Reminders)</label>
+          <input type="text" name="phone_number" value="{{ profile.phone_number }}" placeholder="+234..." class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-deep-navy mb-1">Academic Headline / Bio Tagline</label>
+          <input type="text" name="headline" value="{{ profile.headline }}" placeholder="e.g. Year 10 IGCSE Scholar or Senior Mathematics Tutor" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-deep-navy mb-1">Primary Timezone (For Dual Time Displays)</label>
+          <select name="timezone" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
+            <option value="Africa/Lagos" {% if profile.timezone == 'Africa/Lagos' %}selected{% endif %}>West Africa Time (WAT) - Lagos</option>
+            <option value="Europe/London" {% if profile.timezone == 'Europe/London' %}selected{% endif %}>Greenwich Mean Time (GMT / BST) - London</option>
+            <option value="America/New_York" {% if profile.timezone == 'America/New_York' %}selected{% endif %}>Eastern Time (ET) - New York</option>
+            <option value="America/Chicago" {% if profile.timezone == 'America/Chicago' %}selected{% endif %}>Central Time (CT) - Chicago</option>
+            <option value="Asia/Dubai" {% if profile.timezone == 'Asia/Dubai' %}selected{% endif %}>Gulf Standard Time (GST) - Dubai</option>
+            <option value="Europe/Paris" {% if profile.timezone == 'Europe/Paris' %}selected{% endif %}>Central European Time (CET) - Paris</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-deep-navy mb-1">Biography / About Me</label>
+          <textarea name="bio" rows="4" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">{{ profile.bio }}</textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-deep-navy mb-1">Avatar / Profile Picture</label>
+          <input type="file" name="avatar" accept="image/*" class="w-full text-xs text-outline file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-surface-container file:text-deep-navy hover:file:bg-surface-container-high">
+        </div>
+
+        <div class="pt-4 flex justify-between items-center">
+          <a href="{% url 'dashboard_dispatcher' %}" class="text-xs font-bold text-outline hover:text-deep-navy">
+            &larr; Return to Dashboard
+          </a>
+          <button type="submit" class="px-6 py-3 bg-deep-navy text-on-primary font-bold text-xs rounded-xl shadow-md hover:bg-primary-container transition">
+            Save Changes
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

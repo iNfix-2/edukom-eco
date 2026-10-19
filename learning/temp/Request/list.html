@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Request Center Overview | Edukom Admin Portal{% endblock %}
+
+{% block main %}
+<style>
+    .tab-active {
+        border-bottom: 3px solid #A9D156;
+        color: #002769;
+        font-weight: 700;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #c4c6d2;
+        border-radius: 10px;
+    }
+    .metric-card {
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+    }
+    .metric-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px -6px rgba(0, 39, 105, 0.12);
+    }
+</style>
+
+<section class="py-6 sm:py-10 md:py-12 bg-canvas-gray min-h-[85vh]">
+    <div class="max-w-container-max mx-auto px-4 sm:px-6">
+        
+        <!-- Dashboard Header & Metrics -->
+        <div class="mb-8 sm:mb-10">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <span class="text-vibrant-lime font-bold text-[11px] sm:text-xs uppercase tracking-widest bg-deep-navy px-3 py-1 rounded-md inline-block mb-2">Management Portal</span>
+                    <h1 class="font-display-lg text-2xl sm:text-3xl md:text-4xl font-bold text-deep-navy leading-tight">Request Center Overview</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="/" class="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-deep-navy text-vibrant-lime font-bold text-xs sm:text-sm hover:bg-primary-container hover:text-white transition-all shadow-sm flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">home</span>
+                        <span>Homepage</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Metrics Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                <!-- Metric 1 -->
+                <div class="metric-card bg-white p-5 sm:p-6 rounded-2xl shadow-sm flex items-center justify-between border-l-4 border-deep-navy border-surface-variant/60">
+                    <div>
+                        <p class="font-label-sm text-xs text-on-surface-variant uppercase tracking-wider mb-1">Guardian Requests</p>
+                        <h3 class="font-display-lg text-2xl sm:text-3xl font-bold text-deep-navy">{{ guardian|length }}</h3>
+                    </div>
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 bg-primary-fixed rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-deep-navy" style="font-variation-settings: 'FILL' 1;">family_restroom</span>
+                    </div>
+                </div>
+
+                <!-- Metric 2 -->
+                <div class="metric-card bg-white p-5 sm:p-6 rounded-2xl shadow-sm flex items-center justify-between border-l-4 border-vibrant-lime border-surface-variant/60">
+                    <div>
+                        <p class="font-label-sm text-xs text-on-surface-variant uppercase tracking-wider mb-1">Tutor Applications</p>
+                        <h3 class="font-display-lg text-2xl sm:text-3xl font-bold text-deep-navy">{{ tutor|length }}</h3>
+                    </div>
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 bg-secondary-container rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'FILL' 1;">school</span>
+                    </div>
+                </div>
+
+                <!-- Metric 3 -->
+                <div class="metric-card bg-white p-5 sm:p-6 rounded-2xl shadow-sm flex items-center justify-between border-l-4 border-deep-navy border-surface-variant/60">
+                    <div>
+                        <p class="font-label-sm text-xs text-on-surface-variant uppercase tracking-wider mb-1">Total Submissions</p>
+                        <h3 class="font-display-lg text-2xl sm:text-3xl font-bold text-deep-navy">{{ guardian|length|add:tutor|length }}</h3>
+                    </div>
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 bg-surface-container-high rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-deep-navy" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
+                    </div>
+                </div>
+
+                <!-- Metric 4 -->
+                <div class="metric-card bg-deep-navy text-white p-5 sm:p-6 rounded-2xl shadow-lg flex items-center justify-between">
+                    <div>
+                        <p class="font-label-sm text-xs text-primary-fixed-dim uppercase tracking-wider mb-1">Active Status</p>
+                        <h3 class="font-display-lg text-2xl sm:text-3xl font-bold text-vibrant-lime">Live Sync</h3>
+                    </div>
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-vibrant-lime" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Requests Table Canvas -->
+        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-surface-variant/60 overflow-hidden mb-8 sm:mb-12">
+            
+            <!-- Tabs Navigation (Responsive Horizontal Scroll) -->
+            <div class="flex items-center gap-4 sm:gap-8 px-4 sm:px-8 pt-4 sm:pt-6 border-b border-surface-variant/60 overflow-x-auto whitespace-nowrap custom-scrollbar">
+                <button class="pb-3 sm:pb-4 font-body-md text-sm sm:text-base transition-all tab-active flex items-center gap-2 shrink-0" id="tab-guardian" onclick="switchTab('guardian')">
+                    <span class="material-symbols-outlined text-lg sm:text-xl">family_restroom</span>
+                    <span>Guardian Requests</span>
+                    <span class="ml-1 px-2 py-0.5 rounded-full text-xs bg-deep-navy text-white font-bold">{{ guardian|length }}</span>
+                </button>
+                <button class="pb-3 sm:pb-4 font-body-md text-sm sm:text-base text-on-surface-variant hover:text-deep-navy transition-all flex items-center gap-2 shrink-0" id="tab-tutor" onclick="switchTab('tutor')">
+                    <span class="material-symbols-outlined text-lg sm:text-xl">school</span>
+                    <span>Tutor Requests</span>
+                    <span class="ml-1 px-2 py-0.5 rounded-full text-xs bg-surface-container-high text-deep-navy font-bold">{{ tutor|length }}</span>
+                </button>
+            </div>
+
+            <!-- Toolbar with chronological order indicator & toggle -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-8 py-3 bg-surface-container-lowest border-b border-surface-variant/40">
+                <span class="text-xs text-on-surface-variant font-medium flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm text-deep-navy">info</span>
+                    <span>Click <strong>Date Submitted</strong> header to toggle chronological sorting instantly.</span>
+                </span>
+                <a href="?order={% if current_order == 'asc' %}desc{% else %}asc{% endif %}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container text-deep-navy text-xs font-bold hover:bg-surface-variant transition-colors self-start sm:self-auto border border-surface-variant/60">
+                    <span class="material-symbols-outlined text-sm">swap_vert</span>
+                    <span>Server Sort: {% if current_order == 'asc' %}Oldest First (Ascending){% else %}Newest First (Descending){% endif %}</span>
+                </a>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-4 sm:p-6">
+                
+                <!-- Guardian Requests Content -->
+                <div id="content-guardian">
+                    
+                    <!-- Mobile Card View (Visible on small screens) -->
+                    <div class="block md:hidden space-y-4">
+                        {% for guardian_item in guardian %}
+                        <div class="bg-surface-container/50 p-4 rounded-2xl border border-surface-variant/80 space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center font-bold text-deep-navy text-xs shrink-0">
+                                        {{ guardian_item.first_name|first }}{{ guardian_item.last_name|first }}
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-deep-navy text-sm sm:text-base">{{ guardian_item.last_name }} {{ guardian_item.first_name }}</h3>
+                                        <p class="text-xs text-on-surface-variant">Class: {{ guardian_item.AboutChild.child_class|default:"N/A" }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-bold text-deep-navy bg-white px-2.5 py-1 rounded-full border border-surface-variant shrink-0">
+                                    #{{ forloop.counter }}
+                                </span>
+                            </div>
+                            <div class="space-y-1.5 text-xs text-on-surface-variant border-t border-surface-variant/60 pt-2.5">
+                                <p><strong class="text-deep-navy">Subject:</strong> {{ guardian_item.AboutChild.subject|default:"General Tutoring" }}</p>
+                                <p><strong class="text-deep-navy">Goal:</strong> {{ guardian_item.AboutChild.goal|default:"N/A" }}</p>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-xs text-on-surface-variant border-t border-surface-variant/60 pt-2 font-medium">
+                                <span class="material-symbols-outlined text-sm text-deep-navy">schedule</span>
+                                <span>Submitted: <strong class="text-deep-navy">{{ guardian_item.date_joined|date:"M d, Y, h:i A" }}</strong></span>
+                            </div>
+                            <div class="pt-1">
+                                <a href="{% url 'detailGuardian' guardian_item.uid %}" class="w-full justify-center inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-deep-navy text-vibrant-lime font-bold text-xs hover:bg-primary-container hover:text-white transition-all shadow-xs">
+                                    <span>View Details</span>
+                                    <span class="material-symbols-outlined text-sm">visibility</span>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="py-8 text-center text-on-surface-variant font-medium text-sm">
+                            No guardian requests available.
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Desktop Table View (Visible on tablet & desktop screens) -->
+                    <div class="hidden md:block custom-scrollbar overflow-x-auto">
+                        <table id="guardian-table" class="w-full text-left border-collapse min-w-[850px]">
+                            <thead>
+                                <tr class="bg-surface-container-low text-deep-navy font-bold text-xs uppercase tracking-wider">
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">#</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">Parent Name</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">Student Class</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">Subject</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60 cursor-pointer hover:text-vibrant-lime select-none transition-colors" onclick="sortTable('guardian-table', 4)" title="Click to sort chronologically">
+                                        <div class="flex items-center gap-1">
+                                            <span>Date Submitted</span>
+                                            <span id="sort-icon-guardian" class="material-symbols-outlined text-sm">swap_vert</span>
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">Expectation for Child</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-surface-variant/60 text-sm">
+                                {% for guardian_item in guardian %}
+                                <tr class="request-row hover:bg-surface-container/50 transition-colors group">
+                                    <td class="py-4 px-4 font-bold text-deep-navy">{{ forloop.counter }}</td>
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-9 h-9 rounded-full bg-primary-fixed-dim flex items-center justify-center font-bold text-deep-navy text-xs shrink-0">
+                                                {{ guardian_item.first_name|first }}{{ guardian_item.last_name|first }}
+                                            </div>
+                                            <span class="font-semibold text-deep-navy">{{ guardian_item.last_name }} {{ guardian_item.first_name }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 text-on-surface-variant font-medium">{{ guardian_item.AboutChild.child_class|default:"N/A" }}</td>
+                                    <td class="py-4 px-4">
+                                        <span class="px-2.5 py-1 bg-surface-container-high rounded-full text-xs font-bold text-deep-navy inline-block">
+                                            {{ guardian_item.AboutChild.subject|default:"General Tutoring" }}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4 text-on-surface-variant whitespace-nowrap" data-timestamp="{{ guardian_item.date_joined|date:'U' }}">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="material-symbols-outlined text-sm text-deep-navy">schedule</span>
+                                            <div>
+                                                <span class="font-semibold text-deep-navy block text-xs sm:text-sm">{{ guardian_item.date_joined|date:"M d, Y" }}</span>
+                                                <span class="text-[11px] text-on-surface-variant font-normal">{{ guardian_item.date_joined|date:"h:i A" }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 text-on-surface-variant max-w-xs truncate">{{ guardian_item.AboutChild.goal|default:"N/A" }}</td>
+                                    <td class="py-4 px-4 text-right">
+                                        <a href="{% url 'detailGuardian' guardian_item.uid %}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-deep-navy text-vibrant-lime font-bold text-xs hover:bg-primary-container hover:text-white transition-all shadow-xs">
+                                            <span>View Details</span>
+                                            <span class="material-symbols-outlined text-sm">visibility</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="py-12 text-center text-on-surface-variant font-medium">
+                                        No guardian requests available.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tutor Requests Content (Hidden by Default) -->
+                <div class="hidden" id="content-tutor">
+                    
+                    <!-- Mobile Card View (Visible on small screens) -->
+                    <div class="block md:hidden space-y-4">
+                        {% for tutor_item in tutor %}
+                        <div class="bg-surface-container/50 p-4 rounded-2xl border border-surface-variant/80 space-y-3">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center font-bold text-on-secondary-container text-xs shrink-0">
+                                        {{ tutor_item.first_name|first }}{{ tutor_item.last_name|first }}
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-deep-navy text-sm sm:text-base">{{ tutor_item.last_name }} {{ tutor_item.first_name }}</h3>
+                                        <p class="text-xs text-on-surface-variant">Class: {{ tutor_item.AboutTutor.teacher_class|default:"N/A" }}</p>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-bold text-deep-navy bg-white px-2.5 py-1 rounded-full border border-surface-variant shrink-0">
+                                    #{{ forloop.counter }}
+                                </span>
+                            </div>
+                            <div class="space-y-1.5 text-xs text-on-surface-variant border-t border-surface-variant/60 pt-2.5">
+                                <p><strong class="text-deep-navy">Subject:</strong> {{ tutor_item.AboutTutor.subject|default:"General Tutoring" }}</p>
+                                <p><strong class="text-deep-navy">Expectation:</strong> {{ tutor_item.AboutTutor.goal|default:"N/A" }}</p>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-xs text-on-surface-variant border-t border-surface-variant/60 pt-2 font-medium">
+                                <span class="material-symbols-outlined text-sm text-deep-navy">schedule</span>
+                                <span>Submitted: <strong class="text-deep-navy">{{ tutor_item.date_joined|date:"M d, Y, h:i A" }}</strong></span>
+                            </div>
+                            <div class="pt-1">
+                                <a href="{% url 'detailTutor' tutor_item.uid %}" class="w-full justify-center inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-vibrant-lime text-deep-navy font-bold text-xs hover:brightness-105 transition-all shadow-xs">
+                                    <span>View Bio</span>
+                                    <span class="material-symbols-outlined text-sm">badge</span>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="py-8 text-center text-on-surface-variant font-medium text-sm">
+                            No tutor applications available.
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Desktop Table View (Visible on tablet & desktop screens) -->
+                    <div class="hidden md:block custom-scrollbar overflow-x-auto">
+                        <table id="tutor-table" class="w-full text-left border-collapse min-w-[850px]">
+                            <thead>
+                                <tr class="bg-surface-container-low text-deep-navy font-bold text-xs uppercase tracking-wider">
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">#</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">Tutor Name</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">Tutor Class</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">Subject</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60 cursor-pointer hover:text-vibrant-lime select-none transition-colors" onclick="sortTable('tutor-table', 4)" title="Click to sort chronologically">
+                                        <div class="flex items-center gap-1">
+                                            <span>Date Submitted</span>
+                                            <span id="sort-icon-tutor" class="material-symbols-outlined text-sm">swap_vert</span>
+                                        </div>
+                                    </th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60">Expectation</th>
+                                    <th class="py-4 px-4 border-b border-surface-variant/60 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-surface-variant/60 text-sm">
+                                {% for tutor_item in tutor %}
+                                <tr class="request-row hover:bg-surface-container/50 transition-colors group">
+                                    <td class="py-4 px-4 font-bold text-deep-navy">{{ forloop.counter }}</td>
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center font-bold text-on-secondary-container text-xs shrink-0">
+                                                {{ tutor_item.first_name|first }}{{ tutor_item.last_name|first }}
+                                            </div>
+                                            <span class="font-semibold text-deep-navy">{{ tutor_item.last_name }} {{ tutor_item.first_name }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 text-on-surface-variant font-medium">{{ tutor_item.AboutTutor.teacher_class|default:"N/A" }}</td>
+                                    <td class="py-4 px-4">
+                                        <span class="px-2.5 py-1 bg-surface-container-high rounded-full text-xs font-bold text-deep-navy inline-block">
+                                            {{ tutor_item.AboutTutor.subject|default:"General Tutoring" }}
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4 text-on-surface-variant whitespace-nowrap" data-timestamp="{{ tutor_item.date_joined|date:'U' }}">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="material-symbols-outlined text-sm text-deep-navy">schedule</span>
+                                            <div>
+                                                <span class="font-semibold text-deep-navy block text-xs sm:text-sm">{{ tutor_item.date_joined|date:"M d, Y" }}</span>
+                                                <span class="text-[11px] text-on-surface-variant font-normal">{{ tutor_item.date_joined|date:"h:i A" }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4 text-on-surface-variant max-w-xs truncate">{{ tutor_item.AboutTutor.goal|default:"N/A" }}</td>
+                                    <td class="py-4 px-4 text-right">
+                                        <a href="{% url 'detailTutor' tutor_item.uid %}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-vibrant-lime text-deep-navy font-bold text-xs hover:brightness-105 transition-all shadow-xs">
+                                            <span>View Bio</span>
+                                            <span class="material-symbols-outlined text-sm">badge</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="py-12 text-center text-on-surface-variant font-medium">
+                                        No tutor applications available.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Logs Context Visualization -->
+        <div class="mt-6 sm:mt-8">
+            <h2 class="font-headline-md text-xl sm:text-2xl font-bold text-deep-navy mb-3 sm:mb-4">Request Logs Context</h2>
+            <div class="relative h-[260px] sm:h-[320px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl border border-surface-variant/60">
+                <img alt="System Data View" class="w-full h-full object-cover object-top" src="{% static 'IMG/header/abouthead.jpg' %}"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-deep-navy/95 via-deep-navy/60 to-transparent flex items-end p-5 sm:p-8">
+                    <div class="text-white max-w-2xl">
+                        <span class="px-2.5 py-1 bg-vibrant-lime text-deep-navy rounded-md text-[10px] sm:text-xs font-bold uppercase tracking-wider inline-block mb-2">Integrated Monitoring</span>
+                        <h3 class="font-display-lg text-xl sm:text-3xl font-bold mb-1 sm:mb-2">Audited Request Tracking</h3>
+                        <p class="text-xs sm:text-sm text-surface-container-high leading-relaxed opacity-95">Every interaction within the Edukom network is logged and audited to ensure optimal tutor matching standards and client satisfaction.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function switchTab(type) {
+        const guardianTab = document.getElementById('tab-guardian');
+        const tutorTab = document.getElementById('tab-tutor');
+        const guardianContent = document.getElementById('content-guardian');
+        const tutorContent = document.getElementById('content-tutor');
+
+        if (type === 'guardian') {
+            guardianTab.classList.add('tab-active');
+            guardianTab.classList.remove('text-on-surface-variant');
+            tutorTab.classList.remove('tab-active');
+            tutorTab.classList.add('text-on-surface-variant');
+            
+            guardianContent.classList.remove('hidden');
+            tutorContent.classList.add('hidden');
+        } else {
+            tutorTab.classList.add('tab-active');
+            tutorTab.classList.remove('text-on-surface-variant');
+            guardianTab.classList.remove('tab-active');
+            guardianTab.classList.add('text-on-surface-variant');
+            
+            tutorContent.classList.remove('hidden');
+            guardianContent.classList.add('hidden');
+        }
+    }
+
+    const sortStates = {
+        'guardian-table': '{{ current_order|default:"desc" }}',
+        'tutor-table': '{{ current_order|default:"desc" }}'
+    };
+
+    function sortTable(tableId, colIndex) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr.request-row'));
+        if (rows.length === 0) return;
+
+        const currentSort = sortStates[tableId] || 'desc';
+        const newSort = currentSort === 'desc' ? 'asc' : 'desc';
+        sortStates[tableId] = newSort;
+
+        rows.sort((a, b) => {
+            const cellA = a.children[colIndex];
+            const cellB = b.children[colIndex];
+            const timeA = parseInt(cellA ? cellA.getAttribute('data-timestamp') || '0' : '0', 10);
+            const timeB = parseInt(cellB ? cellB.getAttribute('data-timestamp') || '0' : '0', 10);
+            return newSort === 'asc' ? timeA - timeB : timeB - timeA;
+        });
+
+        rows.forEach((row, idx) => {
+            const snCell = row.children[0];
+            if (snCell) snCell.textContent = idx + 1;
+            tbody.appendChild(row);
+        });
+
+        const iconId = tableId === 'guardian-table' ? 'sort-icon-guardian' : 'sort-icon-tutor';
+        const icon = document.getElementById(iconId);
+        if (icon) {
+            icon.textContent = newSort === 'asc' ? 'arrow_upward' : 'arrow_downward';
+        }
+    }
+</script>
+{% endblock main %}

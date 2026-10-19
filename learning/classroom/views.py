@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import uuid
 import logging
 import hashlib
 import hmac
@@ -15,6 +16,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db import transaction, models
 from django.views.decorators.http import require_POST, require_GET
+from django.core.exceptions import ValidationError
 
 from .models import (
     ClassBooking, 
@@ -22,7 +24,9 @@ from .models import (
     Student, 
     TutorProfile, 
     AttendanceRecord, 
+    ClassroomSignal,
     LessonResource,
+    ResourceType,
     LessonFeedback,
     HomeworkSubmission,
     SubmissionStatus,
@@ -105,8 +109,87 @@ def classroom_live_view(request: HttpRequest, session_id: str) -> HttpResponse:
         'role': role,
         'is_tutor': is_tutor,
         'user_name': display_name,
+        'user_id': request.user.id,
     }
     return render(request, 'classroom/room.html', context)
+
+
+@login_required
+@session_access_required
+@require_POST
+def send_classroom_signal(request: HttpRequest, session_id: str) -> JsonResponse:
+    """
+    Real-time signaling & broker endpoint:
+    Receives WebRTC SDP offers/answers, ICE candidates, live whiteboard strokes,
+    screen-share toggles, and chat messages, and persists them for connected classroom peers.
+    """
+    session = get_object_or_404(ClassSession, id=session_id)
+    role = getattr(request, 'session_user_role', 'STUDENT')
+    display_name = request.user.get_full_name() or request.user.username
+
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        data = request.POST
+
+    signal_type = data.get('signal_type', '').strip()
+    payload = data.get('payload', {})
+
+    if not signal_type:
+        return JsonResponse({'success': False, 'error': 'Missing signal_type'}, status=400)
+
+    signal = ClassroomSignal.objects.create(
+        session=session,
+        sender=request.user,
+        sender_name=display_name,
+        sender_role=role,
+        signal_type=signal_type,
+        payload=payload
+    )
+
+    return JsonResponse({'success': True, 'signal_id': signal.id})
+
+
+@login_required
+@session_access_required
+def poll_classroom_signals(request: HttpRequest, session_id: str) -> JsonResponse:
+    """
+    High-efficiency signaling polling endpoint:
+    Returns newly arrived WebRTC signals, whiteboard draw events, chat messages,
+    and presence updates since the last polled ID.
+    """
+    session = get_object_or_404(ClassSession, id=session_id)
+    try:
+        after_id = int(request.GET.get('after_id', 0))
+    except (ValueError, TypeError):
+        after_id = 0
+
+    signals = ClassroomSignal.objects.filter(
+        session=session,
+        id__gt=after_id
+    ).order_by('id')[:100]
+
+    signals_data = []
+    latest_id = after_id
+    for s in signals:
+        signals_data.append({
+            'id': s.id,
+            'sender_id': s.sender_id,
+            'sender_name': s.sender_name,
+            'sender_role': s.sender_role,
+            'signal_type': s.signal_type,
+            'payload': s.payload,
+            'is_self': (s.sender_id == request.user.id),
+            'created_at': s.created_at.strftime('%H:%M:%S')
+        })
+        latest_id = s.id
+
+    return JsonResponse({
+        'success': True,
+        'signals': signals_data,
+        'latest_id': latest_id,
+        'server_time': timezone.now().isoformat()
+    })
 
 
 @login_required
@@ -160,23 +243,62 @@ def tutor_portal_dashboard(request: HttpRequest) -> HttpResponse:
         booking__tutor=tutor_profile,
         end_time__gte=now,
         status__in=[SessionStatus.SCHEDULED, SessionStatus.IN_PROGRESS]
-    ).select_related('booking', 'booking__student', 'booking__subject').order_by('start_time')[:10]
+    ).select_related('booking', 'booking__student', 'booking__subject').order_by('start_time')
 
-    past_sessions = ClassSession.objects.filter(
+    past_sessions_qs = ClassSession.objects.filter(
         booking__tutor=tutor_profile,
         status=SessionStatus.COMPLETED
-    ).select_related('booking', 'booking__student').order_by('-start_time')[:10]
+    ).select_related('booking', 'booking__student', 'booking__subject').order_by('-start_time')
+    past_sessions = past_sessions_qs[:15]
 
     active_bookings = ClassBooking.objects.filter(
         tutor=tutor_profile, 
         status=BookingStatus.ACTIVE
-    ).select_related('student', 'subject')
+    ).select_related('student', 'subject', 'student__guardian')
+
+    # All resources uploaded by or for this tutor
+    resources = LessonResource.objects.filter(
+        models.Q(booking__tutor=tutor_profile) | 
+        models.Q(session__booking__tutor=tutor_profile) | 
+        models.Q(uploaded_by=request.user)
+    ).select_related('booking', 'session', 'booking__student', 'booking__subject').distinct().order_by('-created_at')
+
+    # Homework submissions
+    homework_submissions = HomeworkSubmission.objects.filter(
+        session__booking__tutor=tutor_profile
+    ).select_related('student', 'session', 'session__booking__subject').order_by('-submitted_at')[:15]
+
+    # Monthly hours and earnings calculation
+    current_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    month_completed = past_sessions_qs.filter(start_time__gte=current_month_start)
+    monthly_hours = sum(s.duration_minutes for s in month_completed) / 60
+    monthly_earnings = round(Decimal(str(monthly_hours)) * tutor_profile.hourly_base_rate, 2)
+
+    # Payslips
+    tutor_payslips = TutorPayrollItem.objects.filter(
+        models.Q(tutor_email__iexact=request.user.email) | models.Q(tutor__email__iexact=request.user.email)
+    ).select_related('payroll_run').order_by('-payroll_run__created_at')[:6]
+
+    # Feedbacks & QA score
+    feedbacks = LessonFeedback.objects.filter(
+        session__booking__tutor=tutor_profile
+    ).select_related('session', 'submitted_by')[:6]
+    avg_rating = round(sum(f.rating for f in feedbacks) / feedbacks.count(), 1) if feedbacks.exists() else 5.0
 
     context = {
         'tutor': tutor_profile,
+        'profile': getattr(request.user, 'profile', None),
         'upcoming_sessions': upcoming_sessions,
         'past_sessions': past_sessions,
         'active_bookings': active_bookings,
+        'resources': resources,
+        'resource_types': ResourceType.choices,
+        'homework_submissions': homework_submissions,
+        'tutor_payslips': tutor_payslips,
+        'monthly_hours': round(monthly_hours, 1),
+        'monthly_earnings': monthly_earnings,
+        'feedbacks': feedbacks,
+        'avg_rating': avg_rating,
         'now': now,
     }
     return render(request, 'classroom/tutor_dashboard.html', context)
@@ -346,8 +468,133 @@ def dispatch_lms_sessions_to_payroll(request: HttpRequest) -> HttpResponse:
 # SAFEGUARDS: LESSON RESOURCES, CANCELLATION POLICY, AND QA FEEDBACK
 # ==============================================================================
 
-ALLOWED_RESOURCE_EXTENSIONS = {'.pdf', '.docx', '.doc', '.pptx', '.ppt', '.xlsx', '.xls', '.png', '.jpg', '.jpeg', '.txt'}
-MAX_RESOURCE_BYTES = 15 * 1024 * 1024  # 15 MB
+ALLOWED_RESOURCE_EXTENSIONS = {
+    '.pdf', '.docx', '.doc', '.pptx', '.ppt', '.xlsx', '.xls', 
+    '.png', '.jpg', '.jpeg', '.webp', '.txt', '.zip',
+    '.mp4', '.webm', '.mov', '.m4v'
+}
+MAX_RESOURCE_BYTES = 50 * 1024 * 1024  # 50 MB
+
+
+@login_required
+@require_POST
+def schedule_session_view(request: HttpRequest) -> HttpResponse:
+    """
+    Allows a tutor (or staff) to schedule a new live class session with their assigned student.
+    Enforces double-booking validation and sets up the WebRTC video room.
+    """
+    booking_id = request.POST.get('booking_id')
+    booking = get_object_or_404(ClassBooking, id=booking_id)
+    
+    tutor_profile = getattr(request.user, 'tutor_profile', None)
+    is_authorized = (
+        (tutor_profile and booking.tutor == tutor_profile) or
+        request.user.is_staff or
+        request.user.is_superuser
+    )
+    if not is_authorized:
+        return HttpResponse("Unauthorized to schedule sessions for this booking.", status=403)
+
+    title = request.POST.get('title', '').strip()
+    session_date = request.POST.get('date', '').strip()
+    start_time_str = request.POST.get('start_time', '').strip()
+    duration_minutes = int(request.POST.get('duration_minutes', 60))
+    lesson_topic = request.POST.get('lesson_topic', '').strip()
+
+    if not title:
+        title = f"{booking.subject.name} with {booking.student.first_name}"
+
+    try:
+        from datetime import datetime
+        import zoneinfo
+        tz_name = booking.client_timezone or 'Africa/Lagos'
+        try:
+            tz = zoneinfo.ZoneInfo(tz_name)
+        except Exception:
+            tz = timezone.get_current_timezone()
+
+        naive_start = datetime.strptime(f"{session_date} {start_time_str}", "%Y-%m-%d %H:%M")
+        start_dt = naive_start.replace(tzinfo=tz)
+        end_dt = start_dt + timezone.timedelta(minutes=duration_minutes)
+    except Exception as e:
+        messages.error(request, f"Invalid date or time format: {str(e)}")
+        return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
+
+    room_name = f"edukom-{uuid.uuid4().hex[:12]}"
+
+    session = ClassSession(
+        booking=booking,
+        title=title,
+        start_time=start_dt,
+        end_time=end_dt,
+        duration_minutes=duration_minutes,
+        status=SessionStatus.SCHEDULED,
+        room_name=room_name,
+        lesson_topic=lesson_topic
+    )
+
+    try:
+        session.full_clean()
+        session.save()
+        messages.success(request, f"Class '{session.title}' scheduled successfully for {session.start_time.strftime('%A, %b %d at %H:%M')}.")
+    except Exception as err:
+        messages.error(request, f"Schedule conflict or validation error: {str(err)}")
+
+    return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
+
+
+@login_required
+@require_POST
+def instant_session_view(request: HttpRequest) -> HttpResponse:
+    """
+    1-Click Instant Class Launcher:
+    Allows a tutor to start an immediate virtual live classroom with an enrolled student,
+    generating the WebRTC room instantly and redirecting straight into the live classroom.
+    """
+    booking_id = request.POST.get('booking_id')
+    booking = get_object_or_404(ClassBooking, id=booking_id)
+
+    tutor_profile = getattr(request.user, 'tutor_profile', None)
+    is_authorized = (
+        (tutor_profile and booking.tutor == tutor_profile) or
+        request.user.is_staff or
+        request.user.is_superuser
+    )
+    if not is_authorized:
+        return HttpResponse("Unauthorized to start an instant class for this student.", status=403)
+
+    title = request.POST.get('title', '').strip()
+    duration_minutes = int(request.POST.get('duration_minutes', 60))
+    lesson_topic = request.POST.get('lesson_topic', '').strip()
+
+    if not title:
+        title = f"Instant Class: {booking.subject.name} - {booking.student.first_name}"
+
+    now = timezone.now()
+    end_dt = now + timezone.timedelta(minutes=duration_minutes)
+    room_name = f"edukom-{uuid.uuid4().hex[:12]}"
+
+    try:
+        session = ClassSession(
+            booking=booking,
+            title=title,
+            start_time=now,
+            end_time=end_dt,
+            duration_minutes=duration_minutes,
+            status=SessionStatus.IN_PROGRESS,
+            room_name=room_name,
+            lesson_topic=lesson_topic,
+            tutor_joined_at=now
+        )
+        session.full_clean()
+        session.save()
+    except ValidationError as err:
+        msg = err.messages[0] if hasattr(err, 'messages') and err.messages else str(err)
+        messages.error(request, f"Unable to start instant class: {msg}")
+        return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
+
+    messages.success(request, f"Instant class launched! Entering live classroom now...")
+    return redirect('classroom:live_room', session_id=session.id)
 
 
 @login_required
@@ -356,49 +603,209 @@ def upload_lesson_resource(request: HttpRequest, session_id: str) -> HttpRespons
     """
     Secure file upload for session materials, worksheets, and lesson notes.
     Prevents directory traversal, malware uploads, and stored XSS.
+    Synchronizes real-time notification to students in the live classroom.
     """
+    from django.template.defaultfilters import filesizeformat
+    from django.urls import reverse
+
     session = get_object_or_404(ClassSession, id=session_id)
     is_auth, role = can_access_session(request.user, session)
+    is_ajax = (
+        request.headers.get('x-requested-with') == 'XMLHttpRequest' or
+        'application/json' in request.headers.get('Accept', '') or
+        request.POST.get('ajax') == '1'
+    )
+
     if not is_auth:
+        if is_ajax:
+            return JsonResponse({'success': False, 'error': 'Unauthorized to upload files to this session.'}, status=403)
         return HttpResponse("Unauthorized to upload files to this session.", status=403)
 
     uploaded_file = request.FILES.get('resource_file')
     title = request.POST.get('title', '').strip()
+    resource_type = request.POST.get('resource_type', ResourceType.WORKSHEET)
+    video_url = request.POST.get('video_url', '').strip()
+    description = request.POST.get('description', '').strip()
 
-    if not uploaded_file:
-        messages.error(request, "No file selected for upload.")
+    if not uploaded_file and not video_url:
+        err_msg = "No file or video link provided for upload."
+        if is_ajax:
+            return JsonResponse({'success': False, 'error': err_msg}, status=400)
+        messages.error(request, err_msg)
         return redirect('classroom:live_room', session_id=session.id)
 
-    if uploaded_file.size > MAX_RESOURCE_BYTES:
-        messages.error(request, "File exceeds maximum permitted size of 15MB.")
-        return redirect('classroom:live_room', session_id=session.id)
+    if uploaded_file:
+        if uploaded_file.size > MAX_RESOURCE_BYTES:
+            err_msg = f"File exceeds maximum permitted size of {MAX_RESOURCE_BYTES // (1024*1024)}MB."
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': err_msg}, status=400)
+            messages.error(request, err_msg)
+            return redirect('classroom:live_room', session_id=session.id)
 
-    filename = uploaded_file.name
-    ext = os.path.splitext(filename)[1].lower()
-    if ext not in ALLOWED_RESOURCE_EXTENSIONS:
-        messages.error(
-            request, 
-            f"File format '{ext}' is not permitted. Allowed formats: PDF, DOCX, PPTX, XLSX, PNG, JPG, TXT."
-        )
-        return redirect('classroom:live_room', session_id=session.id)
+        filename = uploaded_file.name
+        ext = os.path.splitext(filename)[1].lower()
+        if ext not in ALLOWED_RESOURCE_EXTENSIONS:
+            err_msg = f"File format '{ext}' is not permitted. Allowed formats: PDF, DOCX, PPTX, XLSX, Images, and Videos."
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': err_msg}, status=400)
+            messages.error(request, err_msg)
+            return redirect('classroom:live_room', session_id=session.id)
 
-    # Sanitize filename against CWE-22 Path Traversal
-    clean_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', os.path.basename(filename))
-    uploaded_file.name = clean_name
+        clean_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', os.path.basename(filename))
+        uploaded_file.name = clean_name
+        file_size = uploaded_file.size
+        content_type = uploaded_file.content_type or 'application/octet-stream'
+        if not title:
+            title = clean_name
+    else:
+        file_size = 0
+        content_type = 'video/external'
+        if not title:
+            title = "Video Lesson / Recording"
 
     resource = LessonResource.objects.create(
+        booking=session.booking,
         session=session,
-        title=title or clean_name,
+        title=title,
+        resource_type=resource_type,
+        description=description,
         file=uploaded_file,
-        file_size=uploaded_file.size,
-        content_type=uploaded_file.content_type or 'application/octet-stream',
+        file_size=file_size,
+        content_type=content_type,
+        video_url=video_url,
         uploaded_by=request.user
     )
 
+    resource_payload = {
+        'id': str(resource.id),
+        'title': resource.title,
+        'resource_type': resource.resource_type,
+        'resource_type_display': resource.get_resource_type_display(),
+        'file_size': resource.file_size,
+        'file_size_display': filesizeformat(resource.file_size) if resource.file_size else '0 B',
+        'download_url': reverse('classroom:download_resource', args=[resource.id]) if resource.file else '',
+        'video_url': resource.video_url or '',
+        'uploader_name': request.user.get_full_name() or request.user.username,
+        'uploader_role': role,
+        'time': timezone.now().strftime('%H:%M')
+    }
+
+    # Automatically broadcast real-time sync signal to all participants
+    ClassroomSignal.objects.create(
+        session=session,
+        sender=request.user,
+        sender_role=role,
+        signal_type='new_resource',
+        payload=resource_payload
+    )
+
+    if is_ajax:
+        return JsonResponse({
+            'success': True,
+            'resource': resource_payload,
+            'message': f"Resource '{resource.title}' uploaded successfully."
+        })
+
     messages.success(request, f"Resource '{resource.title}' uploaded successfully.")
     if role == 'TUTOR':
-        return redirect('classroom:tutor_portal')
-    return redirect('classroom:student_portal')
+        return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
+    return redirect('classroom:live_room', session_id=session.id)
+
+
+@login_required
+@require_POST
+def upload_material_view(request: HttpRequest) -> HttpResponse:
+    """
+    General uploader for tutors & teachers to add worksheets, lesson notes,
+    past exam papers, and video recordings to their Resource Vault.
+    """
+    booking_id = request.POST.get('booking_id', '').strip()
+    session_id = request.POST.get('session_id', '').strip()
+    title = request.POST.get('title', '').strip()
+    resource_type = request.POST.get('resource_type', ResourceType.WORKSHEET)
+    description = request.POST.get('description', '').strip()
+    video_url = request.POST.get('video_url', '').strip()
+    uploaded_file = request.FILES.get('resource_file')
+
+    if not uploaded_file and not video_url:
+        messages.error(request, "Please attach a file or provide a video link.")
+        return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
+
+    booking = None
+    if booking_id:
+        booking = ClassBooking.objects.filter(id=booking_id).first()
+
+    session = None
+    if session_id:
+        session = ClassSession.objects.filter(id=session_id).first()
+        if session and not booking:
+            booking = session.booking
+
+    if uploaded_file:
+        if uploaded_file.size > MAX_RESOURCE_BYTES:
+            messages.error(request, f"File exceeds maximum permitted size of {MAX_RESOURCE_BYTES // (1024*1024)}MB.")
+            return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
+
+        filename = uploaded_file.name
+        ext = os.path.splitext(filename)[1].lower()
+        if ext not in ALLOWED_RESOURCE_EXTENSIONS:
+            messages.error(
+                request, 
+                f"File format '{ext}' is not permitted. Allowed formats: PDF, DOCX, PPTX, XLSX, Images, and Videos."
+            )
+            return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
+
+        clean_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', os.path.basename(filename))
+        uploaded_file.name = clean_name
+        file_size = uploaded_file.size
+        content_type = uploaded_file.content_type or 'application/octet-stream'
+        if not title:
+            title = os.path.splitext(clean_name)[0].replace('_', ' ').title()
+    else:
+        file_size = 0
+        content_type = 'video/external'
+        if not title:
+            title = "Video Lesson / Recording"
+
+    resource = LessonResource.objects.create(
+        booking=booking,
+        session=session,
+        title=title,
+        resource_type=resource_type,
+        description=description,
+        file=uploaded_file,
+        file_size=file_size,
+        content_type=content_type,
+        video_url=video_url,
+        uploaded_by=request.user
+    )
+
+    messages.success(request, f"Resource '{resource.title}' uploaded successfully to your vault.")
+    return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
+
+
+@login_required
+@require_POST
+def delete_resource_view(request: HttpRequest, resource_id: str) -> HttpResponse:
+    """
+    Deletes an uploaded lesson resource or video from the vault.
+    """
+    resource = get_object_or_404(LessonResource, id=resource_id)
+    tutor_profile = getattr(request.user, 'tutor_profile', None)
+    
+    can_delete = (
+        resource.uploaded_by == request.user or
+        (tutor_profile and resource.booking and resource.booking.tutor == tutor_profile) or
+        (tutor_profile and resource.session and resource.session.booking.tutor == tutor_profile) or
+        request.user.is_staff or request.user.is_superuser
+    )
+    if not can_delete:
+        return HttpResponse("Unauthorized to delete this resource.", status=403)
+
+    title = resource.title
+    resource.delete()
+    messages.success(request, f"Resource '{title}' removed from your vault.")
+    return redirect(request.META.get('HTTP_REFERER') or 'classroom:tutor_portal')
 
 
 @login_required
@@ -408,13 +815,30 @@ def download_lesson_resource(request: HttpRequest, resource_id: str) -> HttpResp
     Ensures only authorized class participants can access academic files.
     """
     resource = get_object_or_404(LessonResource, id=resource_id)
-    is_auth, _ = can_access_session(request.user, resource.session)
+    user = request.user
+    tutor_profile = getattr(user, 'tutor_profile', None)
+
+    is_auth = False
+    if resource.session:
+        is_auth, _ = can_access_session(user, resource.session)
+    elif resource.booking:
+        is_auth = (
+            (tutor_profile and resource.booking.tutor == tutor_profile) or
+            (resource.booking.student.user and resource.booking.student.user == user) or
+            (resource.booking.student.guardian and resource.booking.student.guardian.email.lower() == user.email.lower()) or
+            user.is_staff or user.is_superuser or resource.uploaded_by == user
+        )
+    else:
+        is_auth = (resource.uploaded_by == user or user.is_staff or user.is_superuser)
+
     if not is_auth:
         return HttpResponse("Forbidden: You do not have permission to download this file.", status=403)
 
     if not resource.file:
+        if resource.video_url:
+            return redirect(resource.video_url)
         messages.error(request, "The requested file is no longer available.")
-        return redirect('classroom:student_portal')
+        return redirect('classroom:tutor_portal')
 
     return FileResponse(resource.file.open('rb'), as_attachment=True, filename=os.path.basename(resource.file.name))
 

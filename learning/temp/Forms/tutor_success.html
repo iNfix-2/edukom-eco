@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Application Submitted | Edukom Academic Portal{% endblock %}
+
+{% block main %}
+<section class="relative py-16 md:py-24 bg-canvas-gray overflow-hidden">
+    <!-- Edge Decorative Background Splatters -->
+    <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-12 top-10 w-44 md:w-64 opacity-25 pointer-events-none select-none z-0" alt="">
+    <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -right-12 bottom-10 w-48 md:w-72 opacity-25 pointer-events-none select-none z-0" alt="">
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+        <!-- Success Badge Icon -->
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-vibrant-lime text-deep-navy shadow-lg mb-6">
+            <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+        </div>
+
+        <h1 class="font-display-lg text-3xl sm:text-5xl font-bold text-deep-navy mb-3">Application Received, {{ guardian.full_name }}!</h1>
+        <p class="font-body-lg text-on-surface-variant text-base sm:text-lg mb-8 max-w-xl mx-auto">We are excited to review your tutor application. Here is your onboarding roadmap:</p>
+
+        <!-- Status Badge -->
+        {% if tutor.status %}
+        <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-deep-navy text-vibrant-lime font-bold text-xs sm:text-sm mb-10 shadow-sm">
+            <span class="material-symbols-outlined text-base">check_circle</span>
+            <span>Application Status: {{ tutor.status }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Next Steps Bento Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
+            <div class="bg-white p-6 rounded-3xl border border-surface-variant/60 shadow-sm relative group hover:border-vibrant-lime transition-all">
+                <div class="w-10 h-10 rounded-2xl bg-deep-navy text-vibrant-lime font-bold text-base flex items-center justify-center mb-4">1</div>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy mb-2">Screening Call</h3>
+                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">Our HR team will review your qualifications and contact you to schedule a mock session.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl border border-surface-variant/60 shadow-sm relative group hover:border-vibrant-lime transition-all">
+                <div class="w-10 h-10 rounded-2xl bg-deep-navy text-vibrant-lime font-bold text-base flex items-center justify-center mb-4">2</div>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy mb-2">Mock Teaching Session</h3>
+                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">Demonstrate your subject expertise and pedagogy in a 20-minute live virtual demo.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl border border-surface-variant/60 shadow-sm relative group hover:border-vibrant-lime transition-all">
+                <div class="w-10 h-10 rounded-2xl bg-deep-navy text-vibrant-lime font-bold text-base flex items-center justify-center mb-4">3</div>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy mb-2">Onboarding & Verification</h3>
+                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">Complete onboarding modules on virtual whiteboard tools and join active tutor matching pools.</p>
+            </div>
+        </div>
+
+        <!-- Contact Support Footer Card -->
+        <div class="bg-deep-navy text-white rounded-3xl p-8 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 text-left">
+            <div>
+                <h4 class="font-headline-md font-bold text-xl mb-1">Have Questions About Your Application?</h4>
+                <p class="text-xs sm:text-sm text-primary-fixed/90">Our academic recruitment team is here to guide you.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-4 shrink-0">
+                <a href="mailto:info@edukom.ng" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 transition-all">
+                    <span class="material-symbols-outlined text-vibrant-lime text-base">mail</span>
+                    <span>info@edukom.ng</span>
+                </a>
+                <a href="tel:+2348033310626" class="px-5 py-3 rounded-xl bg-vibrant-lime text-deep-navy font-bold text-xs sm:text-sm flex items-center gap-2 hover:brightness-105 transition-all">
+                    <span class="material-symbols-outlined text-base">phone</span>
+                    <span>+234 803 331 0626</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main %}

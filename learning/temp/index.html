@@ -1,0 +1,875 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<style>
+  /* Animated Testimonials Overlay & Stack */
+  .animated-testimonials-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    gap: 2rem;
+  }
+  .at-left {
+    position: relative;
+    min-height: 380px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+  }
+  .at-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+  .at-image-card {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    transform-origin: center center;
+  }
+  .at-image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .at-image-card .fallback {
+    width: 100%;
+    height: 100%;
+    background: #002769;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    font-weight: bold;
+  }
+  .at-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #00143f;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.5s ease;
+  }
+  .at-name.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .at-designation {
+    color: #4b6700;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.5s ease 0.1s;
+  }
+  .at-designation.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .at-quote-container {
+    max-width: 600px;
+  }
+  .at-quote {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: #444650;
+    opacity: 0;
+    filter: blur(4px);
+    transition: all 0.6s ease 0.2s;
+  }
+  .at-quote.active {
+    opacity: 1;
+    filter: blur(0);
+  }
+  .at-nav {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .at-btn {
+    background: #002769;
+    color: #ffffff;
+    border-radius: 9999px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .at-btn:hover {
+    background: #A9D156;
+    color: #002769;
+    transform: scale(1.08);
+  }
+
+  /* Filter Tabs Active */
+  .course-tab.active {
+    background-color: #002769 !important;
+    color: #ffffff !important;
+    border-color: #002769 !important;
+  }
+</style>
+
+<!-- Hero Section (Stitch Design) -->
+<section class="relative pt-8 pb-16 md:py-24 bg-canvas-gray overflow-hidden">
+  <!-- Splatters -->
+  <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-12 top-10 w-44 md:w-64 opacity-50 pointer-events-none z-0 select-none" alt="">
+  <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -right-12 bottom-10 w-48 md:w-72 opacity-40 pointer-events-none z-0 select-none" alt="">
+
+  <div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+    
+    <!-- Hero Text Content -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <!-- Award Badge -->
+      <div class="inline-flex items-center gap-2 bg-vibrant-lime/20 text-deep-navy font-label-md px-4 py-1.5 rounded-full border border-vibrant-lime/40">
+        <span class="material-symbols-outlined text-sm">stars</span>
+        <span class="font-bold text-xs uppercase tracking-wider">Award Winning Learning Platform</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="font-display-lg text-4xl sm:text-5xl lg:text-6xl font-black text-primary tracking-tight leading-[1.1]">
+        Accessible Education <br>
+        <span class="text-[#A9D156]">Redefined</span> for Excellence.
+      </h1>
+
+      <!-- Subtitle Paragraph -->
+      <p class="font-body-lg text-on-surface-variant max-w-2xl leading-relaxed text-base sm:text-lg">
+        Edukom Learning provides personalized, high-impact private tutoring for students aged 5–18 years. We close learning gaps, prepare students for major examinations, and empower global academic success.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-wrap gap-4 pt-4 items-center">
+        <a href="{% url 'GetATutor' %}" class="px-8 py-4 bg-vibrant-lime text-deep-navy font-headline-md font-bold rounded-2xl shadow-lg hover:brightness-105 transition-all flex items-center gap-3 active:scale-95 group">
+          <span>Get Started</span>
+          <span class="material-symbols-outlined transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </a>
+
+        <a href="{% url 'contact' %}" class="px-7 py-4 bg-white text-deep-navy font-headline-md font-bold rounded-2xl border-2 border-surface-variant hover:border-deep-navy transition-all flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-deep-navy">call</span>
+          <span>Book a Free Consultation</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Hero Image Stack / Visual Component (Soft Mint-Green Glow) -->
+    <div class="lg:col-span-5 relative">
+      <div class="relative mx-auto max-w-md lg:max-w-none">
+        
+        <!-- Soft Mint-Green Ambient Glow (No container or borders) -->
+        <div class="absolute -inset-4 bg-gradient-to-tr from-[#10B981] via-[#A9D156] to-[#34D399] rounded-full opacity-45 blur-3xl -z-10"></div>
+
+        <!-- Transparent Main Hero Image -->
+        <div class="relative overflow-hidden flex items-center justify-center">
+          <img alt="Edukom Student Learning" class="w-full max-h-[460px] object-contain drop-shadow-xl" fetchpriority="high" src="{% static 'IMG/header-image.png' %}">
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock header %}
+
+{% block main %}
+
+<!-- Section 1: Value Propositions (Bento Cards - Stitch Styled) -->
+<section class="relative py-16 md:py-24 bg-surface-bright overflow-hidden">
+  <!-- Splatters -->
+  <img src="{% static 'IMG/community/Splatter - 20.png' %}" class="absolute -left-10 top-20 w-40 md:w-60 opacity-40 pointer-events-none z-0 select-none" alt="">
+  <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -right-10 bottom-20 w-44 md:w-64 opacity-40 pointer-events-none z-0 select-none" alt="">
+
+  <div class="max-w-container-max mx-auto px-gutter space-y-12 relative z-10">
+    
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-primary tracking-tight text-center" style="text-align: center !important;">Our Comprehensive Educational Support</h2>
+      <p class="font-body-lg text-on-surface-variant text-center mx-auto" style="text-align: center !important;">Tailored learning strategies to support every stage of your child's academic growth.</p>
+      <div class="w-20 h-1.5 bg-vibrant-lime mx-auto rounded-full mt-2"></div>
+    </div>
+
+    <!-- Bento Grid (4 Cards) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Bento 1: Online Tutor -->
+      <div class="bento-card bg-white p-8 rounded-3xl border border-surface-variant shadow-sm flex flex-col justify-between group">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-deep-navy group-hover:bg-vibrant-lime transition-colors">
+            <span class="material-symbols-outlined text-3xl">laptop_mac</span>
+          </div>
+          <h3 class="font-headline-md text-xl font-bold text-deep-navy">Online Tutor</h3>
+          <p class="font-body-md text-on-surface-variant text-sm leading-relaxed">
+            Personalized one-on-one virtual tutoring sessions tailored to your child's individual learning speed and goals.
+          </p>
+        </div>
+        <div class="pt-6">
+          <a href="{% url 'about' %}" class="font-label-md font-bold text-deep-navy hover:text-vibrant-lime flex items-center gap-1 group-hover:gap-2 transition-all">
+            <span>Learn more</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bento 2: Entrance Prep -->
+      <div class="bento-card bg-white p-8 rounded-3xl border border-surface-variant shadow-sm flex flex-col justify-between group">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-deep-navy group-hover:bg-vibrant-lime transition-colors">
+            <span class="material-symbols-outlined text-3xl">menu_book</span>
+          </div>
+          <h3 class="font-headline-md text-xl font-bold text-deep-navy">Entrance Prep</h3>
+          <p class="font-body-md text-on-surface-variant text-sm leading-relaxed">
+            Targeted guidance and practice resources for milestone entrance and international curriculum exams.
+          </p>
+        </div>
+        <div class="pt-6">
+          <a href="{% url 'about' %}" class="font-label-md font-bold text-deep-navy hover:text-vibrant-lime flex items-center gap-1 group-hover:gap-2 transition-all">
+            <span>Learn more</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bento 3: Homework Help -->
+      <div class="bento-card bg-white p-8 rounded-3xl border border-surface-variant shadow-sm flex flex-col justify-between group">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-deep-navy group-hover:bg-vibrant-lime transition-colors">
+            <span class="material-symbols-outlined text-3xl">assignment</span>
+          </div>
+          <h3 class="font-headline-md text-xl font-bold text-deep-navy">Homework Help</h3>
+          <p class="font-body-md text-on-surface-variant text-sm leading-relaxed">
+            Assist students in tackling difficult assignments, reinforcing school lessons, and building confidence.
+          </p>
+        </div>
+        <div class="pt-6">
+          <a href="{% url 'about' %}" class="font-label-md font-bold text-deep-navy hover:text-vibrant-lime flex items-center gap-1 group-hover:gap-2 transition-all">
+            <span>Learn more</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bento 4: Global Access -->
+      <div class="bento-card bg-white p-8 rounded-3xl border border-surface-variant shadow-sm flex flex-col justify-between group">
+        <div class="space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-deep-navy group-hover:bg-vibrant-lime transition-colors">
+            <span class="material-symbols-outlined text-3xl">public</span>
+          </div>
+          <h3 class="font-headline-md text-xl font-bold text-deep-navy">Global Access</h3>
+          <p class="font-body-md text-on-surface-variant text-sm leading-relaxed">
+            Connect with certified, experienced educators from around the globe without leaving the comfort of home.
+          </p>
+        </div>
+        <div class="pt-6">
+          <a href="{% url 'about' %}" class="font-label-md font-bold text-deep-navy hover:text-vibrant-lime flex items-center gap-1 group-hover:gap-2 transition-all">
+            <span>Learn more</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Section 2: Who We Are (Dark Navy Stitch Card) -->
+<section class="relative py-12 md:py-20 bg-canvas-gray overflow-hidden bg-cover bg-center bg-no-repeat" style="background-image: url('{% static 'IMG/header/90.png' %}');">
+  <!-- Splatters -->
+  <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -left-12 bottom-10 w-44 md:w-64 opacity-40 pointer-events-none z-0 select-none" alt="">
+  <img src="{% static 'IMG/community/Splatter - 20.png' %}" class="absolute -right-12 top-10 w-48 md:w-72 opacity-40 pointer-events-none z-0 select-none" alt="">
+
+  <div class="max-w-container-max mx-auto px-gutter relative z-10">
+    <div class="bg-deep-navy/90 backdrop-blur-sm text-on-primary rounded-3xl p-8 sm:p-12 lg:p-16 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center shadow-xl relative overflow-hidden">
+      
+      <!-- Image Column -->
+      <div class="lg:col-span-5 relative">
+        <div class="relative rounded-2xl overflow-hidden border-4 border-vibrant-lime/60 shadow-2xl bg-white">
+          <img alt="Who We Are - Edukom" class="w-full h-auto object-contain" loading="lazy" src="{% static 'IMG/about_grid_composition.png' %}">
+        </div>
+      </div>
+
+      <!-- Narrative Column -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="inline-block border-b-4 border-vibrant-lime pb-1">
+          <span class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs">About Edukom</span>
+        </div>
+        <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-white tracking-tight leading-snug">
+          Bridging Academic Traditions with Digital Innovation
+        </h2>
+        <div class="space-y-4 text-primary-fixed/80 font-body-md leading-relaxed text-base">
+          <p>
+            At Edukom Learning, we create a global platform where expert tutors from around the world can deliver top-tier education to your child without them leaving home.
+          </p>
+          <p>
+            We recognize that crowded classrooms often divide teacher attention, leaving some learners behind. Edukom provides focused 1-on-1 support to close knowledge gaps and accelerate student mastery.
+          </p>
+        </div>
+
+        <div class="pt-4">
+          <a href="{% url 'GetATutor' %}" class="inline-flex items-center gap-3 px-8 py-3.5 bg-vibrant-lime text-deep-navy font-headline-md font-bold rounded-xl hover:brightness-105 transition-all shadow-md">
+            <span>Get a Tutor</span>
+            <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Section 3: Subjects We Take (Interactive Tabs & Cards) -->
+<section id="ourCourses" class="relative py-16 md:py-24 bg-surface-bright overflow-hidden bg-cover bg-center bg-no-repeat" style="background-image: url('{% static 'IMG/wrw/doddle.png' %}');">
+  <!-- Splatters -->
+  <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-10 bottom-16 w-44 md:w-64 opacity-40 pointer-events-none z-0 select-none" alt="">
+  <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -right-10 top-16 w-44 md:w-64 opacity-40 pointer-events-none z-0 select-none" alt="">
+
+  <div class="max-w-container-max mx-auto px-gutter space-y-12 relative z-10">
+    
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <span class="font-label-md uppercase tracking-wider text-deep-navy font-bold text-xs inline-block">Curriculum Coverage</span>
+      <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-primary tracking-tight text-center" style="text-align: center !important;">Master New Skills: Subjects We Take</h2>
+      <p class="font-body-lg text-on-surface-variant text-center mx-auto" style="text-align: center !important;">Filter by academic level to see our specialized tutoring subjects.</p>
+    </div>
+
+    <!-- Level Filter Tabs -->
+    <div class="flex flex-wrap justify-center gap-3">
+      <button onclick="opencourse('all')" id="allTab" class="course-tab active px-6 py-2.5 rounded-full font-label-md font-bold border border-surface-variant bg-white text-on-surface-variant hover:border-deep-navy transition-all">All Levels</button>
+      <button onclick="opencourse('elementary')" id="elementary" class="course-tab px-6 py-2.5 rounded-full font-label-md font-bold border border-surface-variant bg-white text-on-surface-variant hover:border-deep-navy transition-all">Reception</button>
+      <button onclick="opencourse('science')" id="science" class="course-tab px-6 py-2.5 rounded-full font-label-md font-bold border border-surface-variant bg-white text-on-surface-variant hover:border-deep-navy transition-all">KS 1-2</button>
+      <button onclick="opencourse('commercial')" id="commercial" class="course-tab px-6 py-2.5 rounded-full font-label-md font-bold border border-surface-variant bg-white text-on-surface-variant hover:border-deep-navy transition-all">KS 3 (Yr 7-9)</button>
+      <button onclick="opencourse('art')" id="art" class="course-tab px-6 py-2.5 rounded-full font-label-md font-bold border border-surface-variant bg-white text-on-surface-variant hover:border-deep-navy transition-all">KS 4 (Yr 10-12)</button>
+      <button onclick="opencourse('coding')" id="coding" class="course-tab px-6 py-2.5 rounded-full font-label-md font-bold border border-surface-variant bg-white text-on-surface-variant hover:border-deep-navy transition-all">A-Levels</button>
+    </div>
+
+    <!-- Subjects Grid -->
+    <ul class="courses grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <li class="elementary art science commercial coding bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">English</p>
+      </li>
+      <li class="art science elementary commercial coding bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Maths</p>
+      </li>
+      <li class="art commercial bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Lit. in English</p>
+      </li>
+      <li class="art commercial bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">History</p>
+      </li>
+      <li class="art bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">ICT</p>
+      </li>
+      <li class="art bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">French</p>
+      </li>
+      <li class="art bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Government</p>
+      </li>
+      <li class="art bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Business</p>
+      </li>
+      <li class="art coding bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Physics</p>
+      </li>
+      <li class="art coding bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Chemistry</p>
+      </li>
+      <li class="art bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Music</p>
+      </li>
+      <li class="art coding bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Biology</p>
+      </li>
+      <li class="science commercial bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Basic Science</p>
+      </li>
+      <li class="art bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Coding</p>
+      </li>
+      <li class="coding bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">Calculus</p>
+      </li>
+      <li class="coding science art bg-white p-5 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-vibrant-lime hover:shadow-md transition-all flex items-center justify-center">
+        <p class="font-headline-md font-semibold text-deep-navy text-base">And More...</p>
+      </li>
+    </ul>
+
+  </div>
+</section>
+
+<!-- Section 4: Exams We Prep For -->
+<section id="ourExams" class="relative py-16 md:py-24 bg-canvas-gray border-t border-b border-surface-variant overflow-hidden">
+  <!-- Splatters -->
+  <img src="{% static 'IMG/community/Splatter - 20.png' %}" class="absolute -left-12 top-12 w-44 md:w-64 opacity-40 pointer-events-none z-0 select-none" alt="">
+
+  <div class="max-w-container-max mx-auto px-gutter space-y-12 relative z-10">
+    
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <span class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs bg-deep-navy px-3 py-1 rounded-md">Exam Prep</span>
+      <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-primary tracking-tight text-center" style="text-align: center !important;">Exams We Prep For</h2>
+      <p class="font-body-lg text-on-surface-variant text-center mx-auto" style="text-align: center !important;">Targeted examination preparation classes designed to deliver high scores.</p>
+    </div>
+
+    <!-- Exam Badges Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">WASSCE</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">GCE</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">NECO</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">UTME</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">BECE</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">IELTS</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">SAT</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">GCSE / IGCSE</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">Cambridge Checkpoint</h4>
+      </div>
+      <div class="bg-white p-6 rounded-2xl border border-surface-variant text-center shadow-sm hover:border-deep-navy hover:shadow-md transition-all">
+        <h4 class="font-headline-md font-bold text-deep-navy text-lg">Primary Checkpoint</h4>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Section 5: How It Works Timeline (Identical structure on Mobile & Desktop) -->
+<section class="relative py-16 md:py-24 bg-surface-bright overflow-hidden">
+  <!-- Splatters -->
+  <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -left-12 bottom-12 w-44 md:w-64 opacity-40 pointer-events-none z-0 select-none" alt="">
+  <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -right-12 top-12 w-48 md:w-72 opacity-40 pointer-events-none z-0 select-none" alt="">
+
+  <div class="max-w-4xl mx-auto px-gutter relative z-10 space-y-16">
+    
+    <!-- Title Header -->
+    <div class="text-center space-y-2 relative">
+      <div class="flex items-center justify-center gap-3">
+        <img src="{% static 'IMG/globe.svg' %}" alt="Globe" class="w-8 h-8 sm:w-10 sm:h-10 inline-block animate-pulse">
+        <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-primary tracking-tight text-center" style="text-align: center !important;">How It Works</h2>
+      </div>
+      <p class="font-body-md text-on-surface-variant text-center mx-auto" style="text-align: center !important;">A simple, proven path to learning success.</p>
+    </div>
+
+    <!-- Vertical Timeline (Maintains center vertical line & alternating layout on mobile and desktop) -->
+    <div class="relative space-y-12 md:space-y-16">
+      
+      <!-- Central Line for both Mobile & Desktop -->
+      <div class="absolute left-1/2 top-4 bottom-4 w-0.5 bg-surface-variant -translate-x-1/2"></div>
+
+      <!-- Item 1: Text Left, Node Center, 01 Right -->
+      <div class="grid grid-cols-11 gap-2 sm:gap-4 items-center">
+        <!-- Left Text -->
+        <div class="col-span-5 text-right space-y-1 sm:space-y-2">
+          <h3 class="font-headline-md text-base sm:text-2xl font-bold text-deep-navy">Join Portal</h3>
+          <p class="font-body-md text-on-surface-variant text-xs sm:text-base leading-relaxed">
+            Edukom was born from a simple observation: children deserve personalized, high-quality tutoring regardless of their location.
+          </p>
+        </div>
+        
+        <!-- Node Dot -->
+        <div class="col-span-1 flex justify-center py-1 sm:py-2">
+          <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white border-2 border-vibrant-lime flex items-center justify-center shadow-sm">
+            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-vibrant-lime"></div>
+          </div>
+        </div>
+
+        <!-- Right Muted Number -->
+        <div class="col-span-5 text-left">
+          <span class="font-display-lg text-4xl sm:text-6xl lg:text-7xl font-extrabold text-surface-variant/70 tracking-wider">01</span>
+        </div>
+      </div>
+
+      <!-- Item 2: 02 Left, Node Center, Text Right -->
+      <div class="grid grid-cols-11 gap-2 sm:gap-4 items-center">
+        <!-- Left Muted Number -->
+        <div class="col-span-5 text-right">
+          <span class="font-display-lg text-4xl sm:text-6xl lg:text-7xl font-extrabold text-surface-variant/70 tracking-wider">02</span>
+        </div>
+        
+        <!-- Node Dot -->
+        <div class="col-span-1 flex justify-center py-1 sm:py-2">
+          <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white border-2 border-vibrant-lime flex items-center justify-center shadow-sm">
+            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-vibrant-lime"></div>
+          </div>
+        </div>
+
+        <!-- Right Text -->
+        <div class="col-span-5 text-left space-y-1 sm:space-y-2">
+          <h3 class="font-headline-md text-base sm:text-2xl font-bold text-deep-navy">Match & Schedule</h3>
+          <p class="font-body-md text-on-surface-variant text-xs sm:text-base leading-relaxed">
+            We pair your student with a handpicked, verified private tutor and create a flexible virtual class schedule.
+          </p>
+        </div>
+      </div>
+
+      <!-- Item 3: Text Left, Node Center, 03 Right -->
+      <div class="grid grid-cols-11 gap-2 sm:gap-4 items-center">
+        <!-- Left Text -->
+        <div class="col-span-5 text-right space-y-1 sm:space-y-2">
+          <h3 class="font-headline-md text-base sm:text-2xl font-bold text-deep-navy">Achieve Mastery</h3>
+          <p class="font-body-md text-on-surface-variant text-xs sm:text-base leading-relaxed">
+            Start live 1-on-1 virtual sessions with continuous progress feedback and measurable score improvements.
+          </p>
+        </div>
+        
+        <!-- Node Dot -->
+        <div class="col-span-1 flex justify-center py-1 sm:py-2">
+          <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white border-2 border-vibrant-lime flex items-center justify-center shadow-sm">
+            <div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-vibrant-lime"></div>
+          </div>
+        </div>
+
+        <!-- Right Muted Number -->
+        <div class="col-span-5 text-left">
+          <span class="font-display-lg text-4xl sm:text-6xl lg:text-7xl font-extrabold text-surface-variant/70 tracking-wider">03</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- Section 6: Hear from the Parents / Testimonials -->
+<section class="relative py-16 md:py-24 bg-surface-bright overflow-hidden">
+  <!-- Splatters -->
+  <img src="{% static 'IMG/community/Splatter - 20.png' %}" class="absolute -right-10 bottom-12 w-48 md:w-72 opacity-40 pointer-events-none z-0 select-none" alt="">
+
+  <div class="max-w-container-max mx-auto px-gutter space-y-12 relative z-10">
+    
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <span class="font-label-md uppercase tracking-wider text-deep-navy font-bold text-xs">Social Proof</span>
+      <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-primary tracking-tight text-center" style="text-align: center !important;">Hear From Our Parents & Guardians</h2>
+      <p class="font-body-lg text-on-surface-variant text-center mx-auto" style="text-align: center !important;">Real experiences from families who have transformed their learning journeys with Edukom.</p>
+    </div>
+
+    <!-- Unified Testimonials Slideshow Carousel -->
+    <div class="relative max-w-container-max mx-auto px-gutter pt-4">
+      
+      <!-- Desktop Navigation Arrows (Floating Left & Right) -->
+      <button type="button" id="desktopPrevTestimonial" aria-label="Previous Testimonial"
+        class="hidden lg:flex absolute -left-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white border border-surface-variant shadow-xl text-deep-navy hover:bg-deep-navy hover:text-vibrant-lime items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer">
+        <span class="material-symbols-outlined text-2xl font-bold">arrow_back</span>
+      </button>
+
+      <button type="button" id="desktopNextTestimonial" aria-label="Next Testimonial"
+        class="hidden lg:flex absolute -right-5 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white border border-surface-variant shadow-xl text-deep-navy hover:bg-deep-navy hover:text-vibrant-lime items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer">
+        <span class="material-symbols-outlined text-2xl font-bold">arrow_forward</span>
+      </button>
+
+      <!-- Slideshow Track / Viewport -->
+      <div id="testimonialCarouselTrack" 
+        class="flex gap-6 overflow-x-auto scroll-smooth py-6 px-1 scrollbar-none select-none"
+        style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+        {% for testimonial in testimonials %}
+          {% cycle 'light' 'navy' 'light' as card_theme silent %}
+          <div class="testimonial-slide shrink-0 w-[85vw] max-w-[340px] sm:w-[calc(50%-12px)] sm:max-w-none lg:w-[calc(33.333%-16px)] flex flex-col"
+            style="scroll-snap-align: center;">
+            <div class="{% if card_theme == 'navy' %}bg-deep-navy text-white shadow-2xl scale-[1.02]{% else %}bg-white border border-surface-variant shadow-sm{% endif %} rounded-3xl p-7 md:p-8 relative flex flex-col justify-between space-y-6 h-full transition-all duration-300 hover:shadow-xl">
+              <div class="space-y-4">
+                <span class="text-vibrant-lime text-3xl font-serif font-black absolute top-6 right-6 select-none">”</span>
+                
+                {% if testimonial.image %}
+                  <div class="rounded-2xl overflow-hidden border border-surface-variant/40 shadow-xs bg-canvas-gray mt-2 flex items-center justify-center p-2" style="min-height: 180px; max-height: 280px;">
+                    <img src="{{ testimonial.image.url }}" alt="Testimonial screenshot" class="w-full h-auto max-h-[250px] object-contain rounded-xl select-none">
+                  </div>
+                {% endif %}
+
+                {% if testimonial.content and testimonial.content != "." %}
+                  <p class="{% if card_theme == 'navy' %}text-white/90{% else %}text-on-surface-variant{% endif %} font-body-md italic leading-relaxed text-sm sm:text-base pt-1">
+                    "{{ testimonial.content }}"
+                  </p>
+                {% endif %}
+              </div>
+
+              <div class="flex items-center gap-3 pt-4 border-t {% if card_theme == 'navy' %}border-white/10{% else %}border-surface-variant/60{% endif %} mt-auto">
+                <div class="w-10 h-10 rounded-full {% if card_theme == 'navy' %}bg-white/10 text-vibrant-lime{% else %}bg-vibrant-lime/20 text-deep-navy{% endif %} flex items-center justify-center font-bold shrink-0">
+                  <span class="material-symbols-outlined text-xl">verified</span>
+                </div>
+                <div class="min-w-0">
+                  <h4 class="font-headline-md font-bold {% if card_theme == 'navy' %}text-white{% else %}text-deep-navy{% endif %} text-sm sm:text-base leading-tight truncate">{{ testimonial.name }}</h4>
+                  <p class="font-body-sm text-xs {% if card_theme == 'navy' %}text-vibrant-lime{% else %}text-on-surface-variant{% endif %} truncate">{{ testimonial.location }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <!-- Fallback Cards matching template image -->
+          <div class="testimonial-slide shrink-0 w-[85vw] max-w-[340px] sm:w-[calc(50%-12px)] sm:max-w-none lg:w-[calc(33.333%-16px)] flex flex-col" style="scroll-snap-align: center;">
+            <div class="bg-white border border-surface-variant shadow-sm rounded-3xl p-7 md:p-8 relative flex flex-col justify-between space-y-6 h-full">
+              <div class="space-y-4">
+                <span class="text-vibrant-lime text-3xl font-serif font-black absolute top-6 right-6">”</span>
+                <p class="text-on-surface-variant font-body-md italic leading-relaxed text-base pt-2">
+                  "The entrance prep at Edukom was the game-changer for my son. He gained confidence and achieved scores we didn't think were possible."
+                </p>
+              </div>
+              <div class="flex items-center gap-4 pt-4 border-t border-surface-variant/60 mt-auto">
+                <img src="{% static 'IMG/community/Frame1.png' %}" alt="Sarah Johnson" class="w-12 h-12 rounded-full object-cover border-2 border-vibrant-lime">
+                <div>
+                  <h4 class="font-headline-md font-bold text-deep-navy text-base leading-tight">Sarah Johnson</h4>
+                  <p class="font-body-sm text-xs text-on-surface-variant">Parent of Year 11 Student</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-slide shrink-0 w-[85vw] max-w-[340px] sm:w-[calc(50%-12px)] sm:max-w-none lg:w-[calc(33.333%-16px)] flex flex-col" style="scroll-snap-align: center;">
+            <div class="bg-deep-navy text-white shadow-2xl rounded-3xl p-7 md:p-8 relative flex flex-col justify-between space-y-6 h-full scale-[1.02]">
+              <div class="space-y-4">
+                <span class="text-vibrant-lime text-3xl font-serif font-black absolute top-6 right-6">”</span>
+                <p class="text-white/90 font-body-md italic leading-relaxed text-base pt-2">
+                  "Having access to a tutor who actually understands how I learn made all the difference. My grades in Advanced Maths improved by two levels."
+                </p>
+              </div>
+              <div class="flex items-center gap-4 pt-4 border-t border-white/10 mt-auto">
+                <img src="{% static 'IMG/community/Frame2.png' %}" alt="David Okon" class="w-12 h-12 rounded-full object-cover border-2 border-vibrant-lime">
+                <div>
+                  <h4 class="font-headline-md font-bold text-white text-base leading-tight">David Okon</h4>
+                  <p class="font-body-sm text-xs text-vibrant-lime">A-Level Mathematics Student</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-slide shrink-0 w-[85vw] max-w-[340px] sm:w-[calc(50%-12px)] sm:max-w-none lg:w-[calc(33.333%-16px)] flex flex-col" style="scroll-snap-align: center;">
+            <div class="bg-white border border-surface-variant shadow-sm rounded-3xl p-7 md:p-8 relative flex flex-col justify-between space-y-6 h-full">
+              <div class="space-y-4">
+                <span class="text-vibrant-lime text-3xl font-serif font-black absolute top-6 right-6">”</span>
+                <p class="text-on-surface-variant font-body-md italic leading-relaxed text-base pt-2">
+                  "The flexibility of the portal is incredible. We can schedule sessions around our busy extracurricular activities without any friction."
+                </p>
+              </div>
+              <div class="flex items-center gap-4 pt-4 border-t border-surface-variant/60 mt-auto">
+                <img src="{% static 'IMG/community/Frame1.png' %}" alt="Marcus Chen" class="w-12 h-12 rounded-full object-cover border-2 border-vibrant-lime">
+                <div>
+                  <h4 class="font-headline-md font-bold text-deep-navy text-base leading-tight">Marcus Chen</h4>
+                  <p class="font-body-sm text-xs text-on-surface-variant">Business Consultant & Parent</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Controls: Indicators & Arrows for Mobile / Tablet -->
+      <div class="flex items-center justify-center gap-4 mt-6">
+        <button type="button" id="prevTestimonialBtn" aria-label="Previous Testimonials"
+          class="flex lg:hidden w-11 h-11 rounded-full bg-white border border-surface-variant shadow-md text-deep-navy hover:bg-deep-navy hover:text-white items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer">
+          <span class="material-symbols-outlined text-xl font-bold">arrow_back</span>
+        </button>
+
+        <!-- Pagination Dots -->
+        <div id="testimonialSliderDots" class="flex items-center gap-2 py-2"></div>
+
+        <button type="button" id="nextTestimonialBtn" aria-label="Next Testimonials"
+          class="flex lg:hidden w-11 h-11 rounded-full bg-white border border-surface-variant shadow-md text-deep-navy hover:bg-deep-navy hover:text-white items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer">
+          <span class="material-symbols-outlined text-xl font-bold">arrow_forward</span>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- Testimonials Carousel Slideshow Controller -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const track = document.getElementById('testimonialCarouselTrack');
+    if (!track) return;
+
+    const prevDesktop = document.getElementById('desktopPrevTestimonial');
+    const nextDesktop = document.getElementById('desktopNextTestimonial');
+    const prevMobile = document.getElementById('prevTestimonialBtn');
+    const nextMobile = document.getElementById('nextTestimonialBtn');
+    const dotsContainer = document.getElementById('testimonialSliderDots');
+    const slides = track.querySelectorAll('.testimonial-slide');
+
+    if (!slides.length) return;
+
+    function getSlideStep() {
+      const slide = slides[0];
+      if (!slide) return 320;
+      const style = window.getComputedStyle(track);
+      const gap = parseFloat(style.gap) || 24;
+      return slide.offsetWidth + gap;
+    }
+
+    function scrollNext() {
+      const step = getSlideStep();
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      if (track.scrollLeft >= maxScroll - 20) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: step, behavior: 'smooth' });
+      }
+    }
+
+    function scrollPrev() {
+      const step = getSlideStep();
+      if (track.scrollLeft <= 20) {
+        track.scrollTo({ left: track.scrollWidth - track.clientWidth, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: -step, behavior: 'smooth' });
+      }
+    }
+
+    // Attach click listeners
+    if (nextDesktop) nextDesktop.addEventListener('click', () => { scrollNext(); resetAutoplay(); });
+    if (prevDesktop) prevDesktop.addEventListener('click', () => { scrollPrev(); resetAutoplay(); });
+    if (nextMobile) nextMobile.addEventListener('click', () => { scrollNext(); resetAutoplay(); });
+    if (prevMobile) prevMobile.addEventListener('click', () => { scrollPrev(); resetAutoplay(); });
+
+    // Generate responsive pagination dots
+    if (dotsContainer) {
+      dotsContainer.innerHTML = '';
+      slides.forEach((_, idx) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = `h-2.5 rounded-full transition-all duration-300 cursor-pointer ${idx === 0 ? 'bg-deep-navy w-7' : 'bg-surface-variant w-2.5 hover:bg-deep-navy/40'}`;
+        dot.setAttribute('aria-label', `Go to testimonial slide ${idx + 1}`);
+        dot.addEventListener('click', () => {
+          const step = getSlideStep();
+          track.scrollTo({ left: idx * step, behavior: 'smooth' });
+          resetAutoplay();
+        });
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    // Update active dot indicator on scroll
+    function updateActiveDot() {
+      if (!dotsContainer) return;
+      const dots = dotsContainer.querySelectorAll('button');
+      if (!dots.length) return;
+      const step = getSlideStep();
+      const activeIdx = Math.min(dots.length - 1, Math.max(0, Math.round(track.scrollLeft / step)));
+      dots.forEach((d, i) => {
+        if (i === activeIdx) {
+          d.className = 'h-2.5 w-7 rounded-full bg-deep-navy transition-all duration-300';
+        } else {
+          d.className = 'h-2.5 w-2.5 rounded-full bg-surface-variant hover:bg-deep-navy/40 transition-all duration-300';
+        }
+      });
+    }
+
+    let scrollDebounce;
+    track.addEventListener('scroll', () => {
+      clearTimeout(scrollDebounce);
+      scrollDebounce = setTimeout(updateActiveDot, 50);
+    }, { passive: true });
+
+    // Touch Swipe Event Listeners (Swipe effect on mobile)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isSwiping = false;
+
+    track.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isSwiping = true;
+      stopAutoplay();
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+      if (!isSwiping) return;
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchStartX - touchEndX;
+      const diffY = touchStartY - touchEndY;
+
+      // Check if horizontal swipe was intentional
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+        if (diffX > 0) {
+          scrollNext();
+        } else {
+          scrollPrev();
+        }
+      }
+      isSwiping = false;
+      startAutoplay();
+    }, { passive: true });
+
+    // Gentle Auto-play for the slideshow
+    let autoplayTimer = null;
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayTimer = setInterval(scrollNext, 5500);
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    function resetAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+
+    track.addEventListener('mouseenter', stopAutoplay);
+    track.addEventListener('mouseleave', startAutoplay);
+
+    // Initial start
+    startAutoplay();
+  });
+
+  function opencourse(course) {
+    const allTabs = document.querySelectorAll('.course-tab');
+    allTabs.forEach(tab => tab.classList.remove('active'));
+
+    if (course === 'all') {
+      document.getElementById('allTab').classList.add('active');
+    } else {
+      const activeTab = document.getElementById(course);
+      if (activeTab) activeTab.classList.add('active');
+    }
+
+    const allCourses = document.querySelectorAll('.courses > li');
+    if (course === 'all') {
+      allCourses.forEach(item => item.style.display = 'flex');
+    } else {
+      allCourses.forEach(item => {
+        if (item.classList.contains(course)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+  }
+</script>
+
+{% endblock main %}

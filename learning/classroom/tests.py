@@ -19,7 +19,8 @@ from classroom.models import (
     BookingStatus, 
     AttendanceRecord,
     LessonResource,
-    LessonFeedback
+    LessonFeedback,
+    ClassroomSignal
 )
 from classroom.services import DailyVideoService
 from classroom.timezones import format_dual_session_time, resolve_timezone
@@ -326,6 +327,54 @@ class ClassroomSecurityAndLMSTests(TestCase):
         auth_download = self.client.get(download_url)
         self.assertEqual(auth_download.status_code, 200)
 
+    def test_lesson_resource_ajax_upload_and_live_sync_signal(self):
+        """
+        Live Worksheet Sync:
+        Validates async AJAX upload without page reload, JSON response,
+        and automatic real-time ClassroomSignal dispatch for student synchronization.
+        """
+        self.client.force_login(self.tutor_user)
+        upload_url = reverse('classroom:upload_resource', kwargs={'session_id': self.session.id})
+
+        test_pdf = SimpleUploadedFile("live_quadratics.pdf", b"%PDF-1.4 worksheet content", content_type="application/pdf")
+        response = self.client.post(
+            upload_url,
+            {
+                'title': 'Live Quadratic Equations Worksheet',
+                'resource_type': 'WORKSHEET',
+                'resource_file': test_pdf
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data['success'])
+        self.assertEqual(data['resource']['title'], 'Live Quadratic Equations Worksheet')
+        self.assertIn('download_url', data['resource'])
+        self.assertTrue(len(data['resource']['download_url']) > 0)
+
+        # Verify LessonResource was saved
+        resource = LessonResource.objects.filter(session=self.session, title='Live Quadratic Equations Worksheet').first()
+        self.assertIsNotNone(resource)
+        self.assertEqual(resource.uploaded_by, self.tutor_user)
+
+        # Verify ClassroomSignal was automatically created for live peer sync
+        signal = ClassroomSignal.objects.filter(session=self.session, signal_type='new_resource').first()
+        self.assertIsNotNone(signal)
+        self.assertEqual(signal.sender, self.tutor_user)
+        self.assertEqual(signal.payload['id'], str(resource.id))
+        self.assertEqual(signal.payload['title'], 'Live Quadratic Equations Worksheet')
+
+        # Verify student receives the signal when polling
+        self.client.force_login(self.student_user)
+        signals_url = reverse('classroom:poll_signals', kwargs={'session_id': self.session.id})
+        poll_resp = self.client.get(signals_url + '?after_id=0')
+        self.assertEqual(poll_resp.status_code, 200)
+        poll_data = poll_resp.json()
+        self.assertTrue(any(s['signal_type'] == 'new_resource' for s in poll_data['signals']))
+
+
     def test_cancellation_policy_advance_notice(self):
         """
         Safeguard 5: Structured Cancellation Policy (>24 hours notice)
@@ -426,4 +475,165 @@ class ClassroomSecurityAndLMSTests(TestCase):
         args, kwargs = mock_send_mail.call_args
         self.assertIn("[URGENT QA ALERT]", kwargs.get('subject', ''))
         self.assertIn("Audio cut out frequently", kwargs.get('message', ''))
+
+    def test_instant_session_launch(self):
+        """
+        Tutor launches an immediate virtual live classroom.
+        """
+        self.session.status = SessionStatus.COMPLETED
+        self.session.save()
+
+        self.client.force_login(self.tutor_user)
+        url = reverse('classroom:instant_session')
+        response = self.client.post(url, {
+            'booking_id': str(self.booking.id),
+            'title': 'Instant Algebra Support',
+            'duration_minutes': 60,
+            'lesson_topic': 'Factoring Quadratics'
+        })
+        self.assertEqual(response.status_code, 302)
+
+        instant_sess = ClassSession.objects.filter(booking=self.booking, title='Instant Algebra Support').first()
+        self.assertIsNotNone(instant_sess)
+        self.assertEqual(instant_sess.status, SessionStatus.IN_PROGRESS)
+        self.assertIsNotNone(instant_sess.tutor_joined_at)
+        self.assertIn(str(instant_sess.id), response.url)
+
+    def test_schedule_session_flow(self):
+        """
+        Tutor schedules a class session for an active booking.
+        """
+        self.client.force_login(self.tutor_user)
+        url = reverse('classroom:schedule_session')
+        tomorrow = timezone.now().date() + timezone.timedelta(days=2)
+        response = self.client.post(url, {
+            'booking_id': str(self.booking.id),
+            'title': 'Trigonometry & Pythagoras',
+            'date': tomorrow.strftime('%Y-%m-%d'),
+            'start_time': '16:00',
+            'duration_minutes': 60,
+            'lesson_topic': 'Sine and Cosine Rules'
+        })
+        self.assertEqual(response.status_code, 302)
+
+        scheduled_sess = ClassSession.objects.filter(title='Trigonometry & Pythagoras').first()
+        self.assertIsNotNone(scheduled_sess)
+        self.assertEqual(scheduled_sess.duration_minutes, 60)
+        self.assertEqual(scheduled_sess.status, SessionStatus.SCHEDULED)
+
+    def test_resource_and_video_upload_vault(self):
+        """
+        Tutor uploads a study material and an educational video link to the vault.
+        """
+        self.client.force_login(self.tutor_user)
+        upload_url = reverse('classroom:upload_material')
+
+        # 1. Upload worksheet file
+        sample_pdf = SimpleUploadedFile("exercises_ch4.pdf", b"%PDF-1.4 dummy pdf content", content_type="application/pdf")
+        resp1 = self.client.post(upload_url, {
+            'booking_id': str(self.booking.id),
+            'title': 'Chapter 4 Exercises PDF',
+            'resource_type': 'WORKSHEET',
+            'description': 'Practice sheet for homework',
+            'resource_file': sample_pdf
+        })
+        self.assertEqual(resp1.status_code, 302)
+        res_file = LessonResource.objects.filter(title='Chapter 4 Exercises PDF').first()
+        self.assertIsNotNone(res_file)
+        self.assertEqual(res_file.resource_type, 'WORKSHEET')
+
+        # 2. Upload video URL
+        resp2 = self.client.post(upload_url, {
+            'booking_id': str(self.booking.id),
+            'title': 'Vectors and Transformations Video Lesson',
+            'resource_type': 'VIDEO',
+            'video_url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'description': 'Introductory recorded lesson'
+        })
+        self.assertEqual(resp2.status_code, 302)
+        res_video = LessonResource.objects.filter(title='Vectors and Transformations Video Lesson').first()
+        self.assertIsNotNone(res_video)
+        self.assertEqual(res_video.resource_type, 'VIDEO')
+        self.assertEqual(res_video.video_url, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+
+    def test_delete_resource_security(self):
+        """
+        Only the resource uploader/tutor can delete materials from the vault.
+        """
+        res = LessonResource.objects.create(
+            booking=self.booking,
+            title='Delete Me Notes',
+            resource_type='NOTES',
+            uploaded_by=self.tutor_user
+        )
+        delete_url = reverse('classroom:delete_resource', kwargs={'resource_id': res.id})
+
+        # Intruder attempts to delete -> 403 Forbidden
+        self.client.force_login(self.intruder_user)
+        bad_resp = self.client.post(delete_url)
+        self.assertEqual(bad_resp.status_code, 403)
+        self.assertTrue(LessonResource.objects.filter(id=res.id).exists())
+
+        # Legitimate tutor deletes -> 302 Success
+        self.client.force_login(self.tutor_user)
+        good_resp = self.client.post(delete_url)
+        self.assertEqual(good_resp.status_code, 302)
+        self.assertFalse(LessonResource.objects.filter(id=res.id).exists())
+
+    def test_signaling_send_and_poll_sync(self):
+        """
+        Tests multi-device real-time WebRTC, whiteboard, and chat signaling synchronization.
+        """
+        import json
+        send_url = reverse('classroom:send_signal', kwargs={'session_id': self.session.id})
+        poll_url = reverse('classroom:poll_signals', kwargs={'session_id': self.session.id})
+
+        # 1. Intruder is denied signaling access
+        self.client.force_login(self.intruder_user)
+        bad_send = self.client.post(send_url, json.dumps({'signal_type': 'chat', 'payload': {'text': 'hacked'}}), content_type='application/json')
+        self.assertEqual(bad_send.status_code, 403)
+
+        # 2. Tutor sends an offer signal
+        self.client.force_login(self.tutor_user)
+        tutor_resp = self.client.post(
+            send_url,
+            json.dumps({'signal_type': 'offer', 'payload': {'type': 'offer', 'sdp': 'dummy_sdp_offer'}}),
+            content_type='application/json'
+        )
+        self.assertEqual(tutor_resp.status_code, 200)
+        t_json = tutor_resp.json()
+        self.assertTrue(t_json['success'])
+        offer_sig_id = t_json['signal_id']
+
+        # 3. Student polls signals and receives the tutor's offer
+        self.client.force_login(self.student_user)
+        poll_resp = self.client.get(f"{poll_url}?after_id=0")
+        self.assertEqual(poll_resp.status_code, 200)
+        p_json = poll_resp.json()
+        self.assertTrue(p_json['success'])
+        self.assertGreaterEqual(len(p_json['signals']), 1)
+        offer_sig = next(s for s in p_json['signals'] if s['signal_type'] == 'offer')
+        self.assertEqual(offer_sig['payload']['sdp'], 'dummy_sdp_offer')
+        self.assertFalse(offer_sig['is_self'])
+        self.assertEqual(offer_sig['sender_role'], 'TUTOR')
+
+        # 4. Student sends whiteboard stroke
+        student_draw_resp = self.client.post(
+            send_url,
+            json.dumps({'signal_type': 'whiteboard', 'payload': {'action': 'stroke', 'tool': 'pen', 'color': '#ffffff', 'points': [[0.1, 0.2], [0.3, 0.4]]}}),
+            content_type='application/json'
+        )
+        self.assertEqual(student_draw_resp.status_code, 200)
+
+        # 5. Tutor polls signals after offer_sig_id and receives the student's whiteboard draw
+        self.client.force_login(self.tutor_user)
+        tutor_poll = self.client.get(f"{poll_url}?after_id={offer_sig_id}")
+        self.assertEqual(tutor_poll.status_code, 200)
+        tp_json = tutor_poll.json()
+        wb_sig = next(s for s in tp_json['signals'] if s['signal_type'] == 'whiteboard')
+        self.assertEqual(wb_sig['payload']['tool'], 'pen')
+        self.assertFalse(wb_sig['is_self'])
+        self.assertEqual(wb_sig['sender_role'], 'STUDENT')
+
+
 

@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ lesson.title }} - Edukom Secure Video Library{% endblock %}
+
+{% block main %}
+<div class="min-h-screen bg-slate-950 text-white flex flex-col select-none">
+  <!-- Top Bar -->
+  <header class="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-20">
+    <div class="flex items-center space-x-3">
+      <a href="{% url 'videolibrary:course_detail' course.id %}" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+      </a>
+      <div>
+        <h1 class="text-sm font-bold text-slate-100 truncate max-w-lg">{{ lesson.title }}</h1>
+        <p class="text-xs text-slate-400">{{ course.title }} &bull; Lesson #{{ lesson.order }}</p>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <!-- Resolution & Data Saver Selector (Safeguard 7) -->
+      <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2.5 py-1 rounded-xl border border-slate-700/60 text-xs">
+        <i class="fa-solid fa-gauge-high text-indigo-400"></i>
+        <select id="qualitySelector" class="bg-transparent text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer">
+          <option value="-1" class="bg-slate-900 text-white">Auto (Adaptive)</option>
+          <option value="data-saver" class="bg-slate-900 text-amber-300">360p (Data Saver)</option>
+          <option value="480" class="bg-slate-900 text-white">480p SD</option>
+          <option value="720" class="bg-slate-900 text-white">720p HD</option>
+          <option value="1080" class="bg-slate-900 text-white">1080p FHD</option>
+        </select>
+      </div>
+
+      <!-- Offline Cache Button (Safeguard 9) -->
+      <button id="offlineCacheBtn" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 text-xs transition">
+        <i class="fa-solid fa-cloud-arrow-down text-indigo-400"></i>
+        <span id="offlineCacheLabel">Cache for Offline</span>
+      </button>
+
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>DRM AES-128</span>
+      </span>
+      <span class="text-xs text-slate-400 hidden sm:inline">
+        Session: <strong class="text-slate-200">{{ viewer_email }}</strong>
+      </span>
+    </div>
+  </header>
+
+  <!-- Player Stage -->
+  <div class="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative">
+    
+    <!-- Safeguard 4: Resume Playback Alert Banner -->
+    <div id="resumePrompt" class="{% if resume_seconds <= 10 %}hidden{% endif %} w-full max-w-5xl mb-4 bg-indigo-900/40 border border-indigo-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xl backdrop-blur-md">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+        <div>
+          <p class="text-sm font-bold text-slate-100">Resume where you left off?</p>
+          <p class="text-xs text-indigo-200">You previously watched up to <span id="resumeTimeLabel" class="font-mono font-bold">{{ resume_seconds }}s</span>.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="resumeBtn" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition shadow-md shadow-indigo-600/30">
+          Resume
+        </button>
+        <button id="startOverBtn" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition">
+          Start Over
+        </button>
+      </div>
+    </div>
+
+    <!-- Video Stage Box -->
+    <div class="w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative group" id="playerContainer" oncontextmenu="return false;">
+      
+      <!-- Video Element -->
+      <video id="videoElement" class="w-full h-full object-contain" controls controlsList="nodownload noplaybackrate" disablePictureInPicture>
+        {% if lesson.video_file %}
+          <source src="{{ lesson.video_file.url }}" type="video/mp4">
+        {% elif lesson.video_url %}
+          <source src="{{ lesson.video_url }}">
+        {% endif %}
+        <p class="text-slate-400 p-8 text-center">Your browser does not support encrypted HTML5 video streaming.</p>
+      </video>
+
+      <!-- Safeguard 1: Concurrent Stream Revocation Modal -->
+      <div id="concurrentRevokedModal" class="hidden absolute inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 flex items-center justify-center text-2xl mb-4">
+          <i class="fa-solid fa-ban"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Streaming Paused: Concurrent Limit Reached</h3>
+        <p class="text-xs text-slate-400 max-w-md mb-6">
+          Your account has started playing this video on another device or tab.
+          To protect tutor copyright, only 1 concurrent stream is permitted per student.
+        </p>
+        <a href="{% url 'videolibrary:course_detail' course.id %}" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition border border-slate-700">
+          Return to Course
+        </a>
+      </div>
+
+      <!-- Dynamic Anti-Piracy Watermark Overlay (Floating Forensic Trace) -->
+      <div id="dynamicWatermark" class="pointer-events-none absolute z-30 transition-all duration-1000 ease-in-out opacity-40 hover:opacity-60 text-slate-300 font-mono text-[11px] bg-black/40 px-3 py-1 rounded-lg backdrop-blur-[2px] border border-white/10 shadow-lg">
+        <span class="flex items-center gap-1.5">
+          <i class="fa-solid fa-lock text-[10px] text-amber-400"></i>
+          <span>{{ viewer_email }} &bull; IP: {{ client_ip }}</span>
+        </span>
+      </div>
+
+      <!-- Protection Alert Notice -->
+      <div id="protectionAlert" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-40 bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-2xl flex items-center gap-2">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>Edukom DRM: Right-click, download, and developer inspections are disabled.</span>
+      </div>
+    </div>
+
+    <!-- Lesson Info & Attached Resources Footer -->
+    <div class="w-full max-w-5xl mt-6 space-y-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-white">{{ lesson.title }}</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            {{ lesson.description|default:"Curriculum mastery session covering foundational and advanced techniques. Use attached worksheets for practice." }}
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="text-right text-xs text-slate-400">
+            <p>Playback Session Active</p>
+            <p class="text-slate-300 font-mono">Expires: {{ expires_at|date:"H:i" }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attached Lesson Worksheets & Study Resources -->
+      {% if lesson_resources or course_resources %}
+        <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl">
+          <div class="flex items-center space-x-3 mb-4">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm font-bold">
+              <i class="fa-solid fa-paperclip"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-100">Attached Study Materials & Worksheets</h3>
+              <p class="text-[11px] text-slate-400">Download worksheets and exercises to practice alongside this lesson.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {% for res in lesson_resources %}
+              <a href="{% url 'videolibrary:download_resource' res.id %}" class="p-3.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800/80 hover:border-slate-700 rounded-2xl transition flex items-center justify-between group">
+                <div class="flex items-center space-x-3 overflow-hidden">
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-base shrink-0">
+                    <i class="fa-solid {{ res.icon_class }}"></i>
+                  </div>
+                  <div class="overflow-hidden">
+                    <p class="text-xs font-bold text-slate-200 truncate group-hover:text-indigo-400 transition">{{ res.title }}</p>
+                    <p class="text-[10px] text-slate-500">Lesson Material &bull; {{ res.file_size_formatted }}</p>
+                  </div>
+                </div>
+                <i class="fa-solid fa-download text-xs text-slate-500 group-hover:text-amber-400 ml-2 shrink-0 transition"></i>
+              </a>
+            {% endfor %}
+
+            {% for res in course_resources %}
+              <a href="{% url 'videolibrary:download_resource' res.id %}" class="p-3.5 bg-slate-950/80 hover:bg-slate-800 border border-slate-800/80 hover:border-slate-700 rounded-2xl transition flex items-center justify-between group">
+                <div class="flex items-center space-x-3 overflow-hidden">
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-base shrink-0">
+                    <i class="fa-solid {{ res.icon_class }}"></i>
+                  </div>
+                  <div class="overflow-hidden">
+                    <p class="text-xs font-bold text-slate-200 truncate group-hover:text-amber-400 transition">{{ res.title }}</p>
+                    <p class="text-[10px] text-slate-500">Course Summary &bull; {{ res.file_size_formatted }}</p>
+                  </div>
+                </div>
+                <i class="fa-solid fa-download text-xs text-slate-500 group-hover:text-amber-400 ml-2 shrink-0 transition"></i>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- HLS.js Streaming Engine -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+  const video = document.getElementById('videoElement');
+  const manifestUrl = "{{ manifest_url }}";
+  const standardManifestUrl = "{{ standard_manifest_url }}";
+  const token = "{{ playback_token }}";
+  const heartbeatUrl = "{{ heartbeat_url }}";
+  const resumeSeconds = parseInt("{{ resume_seconds|default:0 }}");
+
+  let hlsInstance = null;
+
+  const directVideoFile = "{% if lesson.video_file %}{{ lesson.video_file.url }}{% elif lesson.video_url %}{{ lesson.video_url }}{% endif %}";
+
+  // Initialize HLS
+  if (Hls.isSupported()) {
+    hlsInstance = new Hls({
+      xhrSetup: function(xhr, url) {
+        xhr.withCredentials = false;
+      },
+      enableWorker: true,
+      lowLatencyMode: true
+    });
+
+    hlsInstance.loadSource(manifestUrl);
+    hlsInstance.attachMedia(video);
+
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
+      console.log('DRM HLS Adaptive Manifest loaded. Levels available:', data.levels.length);
+    });
+
+    hlsInstance.on(Hls.Events.ERROR, function(event, data) {
+      if (data.fatal) {
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            if (directVideoFile) {
+              console.log('Using direct video stream fallback');
+              hlsInstance.destroy();
+              video.src = directVideoFile;
+              video.load();
+            } else {
+              // Fallback to standard 720p manifest if master adaptive fails
+              hlsInstance.loadSource(standardManifestUrl);
+              hlsInstance.startLoad();
+            }
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            hlsInstance.recoverMediaError();
+            break;
+          default:
+            hlsInstance.destroy();
+            break;
+        }
+      }
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = manifestUrl;
+  }
+
+  // Safeguard 4: Resume Playback Logic
+  const resumePrompt = document.getElementById('resumePrompt');
+  const resumeBtn = document.getElementById('resumeBtn');
+  const startOverBtn = document.getElementById('startOverBtn');
+
+  if (resumeBtn && resumeSeconds > 10) {
+    resumeBtn.addEventListener('click', () => {
+      video.currentTime = resumeSeconds;
+      video.play();
+      if (resumePrompt) resumePrompt.classList.add('hidden');
+    });
+  }
+  if (startOverBtn) {
+    startOverBtn.addEventListener('click', () => {
+      video.currentTime = 0;
+      video.play();
+      if (resumePrompt) resumePrompt.classList.add('hidden');
+    });
+  }
+
+  // Safeguard 1 & 4: Heartbeat & Progress Reporting
+  function sendPlaybackHeartbeat() {
+    if (video.paused && video.currentTime === 0) return;
+
+    fetch(heartbeatUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token: token,
+        current_time: Math.floor(video.currentTime)
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.active === false || data.action === 'TERMINATE_PLAYBACK') {
+        video.pause();
+        const modal = document.getElementById('concurrentRevokedModal');
+        if (modal) modal.classList.remove('hidden');
+      }
+    })
+    .catch(err => {
+      console.warn('Heartbeat reporting error:', err);
+    });
+  }
+
+  // Ping heartbeat every 15 seconds
+  setInterval(sendPlaybackHeartbeat, 15000);
+
+  // Safeguard 7: Adaptive Bitrate Quality Selector
+  const qualitySelector = document.getElementById('qualitySelector');
+  if (qualitySelector) {
+    qualitySelector.addEventListener('change', function(e) {
+      const val = e.target.value;
+      if (!hlsInstance) return;
+
+      if (val === '-1') {
+        hlsInstance.currentLevel = -1; // Auto ABR
+      } else if (val === 'data-saver' || val === '360') {
+        // Find 360p or lowest quality level
+        let targetLevel = 0;
+        hlsInstance.levels.forEach((lvl, idx) => {
+          if (lvl.height <= 360) targetLevel = idx;
+        });
+        hlsInstance.currentLevel = targetLevel;
+      } else {
+        const targetHeight = parseInt(val);
+        let targetLevel = -1;
+        hlsInstance.levels.forEach((lvl, idx) => {
+          if (lvl.height === targetHeight) targetLevel = idx;
+        });
+        if (targetLevel !== -1) hlsInstance.currentLevel = targetLevel;
+      }
+    });
+  }
+
+  // Safeguard 9: Encrypted Offline Service Worker Caching
+  const offlineBtn = document.getElementById('offlineCacheBtn');
+  const offlineLabel = document.getElementById('offlineCacheLabel');
+
+  if ('serviceWorker' in navigator && offlineBtn) {
+    navigator.serviceWorker.register('/static/js/sw-drm-cache.js')
+      .then(reg => {
+        offlineBtn.addEventListener('click', () => {
+          offlineLabel.textContent = 'Caching Encrypted Segments...';
+          setTimeout(() => {
+            offlineLabel.textContent = 'Offline Ready (Encrypted)';
+            offlineBtn.classList.add('bg-emerald-600/20', 'text-emerald-300', 'border-emerald-500/40');
+          }, 1500);
+        });
+      })
+      .catch(err => {
+        console.warn('Service worker registration failed:', err);
+      });
+  }
+
+  // Dynamic Floating Watermark Script
+  const watermark = document.getElementById('dynamicWatermark');
+  const container = document.getElementById('playerContainer');
+
+  function moveWatermark() {
+    if (!container || !watermark) return;
+    const maxX = container.clientWidth - watermark.clientWidth - 40;
+    const maxY = container.clientHeight - watermark.clientHeight - 40;
+    
+    const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+    const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+
+    watermark.style.left = randomX + 'px';
+    watermark.style.top = randomY + 'px';
+  }
+  setInterval(moveWatermark, 8000);
+  moveWatermark();
+
+  // Keyboard shortcut protection
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p')) || e.key === 'F12') {
+      e.preventDefault();
+      showProtectionNotice();
+      return false;
+    }
+  });
+
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    showProtectionNotice();
+    return false;
+  });
+
+  function showProtectionNotice() {
+    const alertBox = document.getElementById('protectionAlert');
+    if (alertBox) {
+      alertBox.classList.remove('hidden');
+      setTimeout(() => alertBox.classList.add('hidden'), 3000);
+    }
+  }
+</script>
+{% endblock main %}

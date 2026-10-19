@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Tutor Application | Edukom Academic Portal{% endblock %}
+
+{% block main %}
+<style>
+  /* Form Step Navigation Styling */
+  .tutor-step-tab {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tutor-step-tab.active {
+    background-color: #002769 !important;
+    color: #ffffff !important;
+    border-color: #002769 !important;
+    box-shadow: 0 4px 14px rgba(0, 39, 105, 0.25);
+  }
+  .tutor-step-tab.active .step-num {
+    background-color: #A9D156 !important;
+    color: #002769 !important;
+  }
+  
+  /* Input Customizations for Crispy Forms */
+  .tutor-form-container input[type="text"],
+  .tutor-form-container input[type="email"],
+  .tutor-form-container input[type="tel"],
+  .tutor-form-container input[type="number"],
+  .tutor-form-container select,
+  .tutor-form-container textarea {
+    width: 100%;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.85rem;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    font-size: 0.95rem;
+    color: #002769;
+    transition: all 0.2s ease;
+  }
+  .tutor-form-container input:focus,
+  .tutor-form-container select:focus,
+  .tutor-form-container textarea:focus {
+    outline: none;
+    border-color: #002769;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(169, 209, 86, 0.3);
+  }
+  .tutor-form-container label {
+    font-weight: 600;
+    color: #002769;
+    margin-bottom: 0.4rem;
+    display: block;
+    font-size: 0.9rem;
+  }
+</style>
+
+<section class="relative py-12 md:py-20 bg-canvas-gray overflow-hidden">
+    <!-- Edge Decorative Background Splatters -->
+    <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-12 top-10 w-44 md:w-64 opacity-25 pointer-events-none select-none z-0" alt="">
+    <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -right-12 bottom-10 w-48 md:w-72 opacity-25 pointer-events-none select-none z-0" alt="">
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+        <!-- Header Banner -->
+        <div class="text-center mb-10">
+            <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest bg-deep-navy px-3.5 py-1.5 rounded-md inline-block mb-3">Join Our Academic Network</span>
+            <h1 class="font-display-lg text-3xl sm:text-5xl font-bold text-deep-navy">Tutor Application</h1>
+            <p class="font-body-md text-on-surface-variant text-sm sm:text-base mt-2 max-w-xl mx-auto">Complete the multi-step application below to join Edukom's elite team of private tutors.</p>
+        </div>
+
+        <!-- Main Card Container -->
+        <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-surface-variant/60 tutor-form-container">
+            
+            <!-- Step Navigation Tabs -->
+            <div id="tab-nav" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                <button type="button" onclick="openform(1)" id="Tab1" class="tutor-step-tab active flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all">
+                    <span id="Span1" class="step-num w-7 h-7 rounded-xl bg-deep-navy text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                    <span class="text-xs sm:text-sm font-bold truncate">Specialization</span>
+                </button>
+                <button type="button" onclick="openform(2)" id="Tab2" class="tutor-step-tab flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all">
+                    <span id="Span2" class="step-num w-7 h-7 rounded-xl bg-surface-variant text-on-surface text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                    <span class="text-xs sm:text-sm font-bold truncate">Contact Info</span>
+                </button>
+                <button type="button" onclick="openform(3)" id="Tab3" class="tutor-step-tab flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all">
+                    <span id="Span3" class="step-num w-7 h-7 rounded-xl bg-surface-variant text-on-surface text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                    <span class="text-xs sm:text-sm font-bold truncate">Location</span>
+                </button>
+                <button type="button" onclick="openform(4)" id="Tab4" class="tutor-step-tab flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all">
+                    <span id="Span4" class="step-num w-7 h-7 rounded-xl bg-surface-variant text-on-surface text-xs font-bold flex items-center justify-center shrink-0">4</span>
+                    <span class="text-xs sm:text-sm font-bold truncate">Schedule</span>
+                </button>
+            </div>
+
+            <!-- Form Content -->
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Step 1: Specialization -->
+                <div id="form1" class="space-y-6">
+                    <div class="border-b border-surface-variant/60 pb-4">
+                        <h2 class="text-xl sm:text-2xl font-bold font-headline-md text-deep-navy">Teaching Specialization</h2>
+                        <p class="text-sm text-on-surface-variant">Tell us about your educational goals and subject competence.</p>
+                    </div>
+                    <div class="space-y-4">
+                        {{ Abform | crispy }}
+                    </div>
+                    <div class="flex justify-end pt-4">
+                        <button type="button" class="px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center gap-2" onclick="fnext(1)">
+                            <span>Next Step</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Personal Info -->
+                <div id="form2" class="space-y-6 hidden">
+                    <div class="border-b border-surface-variant/60 pb-4">
+                        <h2 class="text-xl sm:text-2xl font-bold font-headline-md text-deep-navy">Personal & Contact Information</h2>
+                        <p class="text-sm text-on-surface-variant">Provide your direct contact details for candidate verification.</p>
+                    </div>
+                    <div class="space-y-4">
+                        {{ Guform | crispy }}
+                    </div>
+                    <div class="flex justify-between items-center pt-4">
+                        <button type="button" class="px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center gap-2" onclick="openform(1)">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <span>Previous</span>
+                        </button>
+                        <button type="button" class="px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center gap-2" onclick="fnext(2)">
+                            <span>Next Step</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Location -->
+                <div id="form3" class="space-y-6 hidden">
+                    <div class="border-b border-surface-variant/60 pb-4">
+                        <h2 class="text-xl sm:text-2xl font-bold font-headline-md text-deep-navy">Location Details</h2>
+                        <p class="text-sm text-on-surface-variant">Helps us connect you with students in your proximity or time zone.</p>
+                    </div>
+                    <div class="space-y-4">
+                        {{ Loform | crispy }}
+                    </div>
+                    <div class="flex justify-between items-center pt-4">
+                        <button type="button" class="px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center gap-2" onclick="openform(2)">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <span>Previous</span>
+                        </button>
+                        <button type="button" class="px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center gap-2" onclick="fnext(3)">
+                            <span>Next Step</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Schedule -->
+                <div id="form4" class="space-y-6 hidden">
+                    <div class="border-b border-surface-variant/60 pb-4">
+                        <h2 class="text-xl sm:text-2xl font-bold font-headline-md text-deep-navy">Lesson Availability</h2>
+                        <p class="text-sm text-on-surface-variant">Select your weekly availability preferences for teaching sessions.</p>
+                    </div>
+                    <div class="space-y-4">
+                        {{ Leform | crispy }}
+                    </div>
+                    <div class="flex justify-between items-center pt-4">
+                        <button type="button" class="px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center gap-2" onclick="openform(3)">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            <span>Previous</span>
+                        </button>
+                        <button type="submit" class="px-10 py-3.5 bg-vibrant-lime text-deep-navy font-bold rounded-xl text-base hover:brightness-105 transition-all shadow-lg flex items-center gap-2">
+                            <span>Submit Application</span>
+                            <span class="material-symbols-outlined">check_circle</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script src="{% static 'JS/jquery-3.5.1.min.js' %}"></script>
+<script>
+    function openform(key){
+        const formtab = document.getElementById(`Tab${key}`);
+        const formfield = document.getElementById(`form${key}`);
+        const SpanTab = document.getElementById(`Span${key}`);
+        
+        const tabs = document.querySelectorAll('#tab-nav > button');
+        const tabSpan = document.querySelectorAll('#tab-nav span.step-num');
+        const forms = document.querySelectorAll('form > div[id^="form"]');
+        
+        for (let i = 0; i < forms.length; i++) {
+            if(forms[i].id === formfield.id ){
+                forms[i].classList.remove('hidden');
+                forms[i].classList.add('block');
+            } else {
+                forms[i].classList.add('hidden');
+                forms[i].classList.remove('block');
+            }
+        }
+        
+        for (let i = 0; i < tabs.length; i++) {
+            if(parseInt(tabs[i].id.replace('Tab', '')) <= key){
+                tabs[i].classList.add('active');
+            } else {
+                tabs[i].classList.remove('active');
+            }
+        }
+        
+        for (let i = 0; i < tabSpan.length; i++) {
+            if(parseInt(tabSpan[i].id.replace('Span', '')) <= key){
+                tabSpan[i].classList.add('bg-vibrant-lime', 'text-deep-navy');
+            } else {
+                tabSpan[i].classList.remove('bg-vibrant-lime', 'text-deep-navy');
+            }
+        }
+    }
+
+    function fnext(key){
+        openform(key + 1);
+    }
+
+    openform(1);
+</script>
+{% endblock main %}

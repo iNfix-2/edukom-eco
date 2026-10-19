@@ -19,7 +19,7 @@ from homepage import models as home_models
 from tutors import models as tmodels
 from classroom.models import (
     Student, TutorProfile, ClassBooking, ClassSession, 
-    LessonResource, LessonFeedback, LearningPathMilestone, 
+    LessonResource, ResourceType, LessonFeedback, LearningPathMilestone, 
     LearningMilestoneStatus, SessionStatus, BookingStatus, Subject,
     HomeworkSubmission, SubmissionStatus,
     Quiz, QuizAttempt, CourseCertificate
@@ -411,6 +411,13 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
         models.Q(tutor_email__iexact=user.email) | models.Q(tutor__email__iexact=user.email)
     ).select_related('payroll_run').order_by('-payroll_run__created_at')[:6]
 
+    # 9. All resources uploaded by or for this tutor
+    resources = LessonResource.objects.filter(
+        models.Q(booking__tutor=tutor_profile) | 
+        models.Q(session__booking__tutor=tutor_profile) | 
+        models.Q(uploaded_by=user)
+    ).select_related('booking', 'session', 'booking__student', 'booking__subject').distinct().order_by('-created_at')
+
     context = {
         'profile': profile,
         'tutor': tutor_profile,
@@ -424,6 +431,8 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
         'feedbacks': feedbacks,
         'homework_submissions': homework_submissions,
         'tutor_payslips': tutor_payslips,
+        'resources': resources,
+        'resource_types': ResourceType.choices,
         'now': now,
     }
     return render(request, 'account/dashboard_tutor.html', context)

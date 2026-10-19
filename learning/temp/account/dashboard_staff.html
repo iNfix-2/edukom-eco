@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Operations Coordinator Dashboard | Edukom LMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-canvas-gray py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- Top Staff Coordinator Banner -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+      <div class="flex items-center space-x-5 z-10">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-3xl font-black shadow-md">
+          <i class="fa-solid fa-headset"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl sm:text-3xl font-bold text-deep-navy">Operations &amp; Academic Command Center</h1>
+            <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-xs font-bold rounded-full">
+              Staff Coordinator
+            </span>
+          </div>
+          <p class="text-sm text-on-surface-variant mt-1">
+            Real-time schedule coordination, QA monitoring, tutor assignment, and payroll dispatch.
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Dispatch Button -->
+      <div class="flex items-center gap-3 z-10">
+        <form action="{% url 'classroom:dispatch_payroll' %}" method="post" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="px-5 py-3 bg-green-700 hover:bg-green-800 text-white font-bold text-xs rounded-2xl shadow-md transition flex items-center gap-2">
+            <i class="fa-solid fa-money-bill-transfer"></i> Dispatch LMS Hours to Payroll
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4 KPI SUMMARY CARDS -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Active Students</span>
+        <span class="text-2xl sm:text-3xl font-black text-deep-navy mt-1 block">{{ total_students }}</span>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Verified Tutors</span>
+        <span class="text-2xl sm:text-3xl font-black text-deep-navy mt-1 block">{{ total_tutors }}</span>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Active Bookings</span>
+        <span class="text-2xl sm:text-3xl font-black text-secondary mt-1 block" style="color: #4b6700;">{{ active_bookings }}</span>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Classes Today</span>
+        <span class="text-2xl sm:text-3xl font-black text-indigo-600 mt-1 block">{{ today_sessions_count }}</span>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN STAFF LAYOUT -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- LEFT 2 COLUMNS: Global Live Schedules & QA Alerts -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- 1. LIVE & SCHEDULED SESSIONS OVERSIGHT -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-6 border-b border-outline-variant/20">
+            <h2 class="text-xl font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-deep-navy"></i>
+              <span>Live & Scheduled Sessions Across All Tutors</span>
+            </h2>
+            <span class="text-xs font-bold text-outline">{{ upcoming_sessions.count }} Active</span>
+          </div>
+
+          <div class="mt-6 overflow-x-auto">
+            <table class="min-w-full divide-y divide-outline-variant/20 text-xs">
+              <thead class="bg-surface-container text-deep-navy">
+                <tr>
+                  <th class="px-4 py-3 text-left font-bold">Lesson</th>
+                  <th class="px-4 py-3 text-left font-bold">Tutor</th>
+                  <th class="px-4 py-3 text-left font-bold">Student</th>
+                  <th class="px-4 py-3 text-left font-bold">Schedule</th>
+                  <th class="px-4 py-3 text-center font-bold">Room Entry</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-outline-variant/10">
+                {% for sess in upcoming_sessions %}
+                <tr>
+                  <td class="px-4 py-3.5 font-bold text-deep-navy">{{ sess.title }}</td>
+                  <td class="px-4 py-3.5">{{ sess.booking.tutor.display_name }}</td>
+                  <td class="px-4 py-3.5">{{ sess.booking.student.first_name }} {{ sess.booking.student.last_name }}</td>
+                  <td class="px-4 py-3.5 text-outline">{{ sess.dual_time_display }}</td>
+                  <td class="px-4 py-3.5 text-center">
+                    <a href="{% url 'classroom:live_room' sess.id %}" target="_blank" class="px-2.5 py-1 bg-deep-navy text-white rounded-lg font-bold text-[11px] hover:bg-primary-container">
+                      Monitor
+                    </a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="text-center py-6 text-outline">No live classes scheduled currently.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. QA ALERTS: RATINGS <= 3 STARS -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-6 border-b border-outline-variant/20">
+            <h2 class="text-xl font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+              <span>Quality Assurance Alerts (Low Ratings &le; 3 Stars)</span>
+            </h2>
+          </div>
+
+          <div class="mt-6 space-y-3">
+            {% for qa in qa_alerts %}
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs flex justify-between items-start gap-4">
+              <div>
+                <p class="font-bold text-amber-900">{{ qa.session.title }}</p>
+                <p class="text-amber-800 mt-0.5">Tutor: <strong>{{ qa.session.booking.tutor.display_name }}</strong> &bull; Student: <strong>{{ qa.session.booking.student.first_name }}</strong></p>
+                {% if qa.comments %}
+                  <p class="italic text-amber-700 mt-1">"{{ qa.comments }}"</p>
+                {% endif %}
+              </div>
+              <span class="px-2.5 py-1 bg-amber-200 text-amber-900 font-black rounded-lg text-xs shrink-0">
+                ★ {{ qa.rating }}.0
+              </span>
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">No low ratings flagged. All sessions meeting quality thresholds.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT 1 COLUMN: Pending Notes & Leads -->
+      <div class="space-y-8">
+
+        <!-- Pending Lesson Notes from Tutors -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-clock-rotate-left text-rose-500"></i>
+              <span>Pending Lesson Notes</span>
+            </h3>
+          </div>
+
+          <div class="mt-4 space-y-3 text-xs">
+            {% for un in unsubmitted_notes %}
+            <div class="p-3.5 rounded-2xl bg-surface-bright border border-outline-variant/20 space-y-1">
+              <p class="font-bold text-deep-navy">{{ un.title }}</p>
+              <p class="text-outline">Tutor: {{ un.booking.tutor.display_name }}</p>
+              <span class="px-2 py-0.5 bg-rose-100 text-rose-800 text-[10px] font-bold rounded">
+                Notes Overdue
+              </span>
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">All concluded classes have notes recorded.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Recent Guardian Applications / Inquiries -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-address-card text-secondary"></i>
+              <span>New Guardian Requests</span>
+            </h3>
+            <a href="{% url 'listGuardian' %}" class="text-xs font-bold text-deep-navy hover:underline">
+              All &rarr;
+            </a>
+          </div>
+
+          <div class="mt-4 space-y-2.5 text-xs">
+            {% for g in recent_guardians %}
+            <div class="p-3 rounded-2xl bg-surface-container-low flex justify-between items-center">
+              <div>
+                <p class="font-bold text-deep-navy">{{ g.first_name }} {{ g.last_name }}</p>
+                <p class="text-[11px] text-outline">{{ g.phone }} &bull; {{ g.curriculum }}</p>
+              </div>
+              <a href="{% url 'detailGuardian' g.uid %}" class="px-2 py-1 bg-white border border-outline-variant/30 rounded text-[11px] font-bold text-deep-navy hover:bg-deep-navy hover:text-white transition">
+                View
+              </a>
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">No guardian inquiries.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}On-Demand Video Curriculum Library - Edukom{% endblock %}
+
+{% block main %}
+<div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- Header -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-indigo-600/20">
+          <i class="fa-solid fa-play-circle"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-black text-slate-900 tracking-tight">On-Demand Video Masterclasses</h1>
+          <p class="text-xs text-slate-500 mt-1">
+            Secure, DRM-encrypted lesson recordings, curriculum masterclasses & downloadable worksheets
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        {% if can_manage %}
+          <a href="{% url 'videolibrary:studio_dashboard' %}" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-indigo-200/60 shadow-xs">
+            <i class="fa-solid fa-photo-film"></i>
+            <span>Creator Studio</span>
+          </a>
+        {% endif %}
+
+        {% if has_all_access %}
+          <span class="px-3.5 py-1.5 bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold flex items-center gap-1.5">
+            <i class="fa-solid fa-crown text-amber-500"></i>
+            <span>All-Access Active</span>
+          </span>
+        {% else %}
+          <span class="px-3.5 py-1.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold">
+            Subscription Required for Full Access
+          </span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    {% if messages %}
+      <div class="space-y-2">
+        {% for message in messages %}
+          <div class="p-4 rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-sm {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border border-rose-200{% elif message.tags == 'success' %}bg-emerald-50 text-emerald-800 border border-emerald-200{% else %}bg-indigo-50 text-indigo-800 border border-indigo-200{% endif %}">
+            <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-rose-500{% elif message.tags == 'success' %}fa-circle-check text-emerald-500{% else %}fa-circle-info text-indigo-500{% endif %} text-base"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Courses Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for course in courses %}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col hover:shadow-md transition">
+          <div class="aspect-video bg-slate-900 relative flex items-center justify-center text-slate-600">
+            {% if course.thumbnail_display %}
+              <img src="{{ course.thumbnail_display }}" alt="{{ course.title }}" class="w-full h-full object-cover">
+            {% else %}
+              <i class="fa-solid fa-clapperboard text-4xl text-slate-700"></i>
+            {% endif %}
+            
+            <span class="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold">
+              {{ course.class_level }}
+            </span>
+
+            {% if not course.is_published %}
+              <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded-md bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow">
+                Draft
+              </span>
+            {% endif %}
+
+            <div class="absolute bottom-3 right-3 flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md bg-indigo-600 text-white text-[10px] font-bold">
+                {{ course.lessons.count }} Lessons
+              </span>
+              {% if course.resources.count > 0 %}
+                <span class="px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 text-[10px] font-bold">
+                  {{ course.resources.count }} Materials
+                </span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+            <div>
+              <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                <span>{{ course.subject.name|default:"General" }}</span>
+                {% if course.id in subscribed_course_ids or has_all_access %}
+                  <span class="text-emerald-600 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-unlock text-[10px]"></i> Subscribed
+                  </span>
+                {% else %}
+                  <span class="text-amber-600 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-lock text-[10px]"></i> Locked
+                  </span>
+                {% endif %}
+              </div>
+              <h3 class="text-base font-bold text-slate-900 line-clamp-1">{{ course.title }}</h3>
+              <p class="text-xs text-slate-500 mt-2 line-clamp-2">
+                {{ course.description|default:"Comprehensive curriculum course covering step-by-step topic mastery with assigned worksheets and recorded explanations." }}
+              </p>
+            </div>
+
+            <div class="space-y-2 pt-2">
+              <a href="{% url 'videolibrary:course_detail' course.id %}" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs text-center shadow transition flex items-center justify-center gap-2">
+                <span>Explore Syllabus & Resources</span>
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+              </a>
+
+              {% if can_manage %}
+                <a href="{% url 'videolibrary:studio_course_curriculum' course.id %}" class="w-full py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold rounded-xl text-[11px] text-center transition flex items-center justify-center gap-1.5 border border-slate-200/60">
+                  <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                  <span>Manage in Studio</span>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-span-full py-16 text-center text-slate-400">
+          <i class="fa-solid fa-film text-4xl mb-3"></i>
+          <p class="text-sm font-semibold">No video courses published yet. Check back soon!</p>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock main %}

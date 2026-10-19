@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Request Submitted | Edukom Academic Portal{% endblock %}
+
+{% block main %}
+<section class="relative py-16 md:py-24 bg-canvas-gray overflow-hidden">
+    <!-- Edge Decorative Background Splatters -->
+    <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-12 top-10 w-44 md:w-64 opacity-25 pointer-events-none select-none z-0" alt="">
+    <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -right-12 bottom-10 w-48 md:w-72 opacity-25 pointer-events-none select-none z-0" alt="">
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 text-center">
+        <!-- Success Badge Icon -->
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-vibrant-lime text-deep-navy shadow-lg mb-6">
+            <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+        </div>
+
+        <h1 class="font-display-lg text-3xl sm:text-5xl font-bold text-deep-navy mb-3">Thank You, {{ guardian.full_name }}!</h1>
+        <p class="font-body-lg text-on-surface-variant text-base sm:text-lg mb-10 max-w-xl mx-auto">Your tutor request has been successfully submitted. Here is what happens next:</p>
+
+        <!-- Next Steps Bento Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
+            <div class="bg-white p-6 rounded-3xl border border-surface-variant/60 shadow-sm relative group hover:border-vibrant-lime transition-all">
+                <div class="w-10 h-10 rounded-2xl bg-deep-navy text-vibrant-lime font-bold text-base flex items-center justify-center mb-4">1</div>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy mb-2">Call From Our Team</h3>
+                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">We will review your request details and reach out to clarify specific learning goals.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl border border-surface-variant/60 shadow-sm relative group hover:border-vibrant-lime transition-all">
+                <div class="w-10 h-10 rounded-2xl bg-deep-navy text-vibrant-lime font-bold text-base flex items-center justify-center mb-4">2</div>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy mb-2">Matched Tutors List</h3>
+                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">We curate and send you profiles of elite tutors matching your curriculum requirements.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl border border-surface-variant/60 shadow-sm relative group hover:border-vibrant-lime transition-all">
+                <div class="w-10 h-10 rounded-2xl bg-deep-navy text-vibrant-lime font-bold text-base flex items-center justify-center mb-4">3</div>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy mb-2">Confirm & Begin</h3>
+                <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">Select your preferred tutor, finalize scheduling, and start interactive lessons.</p>
+            </div>
+        </div>
+
+        <!-- Contact Support Footer Card -->
+        <div class="bg-deep-navy text-white rounded-3xl p-8 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 text-left">
+            <div>
+                <h4 class="font-headline-md font-bold text-xl mb-1">Have Immediate Questions?</h4>
+                <p class="text-xs sm:text-sm text-primary-fixed/90">Our academic advisors are ready to assist you anytime.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center gap-4 shrink-0">
+                <a href="mailto:info@edukom.ng" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 transition-all">
+                    <span class="material-symbols-outlined text-vibrant-lime text-base">mail</span>
+                    <span>info@edukom.ng</span>
+                </a>
+                <a href="tel:+2348033310626" class="px-5 py-3 rounded-xl bg-vibrant-lime text-deep-navy font-bold text-xs sm:text-sm flex items-center gap-2 hover:brightness-105 transition-all">
+                    <span class="material-symbols-outlined text-base">phone</span>
+                    <span>+234 803 331 0626</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main %}

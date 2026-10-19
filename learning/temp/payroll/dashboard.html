@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Payroll Dashboard - Edukom Learning{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div>
+        <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-money-check-dollar text-indigo-600"></i>
+          <span>Automated Payroll Operations</span>
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">Ingest lesson logs, calculate variable rates, and generate bank disbursements.</p>
+      </div>
+      <div class="flex gap-3">
+        <a href="{% url 'payroll:rate_matrix' %}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition flex items-center gap-2">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Rate Matrix</span>
+        </a>
+        <a href="{% url 'payroll:upload' %}" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow transition flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>New Payroll Run</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Disbursed</p>
+        <p class="text-3xl font-black text-slate-900 mt-2">NGN {{ total_disbursed|floatformat:2 }}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Active Rate Tiers</p>
+        <p class="text-3xl font-black text-indigo-600 mt-2">{{ active_rates_count }}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Payroll Runs</p>
+        <p class="text-3xl font-black text-slate-900 mt-2">{{ runs|length }}</p>
+      </div>
+    </div>
+
+    <!-- Direct LMS-to-Payroll Bridge (Zero CSV Native Generator) -->
+    <div class="bg-gradient-to-br from-indigo-900 via-deep-navy to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <span class="p-3 bg-vibrant-lime text-deep-navy rounded-2xl font-black text-lg">
+            <i class="fa-solid fa-bolt"></i>
+          </span>
+          <div>
+            <h2 class="text-xl font-bold">Direct LMS-to-Payroll Bridge</h2>
+            <p class="text-xs text-white/70">1-Click generation from completed Edukom Virtual Classroom sessions (No CSV needed)</p>
+          </div>
+        </div>
+        <span class="px-3 py-1 bg-white/10 text-vibrant-lime text-xs font-bold rounded-full border border-white/10 flex items-center gap-1.5 self-start md:self-auto">
+          <i class="fa-solid fa-shield-halved"></i> 5% WHT Automated
+        </span>
+      </div>
+
+      <form action="{% url 'payroll:generate_lms' %}" method="post" class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end text-xs">
+        {% csrf_token %}
+        <div>
+          <label class="block font-bold text-white/90 mb-1">Billing Period Start</label>
+          <input type="date" name="period_start" required class="w-full px-3.5 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-vibrant-lime focus:outline-none">
+        </div>
+        <div>
+          <label class="block font-bold text-white/90 mb-1">Billing Period End</label>
+          <input type="date" name="period_end" required class="w-full px-3.5 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-vibrant-lime focus:outline-none">
+        </div>
+        <div class="lg:col-span-1">
+          <label class="block font-bold text-white/90 mb-1">Withholding Tax (WHT %)</label>
+          <input type="number" step="0.1" name="wht_percentage" value="5.0" min="0" max="100" class="w-full px-3.5 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-vibrant-lime focus:outline-none">
+        </div>
+        <div class="sm:col-span-2 lg:col-span-1">
+          <label class="block font-bold text-white/90 mb-1">Batch Label / Title</label>
+          <input type="text" name="title" placeholder="e.g. Oct Mid-Month" class="w-full px-3.5 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:ring-2 focus:ring-vibrant-lime focus:outline-none">
+        </div>
+        <div class="sm:col-span-2 lg:col-span-1">
+          <button type="submit" class="w-full py-2.5 px-4 bg-vibrant-lime hover:brightness-105 text-deep-navy font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-calculator"></i>
+            <span>Calculate Payroll</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Runs Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+        <h2 class="text-lg font-bold text-slate-800">Recent Payroll Batches</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Title</th>
+              <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Period</th>
+              <th class="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Total Hours</th>
+              <th class="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Net Amount</th>
+              <th class="px-6 py-3 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 bg-white">
+            {% for run in runs %}
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <a href="{% url 'payroll:run_detail' run.id %}" class="text-sm font-bold text-indigo-600 hover:text-indigo-900">
+                  {{ run.title }}
+                </a>
+                <p class="text-xs text-slate-400">{{ run.source_filename }}</p>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                {{ run.period_start }} to {{ run.period_end }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 text-right font-medium">
+                {{ run.total_hours }} hrs
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900 text-right font-extrabold">
+                {{ run.currency }} {{ run.total_net|floatformat:2 }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                {% if run.status == 'APPROVED' %}
+                  <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">Approved</span>
+                {% elif run.status == 'DISBURSED' %}
+                  <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Disbursed</span>
+                {% else %}
+                  <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">{{ run.get_status_display }}</span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                <a href="{% url 'payroll:run_detail' run.id %}" class="text-indigo-600 hover:text-indigo-900 font-semibold">
+                  Review &rarr;
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
+                <p>No payroll runs recorded yet. Upload a session log to get started.</p>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

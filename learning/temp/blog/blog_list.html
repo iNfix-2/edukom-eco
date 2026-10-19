@@ -1,0 +1,814 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block header %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Hanken+Grotesk:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+    :root {
+        --edu-navy: #00143f;
+        --edu-navy-text: #002769;
+        --edu-lime: #A9D156;
+        --edu-lime-soft: #c5ee6f;
+        --edu-bg: #F5F5F5;
+        --edu-body-text: #444650;
+        --edu-meta-text: #747781;
+        --edu-green-hover: #4b6700;
+    }
+
+    body {
+        background-color: var(--edu-bg);
+    }
+
+    /* Override the global body>* rule (5% padding + justified text) so the
+       hero/newsletter bands can run full-bleed and card text isn't justified. */
+    .blog-page {
+        padding: 0 !important;
+        text-align: left !important;
+        font-family: 'Hanken Grotesk', sans-serif;
+    }
+
+    .blog-page a {
+        text-decoration: none;
+    }
+
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 1.15em;
+        line-height: 1;
+    }
+
+    /* ---------- Featured hero ---------- */
+    .blog-hero {
+        position: relative;
+        min-height: 520px;
+        display: flex;
+        align-items: center;
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+    }
+
+    .blog-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(0, 20, 63, 0.92) 0%, rgba(0, 20, 63, 0.55) 45%, rgba(0, 20, 63, 0.1) 100%);
+    }
+
+    .blog-hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1300px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 3rem 5%;
+    }
+
+    .blog-hero-inner > div {
+        max-width: 680px;
+    }
+
+    /* Mobile-only elements (boxed image + dot avatar) — hidden on
+       tablet/desktop, where the hero uses a full-bleed background photo. */
+    .blog-hero-img-wrap {
+        display: none;
+    }
+
+    .blog-hero-avatar-dot {
+        display: none;
+    }
+
+    .blog-hero-tag {
+        display: inline-block;
+        background: var(--edu-lime);
+        color: var(--edu-navy);
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        padding: 6px 16px;
+        border-radius: 30px;
+        margin-bottom: 1.5rem;
+    }
+
+    .blog-hero-title {
+        color: #fff;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 2.75rem;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+        margin-bottom: 1.25rem;
+    }
+
+    .blog-hero-excerpt {
+        font-family: 'Hanken Grotesk', sans-serif;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 1.75rem;
+        max-width: 560px;
+    }
+
+    .blog-hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 1.75rem;
+    }
+
+    .blog-hero-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .blog-hero-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--edu-lime);
+        flex-shrink: 0;
+        background: #fff;
+    }
+
+    .blog-hero-meta-text {
+        color: #fff;
+    }
+
+    .blog-hero-meta-text strong {
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .blog-hero-meta-text span {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 0.8rem;
+    }
+
+    .blog-hero-meta-text span i,
+    .blog-hero-meta-text .material-symbols-outlined {
+        margin-right: 3px;
+        opacity: 0.8;
+        font-size: 1em;
+    }
+
+    .btn-hero-read {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--edu-lime);
+        color: var(--edu-navy) !important;
+        font-weight: 700;
+        padding: 14px 28px;
+        border-radius: 8px;
+        transition: all 0.25s ease;
+    }
+
+    .btn-hero-read .material-symbols-outlined {
+        transition: transform 0.2s ease;
+    }
+
+    .btn-hero-read:hover .material-symbols-outlined {
+        transform: translateX(3px);
+    }
+
+    .btn-hero-read:hover {
+        box-shadow: 0 8px 20px rgba(169, 209, 86, 0.35);
+    }
+
+    /* ---------- Toolbar: categories + sort ---------- */
+    .blog-toolbar-band {
+        background: #fff;
+        border-bottom: 1px solid #e2e2e2;
+    }
+
+    .blog-toolbar {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 1rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .blog-cats {
+        display: flex;
+        gap: 10px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .blog-cats::-webkit-scrollbar {
+        display: none;
+    }
+
+    .blog-cat-pill {
+        white-space: nowrap;
+        padding: 8px 20px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--edu-body-text) !important;
+        background: transparent;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .blog-cat-pill:hover {
+        background: #eeeeee;
+    }
+
+    .blog-cat-pill.active {
+        background: var(--edu-navy);
+        color: #fff !important;
+    }
+
+    .blog-cat-pill.active:hover {
+        background: var(--edu-navy);
+    }
+
+    .blog-sort-form {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        color: var(--edu-meta-text);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .blog-sort-form select {
+        border: none;
+        background: transparent;
+        font-family: 'Hanken Grotesk', sans-serif;
+        font-weight: 600;
+        color: var(--edu-navy-text);
+        cursor: pointer;
+    }
+
+    /* ---------- Grid ---------- */
+    .blog-grid {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 3.5rem 5%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .blog-card {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid transparent;
+        box-shadow: 0 4px 20px rgba(0, 39, 105, 0.05);
+        display: flex;
+        flex-direction: column;
+        transition: border-color 0.2s ease;
+    }
+
+    .blog-card:hover {
+        border-color: rgba(169, 209, 86, 0.4);
+    }
+
+    .blog-card-img-wrap {
+        position: relative;
+        aspect-ratio: 16/10;
+        overflow: hidden;
+    }
+
+    .blog-card-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .blog-card:hover .blog-card-img-wrap img {
+        transform: scale(1.08);
+    }
+
+    .blog-card-cat {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: rgba(0, 20, 63, 0.9);
+        backdrop-filter: blur(4px);
+        color: #fff;
+        font-size: 0.62rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+
+    .blog-card-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .blog-card-meta {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 0.75rem;
+        color: var(--edu-meta-text);
+        margin-bottom: 1rem;
+    }
+
+    .blog-card-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .blog-card-meta i,
+    .blog-card-meta .material-symbols-outlined {
+        margin-right: 4px;
+        opacity: 0.7;
+        font-size: 1em;
+    }
+
+    .blog-card-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        font-size: 1.15rem;
+        color: var(--edu-navy-text);
+        line-height: 1.35;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    .blog-card:hover .blog-card-title {
+        color: var(--edu-navy);
+    }
+
+    .blog-card-excerpt {
+        font-size: 0.87rem;
+        color: var(--edu-body-text);
+        line-height: 1.55;
+        margin-bottom: 1.5rem;
+        flex: 1;
+    }
+
+    .blog-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid #e8e8e8;
+        padding-top: 1rem;
+        font-size: 0.8rem;
+    }
+
+    .blog-card-author {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #333;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+
+    .blog-card-author .dot {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--edu-lime-soft);
+        flex-shrink: 0;
+    }
+
+    .blog-card-readmore {
+        display: inline-flex;
+        align-items: center;
+        color: var(--edu-navy) !important;
+        font-weight: 700;
+        transition: color 0.2s ease;
+    }
+
+    .blog-card-readmore:hover {
+        color: var(--edu-green-hover) !important;
+    }
+
+    /* Highlight / promo card variant (posts with a CTA set) */
+    .blog-card--highlight {
+        position: relative;
+        background: var(--edu-navy);
+        justify-content: center;
+        padding: 2.25rem 2rem;
+        box-shadow: 0 4px 20px rgba(0, 39, 105, 0.05);
+        overflow: hidden;
+    }
+
+    .blog-card--highlight::before {
+        content: '';
+        position: absolute;
+        top: -3rem;
+        right: -3rem;
+        width: 12rem;
+        height: 12rem;
+        background: rgba(169, 209, 86, 0.12);
+        border-radius: 50%;
+        filter: blur(40px);
+    }
+
+    .blog-card--highlight > * {
+        position: relative;
+    }
+
+    .blog-card--highlight .blog-card-cat {
+        position: static;
+        display: inline-block;
+        background: transparent;
+        border: 1px solid var(--edu-lime);
+        color: var(--edu-lime);
+        margin-bottom: 1.25rem;
+    }
+
+    .blog-card--highlight .blog-card-title {
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .blog-card--highlight .blog-card-excerpt {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 2rem;
+    }
+
+    .blog-card--highlight .btn-highlight {
+        display: block;
+        width: 100%;
+        text-align: center;
+        background: var(--edu-lime);
+        color: var(--edu-navy) !important;
+        font-weight: 700;
+        padding: 14px 22px;
+        border-radius: 8px;
+        transition: transform 0.2s ease;
+    }
+
+    .blog-card--highlight .btn-highlight:hover {
+        transform: scale(1.02);
+    }
+
+    /* ---------- Load more ---------- */
+    .blog-loadmore-wrap {
+        text-align: center;
+        padding-bottom: 4rem;
+    }
+
+    .btn-loadmore {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        border: 2px solid var(--edu-navy);
+        color: var(--edu-navy) !important;
+        font-weight: 700;
+        padding: 14px 34px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-loadmore:hover {
+        background: var(--edu-navy);
+        color: #fff !important;
+    }
+
+    /* ---------- Newsletter CTA ---------- */
+    .blog-newsletter {
+        background: var(--edu-navy);
+        padding: 5rem 5%;
+        text-align: center;
+    }
+
+    .blog-newsletter h2 {
+        color: #fff;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 2.5rem;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+    }
+
+    .blog-newsletter p {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 1rem;
+        max-width: 520px;
+        margin: 0 auto 2rem;
+    }
+
+    .blog-newsletter-form {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        max-width: 500px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+    }
+
+    .blog-newsletter-form input[type="email"] {
+        flex: 1;
+        min-width: 220px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        border: none;
+        font-family: 'Hanken Grotesk', sans-serif;
+        font-size: 0.95rem;
+    }
+
+    .blog-newsletter-form button {
+        background: var(--edu-lime);
+        color: var(--edu-navy);
+        font-weight: 700;
+        border: none;
+        padding: 15px 28px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .blog-newsletter-form button:hover {
+        box-shadow: 0 8px 20px rgba(169, 209, 86, 0.4);
+    }
+
+    .blog-newsletter-fineprint {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.75rem;
+        margin-top: 1.25rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        grid-column: 1 / -1;
+        padding: 4rem 0;
+        color: #999;
+    }
+
+    @media (max-width: 992px) {
+        .blog-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        /* Mobile keeps the original boxed hero (solid navy panel + a
+           separate image block) instead of the tablet/desktop full-bleed
+           background photo. */
+        .blog-hero {
+            background-image: linear-gradient(120deg, var(--edu-navy) 0%, #001433 100%) !important;
+            min-height: 0;
+            display: block;
+        }
+
+        .blog-hero::before {
+            content: none;
+        }
+
+        .blog-hero-inner {
+            display: block;
+            padding: 2rem 6% 2.5rem;
+        }
+
+        .blog-hero-inner > div {
+            max-width: none;
+        }
+
+        .blog-hero-img-wrap {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+        }
+
+        .blog-hero-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .blog-hero-title {
+            font-size: 1.8rem;
+        }
+
+        .blog-hero-actions {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .btn-hero-read {
+            background: #fff;
+        }
+
+        .btn-hero-read:hover {
+            background: var(--edu-lime);
+        }
+
+        .blog-hero-avatar {
+            display: none;
+        }
+
+        .blog-hero-avatar-dot {
+            display: block;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--edu-lime);
+            flex-shrink: 0;
+        }
+
+        .blog-grid {
+            grid-template-columns: 1fr;
+            padding: 2rem 6%;
+        }
+
+        .blog-toolbar {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* Mockup treats the newsletter band as a bordered card on mobile
+           rather than a full-bleed navy strip. */
+        .blog-newsletter {
+            background: var(--edu-bg);
+            padding: 2rem 5% 3rem;
+        }
+
+        .blog-newsletter-box {
+            background: #fff;
+            border: 1.5px solid var(--edu-lime);
+            border-radius: 16px;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .blog-newsletter h2,
+        .blog-newsletter p {
+            color: var(--edu-navy);
+        }
+
+        .blog-newsletter h2 {
+            font-size: 1.8rem;
+        }
+
+        .blog-newsletter p {
+            color: #555;
+        }
+
+        .blog-newsletter-form input[type="email"] {
+            border: 1px solid #ddd;
+        }
+
+        .blog-newsletter-fineprint {
+            color: #999;
+        }
+    }
+</style>
+{% endblock header %}
+
+{% block main %}
+<div class="blog-page">
+
+    {% if featured %}
+    <section class="blog-hero" style="background-image: url('{% if featured.image %}{{ featured.image.url }}{% else %}{% static 'IMG/header/bloghead.jpg' %}{% endif %}');">
+        <div class="blog-hero-img-wrap">
+            {% if featured.image %}
+            <img src="{{ featured.image.url }}" alt="{{ featured.title }}">
+            {% else %}
+            <img src="{% static 'IMG/header/bloghead.jpg' %}" alt="">
+            {% endif %}
+        </div>
+        <div class="blog-hero-inner">
+            <div>
+                <span class="blog-hero-tag">Featured Insight</span>
+                <h1 class="blog-hero-title">{{ featured.title }}</h1>
+                <p class="blog-hero-excerpt">{{ featured.content|striptags|truncatewords:28 }}</p>
+                <div class="blog-hero-actions">
+                    <a href="{% url 'blog_detail' featured.slug %}" class="btn-hero-read">
+                        Read Article
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
+                    <div class="blog-hero-meta">
+                        <img class="blog-hero-avatar" src="{% static 'IMG/logo.png' %}" alt="">
+                        <span class="blog-hero-avatar-dot"></span>
+                        <div class="blog-hero-meta-text">
+                            <strong>Edukom Team</strong>
+                            <span><span class="material-symbols-outlined">calendar_today</span>{{ featured.date_created|date:"M d, Y" }} &bull; <span class="material-symbols-outlined">schedule</span>{{ featured.reading_time }} min read</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <div class="blog-toolbar-band">
+        <div class="blog-toolbar">
+            <div class="blog-cats">
+                <a href="{% url 'blog_list' %}?sort={{ sort }}" class="blog-cat-pill{% if not selected_category %} active{% endif %}">All Insights</a>
+                {% for value, label in categories %}
+                <a href="{% url 'blog_list' %}?category={{ value|urlencode }}&sort={{ sort }}" class="blog-cat-pill{% if selected_category == value %} active{% endif %}">{{ label }}</a>
+                {% endfor %}
+            </div>
+            <form class="blog-sort-form" method="get" action="{% url 'blog_list' %}">
+                <input type="hidden" name="category" value="{{ selected_category }}">
+                Sort by:
+                <select name="sort" onchange="this.form.submit()">
+                    <option value="recent" {% if sort == 'recent' %}selected{% endif %}>Most Recent</option>
+                    <option value="popular" {% if sort == 'popular' %}selected{% endif %}>Most Popular</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <div class="blog-grid">
+        {% for post in posts %}
+        {% if post.is_highlight_card %}
+        <article class="blog-card blog-card--highlight">
+            {% if post.category %}<span class="blog-card-cat">{{ post.category }}</span>{% endif %}
+            <a href="{% url 'blog_detail' post.slug %}" class="blog-card-title">{{ post.title }}</a>
+            <p class="blog-card-excerpt">{{ post.content|striptags|truncatewords:20 }}</p>
+            <a href="{% if post.cta_url %}{{ post.cta_url }}{% else %}{% url 'blog_detail' post.slug %}{% endif %}" class="btn-highlight">{{ post.cta_title }}</a>
+        </article>
+        {% else %}
+        <article class="blog-card">
+            <a href="{% url 'blog_detail' post.slug %}" class="blog-card-img-wrap">
+                {% if post.category %}<span class="blog-card-cat">{{ post.category }}</span>{% endif %}
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" loading="lazy">
+                {% else %}
+                <img src="{% static 'IMG/header/bloghead.jpg' %}" alt="" loading="lazy">
+                {% endif %}
+            </a>
+            <div class="blog-card-body">
+                <div class="blog-card-meta">
+                    <span><span class="material-symbols-outlined">calendar_today</span>{{ post.date_created|date:"M d, Y" }}</span>
+                    <span><span class="material-symbols-outlined">schedule</span>{{ post.reading_time }} min read</span>
+                </div>
+                <a href="{% url 'blog_detail' post.slug %}" class="blog-card-title">{{ post.title }}</a>
+                <p class="blog-card-excerpt">{{ post.content|striptags|truncatewords:18 }}</p>
+                <div class="blog-card-footer">
+                    <span class="blog-card-author">
+                        <span class="dot"></span>
+                        Admin
+                    </span>
+                    <a href="{% url 'blog_detail' post.slug %}" class="blog-card-readmore">Read More <span class="material-symbols-outlined">chevron_right</span></a>
+                </div>
+            </div>
+        </article>
+        {% endif %}
+        {% empty %}
+        <div class="empty-state">
+            <h3>No stories in this category yet.</h3>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if has_more %}
+    <div class="blog-loadmore-wrap">
+        <a class="btn-loadmore" href="{% url 'blog_list' %}?category={{ selected_category|urlencode }}&sort={{ sort }}&show={{ show|add:6 }}">
+            Load More Articles
+            <span class="material-symbols-outlined">expand_more</span>
+        </a>
+    </div>
+    {% endif %}
+
+    <section class="blog-newsletter">
+        <div class="blog-newsletter-box">
+            <h2>Stay Ahead in the Global Academic Race</h2>
+            <p>Join parents and educators receiving our digest of research, trends, and success strategies.</p>
+            <form class="blog-newsletter-form" method="post" action="{% url 'subscribe_newsletter' %}">
+                {% csrf_token %}
+                {{ subscriber_form.email }}
+                <button type="submit">Subscribe Now</button>
+            </form>
+            <p class="blog-newsletter-fineprint">No spam. Only excellence. Unsubscribe at any time.</p>
+        </div>
+    </section>
+
+</div>
+{% endblock main %}

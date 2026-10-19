@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Guardians Directory | Edukom Admin Portal{% endblock %}
+
+{% block main %}
+<section class="py-12 md:py-20 bg-canvas-gray min-h-[80vh]">
+    <div class="max-w-container-max mx-auto px-gutter">
+        <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest bg-deep-navy px-3 py-1 rounded-md inline-block mb-2">Admin Dashboard</span>
+                <h1 class="font-display-lg text-3xl sm:text-4xl font-bold text-deep-navy">Guardians Directory</h1>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-xl border border-surface-variant/60 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-deep-navy text-white text-xs uppercase tracking-wider font-bold">
+                            <th class="py-4 px-6">S/N</th>
+                            <th class="py-4 px-6">Guardian Name</th>
+                            <th class="py-4 px-6">Child's Class</th>
+                            <th class="py-4 px-6">Date Submitted</th>
+                            <th class="py-4 px-6">Lesson Days</th>
+                            <th class="py-4 px-6 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-variant/60 text-sm text-on-surface">
+                        {% for person in guardian %}
+                        <tr class="hover:bg-surface-container/50 transition-colors">
+                            <td class="py-4 px-6 font-bold text-deep-navy">{{ forloop.counter }}</td>
+                            <td class="py-4 px-6 font-semibold text-deep-navy">
+                                <a href="{% url 'guardian' person.uid %}" class="hover:text-vibrant-lime transition-colors underline decoration-2 underline-offset-4 decoration-vibrant-lime">
+                                    {{ person.full_name }}
+                                </a>
+                            </td>
+                            <td class="py-4 px-6 text-on-surface-variant">{{ person.AboutChild.child_class|default:"N/A" }}</td>
+                            <td class="py-4 px-6 text-on-surface-variant whitespace-nowrap">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-sm text-deep-navy">schedule</span>
+                                    <span class="font-medium text-deep-navy">{{ person.date_joined|date:"M d, Y" }}</span>
+                                    <span class="text-xs text-outline font-normal">({{ person.date_joined|date:"h:i A" }})</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6 text-on-surface-variant">{{ person.Lesson.days|default:"N/A" }}</td>
+                            <td class="py-4 px-6 text-right">
+                                <a href="{% url 'guardian' person.uid %}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-deep-navy text-vibrant-lime font-bold text-xs hover:bg-primary-container hover:text-white transition-all shadow-xs">
+                                    <span>View Details</span>
+                                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="py-12 text-center text-on-surface-variant font-medium">
+                                No guardian records found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main %}

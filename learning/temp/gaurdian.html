@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Guardian Details | Edukom Admin Portal{% endblock %}
+
+{% block main %}
+<section class="py-12 md:py-20 bg-canvas-gray min-h-[80vh]">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <div class="mb-8 flex items-center justify-between">
+            <div>
+                <a href="{% url 'guardians' %}" class="inline-flex items-center gap-2 text-deep-navy font-bold text-sm hover:text-vibrant-lime transition-colors mb-2">
+                    <span class="material-symbols-outlined text-base">arrow_back</span>
+                    <span>Back to Guardians Directory</span>
+                </a>
+                <h1 class="font-display-lg text-3xl sm:text-4xl font-bold text-deep-navy">Guardian Profile Details</h1>
+            </div>
+        </div>
+
+        <!-- Guardian Summary Card -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-surface-variant/60 mb-8 space-y-6">
+            <div class="flex items-center gap-4 pb-6 border-b border-surface-variant/60">
+                <div class="w-14 h-14 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center font-bold text-xl shadow-md">
+                    {{ guardian.first_name|first }}{{ guardian.last_name|first }}
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-deep-navy">{{ guardian.first_name }} {{ guardian.last_name }}</h2>
+                    <p class="text-sm text-on-surface-variant">{{ guardian.email }} &bull; {{ guardian.phone }}</p>
+                </div>
+            </div>
+
+            <!-- Details Bento Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Guardian Meta -->
+                <div class="bg-surface-container p-5 rounded-2xl border border-outline-variant/60">
+                    <h3 class="text-xs uppercase tracking-wider font-bold text-deep-navy mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-vibrant-lime text-base" style="font-variation-settings: 'FILL' 1;">person</span>
+                        Guardian Overview
+                    </h3>
+                    <ul class="space-y-2 text-sm text-on-surface-variant">
+                        <li><strong class="text-deep-navy">Full Name:</strong> {{ guardian.full_name }}</li>
+                        <li><strong class="text-deep-navy">Phone:</strong> {{ guardian.phone }}</li>
+                        <li><strong class="text-deep-navy">Email:</strong> {{ guardian.email }}</li>
+                        <li><strong class="text-deep-navy">Lesson Type:</strong> {{ guardian.lesson_type }}</li>
+                        <li><strong class="text-deep-navy">Curriculum:</strong> {{ guardian.curriculum }}</li>
+                        <li><strong class="text-deep-navy">Date Joined:</strong> {{ guardian.date_joined|date:"M d, Y" }}</li>
+                    </ul>
+                </div>
+
+                <!-- Child Meta -->
+                <div class="bg-surface-container p-5 rounded-2xl border border-outline-variant/60">
+                    <h3 class="text-xs uppercase tracking-wider font-bold text-deep-navy mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-vibrant-lime text-base" style="font-variation-settings: 'FILL' 1;">child_care</span>
+                        Child Information
+                    </h3>
+                    <ul class="space-y-2 text-sm text-on-surface-variant">
+                        <li><strong class="text-deep-navy">Class/Level:</strong> {{ guardian.AboutChild.child_class|default:"N/A" }}</li>
+                        <li><strong class="text-deep-navy">Goal:</strong> {{ guardian.AboutChild.goal|default:"N/A" }}</li>
+                        <li><strong class="text-deep-navy">Subjects:</strong> {{ guardian.AboutChild.subject|default:"N/A" }}</li>
+                        <li><strong class="text-deep-navy">Notes:</strong> {{ guardian.AboutChild.about|default:"N/A" }}</li>
+                    </ul>
+                </div>
+
+                <!-- Lesson Meta -->
+                <div class="bg-surface-container p-5 rounded-2xl border border-outline-variant/60">
+                    <h3 class="text-xs uppercase tracking-wider font-bold text-deep-navy mb-3 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-vibrant-lime text-base" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+                        Lesson Schedule
+                    </h3>
+                    <ul class="space-y-2 text-sm text-on-surface-variant">
+                        <li><strong class="text-deep-navy">Days:</strong> {{ guardian.Lesson.days|default:"N/A" }}</li>
+                        <li><strong class="text-deep-navy">Start Date:</strong> {{ guardian.Lesson.start|default:"N/A" }}</li>
+                        <li><strong class="text-deep-navy">Duration:</strong> {{ guardian.Lesson.weeks }} weeks</li>
+                        <li><strong class="text-deep-navy">Hours/Day:</strong> {{ guardian.Lesson.hour_per_day }} hrs/day</li>
+                        <li><strong class="text-deep-navy">Start Time:</strong> {{ guardian.Lesson.start_time|default:"N/A" }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main %}

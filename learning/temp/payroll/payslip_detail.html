@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payslip Voucher: {{ item.tutor_name }} | Edukom Group{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+
+  <!-- Top Action Bar (Hidden when printing) -->
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-4 print:hidden">
+    <a href="{% url 'dashboard_dispatcher' %}" class="inline-flex items-center gap-2 text-xs font-bold text-deep-navy hover:text-secondary transition-colors">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Back to Dashboard</span>
+    </a>
+    
+    <div class="flex items-center gap-3">
+      <button type="button" onclick="window.print()" class="px-5 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+        <i class="fa-solid fa-print"></i>
+        <span>Print / Save as PDF</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Branded Printable Payslip Container -->
+  <div class="bg-white rounded-3xl shadow-sm border border-outline-variant/30 overflow-hidden print:border-none print:shadow-none print:rounded-none">
+    
+    <!-- Header -->
+    <div class="p-8 bg-deep-navy text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-white/10">
+      <div class="flex items-center gap-4">
+        <img src="{% static 'IMG/logo.png' %}" alt="Edukom Logo" class="h-12 w-auto bg-white p-1 rounded-xl">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">Edukom Learning Group</h1>
+          <p class="text-xs text-white/70">Official Tutor Compensation Statement</p>
+        </div>
+      </div>
+      <div class="text-left sm:text-right">
+        <span class="px-3 py-1 bg-vibrant-lime text-deep-navy text-xs font-black rounded-lg uppercase tracking-wider">
+          {{ item.status }}
+        </span>
+        <p class="text-xs text-white/80 mt-1 font-mono">Statement Ref: {{ item.id|stringformat:".8s"|upper }}</p>
+        <p class="text-[11px] text-white/60">Issued: {{ now|date:"M d, Y" }}</p>
+      </div>
+    </div>
+
+    <!-- Metadata Grid -->
+    <div class="p-8 border-b border-outline-variant/20 bg-surface-bright/40 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 text-xs">
+      <div>
+        <span class="font-bold text-outline uppercase text-[10px]">Tutor Name</span>
+        <p class="font-bold text-deep-navy text-sm mt-0.5">{{ item.tutor_name }}</p>
+        <p class="text-outline text-[11px]">{{ item.tutor_email }}</p>
+      </div>
+      <div>
+        <span class="font-bold text-outline uppercase text-[10px]">Billing Period</span>
+        <p class="font-bold text-deep-navy text-sm mt-0.5">{{ run.title }}</p>
+        <p class="text-outline text-[11px]">{{ run.period_start|date:"M d" }} &ndash; {{ run.period_end|date:"M d, Y" }}</p>
+      </div>
+      <div>
+        <span class="font-bold text-outline uppercase text-[10px]">Payment Destination</span>
+        {% if bank_account %}
+          <p class="font-bold text-deep-navy text-sm mt-0.5">{{ bank_account.bank_name }}</p>
+          <p class="text-outline text-[11px] font-mono">{{ bank_account.masked_account_number }}</p>
+        {% else %}
+          <p class="font-semibold text-amber-700 mt-0.5">Direct Wire / Pending KYC</p>
+        {% endif %}
+      </div>
+      <div>
+        <span class="font-bold text-outline uppercase text-[10px]">Dual Approval Signoff</span>
+        <p class="font-bold text-deep-navy text-sm mt-0.5">
+          {% if run.approved_by %}
+            <i class="fa-solid fa-circle-check text-green-600"></i> Approved
+          {% else %}
+            <span class="text-amber-600">Pending Checker</span>
+          {% endif %}
+        </p>
+        <p class="text-outline text-[11px]">
+          {% if run.approved_by %}By: {{ run.approved_by.username }}{% else %}Draft / Calculated{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <!-- Itemized Lesson Breakdown -->
+    <div class="p-8">
+      <h3 class="text-sm font-bold text-deep-navy uppercase tracking-wider mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-list-check text-secondary"></i>
+        <span>Verified Teaching Sessions</span>
+      </h3>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-outline-variant/20 text-xs">
+          <thead>
+            <tr class="bg-surface-container text-deep-navy">
+              <th class="px-3 py-2.5 text-left font-bold">Date & Time</th>
+              <th class="px-3 py-2.5 text-left font-bold">Student</th>
+              <th class="px-3 py-2.5 text-left font-bold">Level / Topic</th>
+              <th class="px-3 py-2.5 text-center font-bold">Mode</th>
+              <th class="px-3 py-2.5 text-right font-bold">Hours</th>
+              <th class="px-3 py-2.5 text-right font-bold">Rate</th>
+              <th class="px-3 py-2.5 text-right font-bold">Amount</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/10">
+            {% for s in item.session_breakdown %}
+            <tr class="hover:bg-surface-bright/80">
+              <td class="px-3 py-3 text-deep-navy font-semibold">{{ s.date|default:"N/A" }}</td>
+              <td class="px-3 py-3 font-bold text-deep-navy">{{ s.student_name }}</td>
+              <td class="px-3 py-3">
+                <span class="font-semibold text-deep-navy">{{ s.class_level }}</span>
+                {% if s.topic %}<p class="text-[11px] text-outline truncate max-w-xs">{{ s.topic }}</p>{% endif %}
+              </td>
+              <td class="px-3 py-3 text-center text-outline text-[11px]">{{ s.delivery_mode }}</td>
+              <td class="px-3 py-3 text-right font-mono">{{ s.duration_hours|floatformat:1 }}h</td>
+              <td class="px-3 py-3 text-right font-mono">₦{{ s.hourly_rate|floatformat:2 }}</td>
+              <td class="px-3 py-3 text-right font-mono font-bold text-deep-navy">₦{{ s.amount|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center py-6 text-outline">No itemized session records found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Financial Calculation Block -->
+      <div class="mt-8 pt-6 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div class="text-xs text-outline space-y-1 max-w-md">
+          <p><strong>NDPR & Financial Compliance Notice:</strong></p>
+          <p>This statement constitutes an official compensation record for independent academic tutoring services rendered to Edukom Group. Statutory deductions (e.g. 5% Withholding Tax) are remitted directly to the relevant tax authority in accordance with statutory guidelines.</p>
+        </div>
+
+        <div class="w-full md:w-80 bg-surface-bright p-5 rounded-2xl border border-outline-variant/20 text-xs space-y-2.5">
+          <div class="flex justify-between items-center">
+            <span class="text-outline">Total Hours Logged:</span>
+            <span class="font-bold text-deep-navy font-mono">{{ item.total_hours|floatformat:1 }} hrs</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-outline">Gross Compensation:</span>
+            <span class="font-bold text-deep-navy font-mono">₦{{ item.calculated_gross_pay|floatformat:2 }}</span>
+          </div>
+          {% if item.deductions > 0 %}
+          <div class="flex justify-between items-center text-rose-700">
+            <span>Withholding Tax (WHT) / Deductions:</span>
+            <span class="font-bold font-mono">- ₦{{ item.deductions|floatformat:2 }}</span>
+          </div>
+          {% endif %}
+          {% if item.bonuses > 0 %}
+          <div class="flex justify-between items-center text-green-700">
+            <span>Performance Bonuses / Reimbursements:</span>
+            <span class="font-bold font-mono">+ ₦{{ item.bonuses|floatformat:2 }}</span>
+          </div>
+          {% endif %}
+          <div class="pt-2 border-t border-outline-variant/30 flex justify-between items-center text-sm font-black text-deep-navy">
+            <span>Net Disbursed Amount:</span>
+            <span class="text-base text-secondary font-mono">₦{{ item.net_pay|floatformat:2 }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Printable Footer -->
+    <div class="p-6 bg-surface-container text-center text-xs text-outline border-t border-outline-variant/20">
+      <p>Edukom Learning Group &bull; Nigeria & Diaspora Online Academic Tutoring &bull; support@edukom.ng</p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

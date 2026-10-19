@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Interactive Quizzes & Diagnostic Tests | Edukom Academic LMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-canvas-gray py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- Header Hero Banner -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+      <div class="absolute -right-12 -top-12 w-48 h-48 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex items-center space-x-5 z-10">
+        <div class="w-16 h-16 rounded-2xl bg-deep-navy text-blue-400 flex items-center justify-center text-2xl font-black shadow-md border-2 border-blue-400">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl sm:text-3xl font-bold text-deep-navy">Interactive Quizzes &amp; Assessments</h1>
+            <span class="px-3 py-0.5 bg-blue-50 text-blue-800 border border-blue-200 rounded-full text-xs font-semibold">
+              Curriculum Aligned
+            </span>
+          </div>
+          <p class="text-xs text-on-surface-variant mt-1">
+            Automated testing engine: diagnostic check-ins, subject evaluations, and mastery verification.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 z-10">
+        <a href="{% url 'dashboard_dispatcher' %}" class="px-4 py-2.5 bg-surface-container text-deep-navy font-bold text-xs rounded-xl hover:bg-surface-bright transition border border-outline-variant/30 flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-left"></i> Return to Dashboard
+        </a>
+      </div>
+    </div>
+
+    <!-- Quiz Catalog Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for item in quiz_items %}
+        {% with quiz=item.quiz %}
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30 hover:border-deep-navy/40 transition flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 bg-surface-container rounded-lg text-xs font-bold text-deep-navy border border-outline-variant/20">
+                {{ quiz.subject.name }}
+              </span>
+              <span class="text-[10px] uppercase font-bold text-outline">
+                {{ quiz.class_level }} &bull; {{ quiz.curriculum }}
+              </span>
+            </div>
+
+            <div>
+              <h3 class="text-base font-bold text-deep-navy">{{ quiz.title }}</h3>
+              {% if quiz.description %}
+              <p class="text-xs text-on-surface-variant line-clamp-2 mt-1 leading-relaxed">
+                {{ quiz.description }}
+              </p>
+              {% endif %}
+            </div>
+
+            <!-- Quiz Parameters -->
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-outline-variant/20 text-center">
+              <div class="bg-surface-container/60 p-2 rounded-xl">
+                <span class="text-[9px] font-bold text-outline block uppercase">Questions</span>
+                <span class="text-xs font-black text-deep-navy">{{ quiz.total_questions }}</span>
+              </div>
+              <div class="bg-surface-container/60 p-2 rounded-xl">
+                <span class="text-[9px] font-bold text-outline block uppercase">Time Limit</span>
+                <span class="text-xs font-black text-deep-navy">{% if quiz.time_limit_minutes %}{{ quiz.time_limit_minutes }}m{% else %}Untimed{% endif %}</span>
+              </div>
+              <div class="bg-surface-container/60 p-2 rounded-xl">
+                <span class="text-[9px] font-bold text-outline block uppercase">Pass Mark</span>
+                <span class="text-xs font-black text-emerald-700">{{ quiz.pass_percentage }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action / History Footer -->
+          <div class="pt-4 border-t border-outline-variant/20">
+            {% if is_student %}
+              {% if item.attempt_count > 0 %}
+                <div class="flex items-center justify-between mb-3 text-xs">
+                  <div class="flex items-center gap-1.5">
+                    {% if item.has_passed %}
+                      <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded uppercase">Passed</span>
+                    {% else %}
+                      <span class="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-black rounded uppercase">Attempted</span>
+                    {% endif %}
+                    <span class="text-[11px] font-bold text-deep-navy">Best: {{ item.best_score }}%</span>
+                  </div>
+                  <a href="{% url 'classroom:quiz_result' attempt_id=item.latest_attempt.id %}" class="text-[11px] font-bold text-deep-navy hover:underline">
+                    View Report &rarr;
+                  </a>
+                </div>
+
+                {% if item.can_attempt %}
+                  <a href="{% url 'classroom:take_quiz' quiz_id=quiz.id %}" class="w-full py-2.5 bg-surface-container hover:bg-deep-navy hover:text-white text-deep-navy font-bold text-xs rounded-xl text-center block transition border border-outline-variant/30">
+                    Re-take Quiz ({{ item.attempt_count }}/{{ quiz.max_attempts }})
+                  </a>
+                {% else %}
+                  <button disabled class="w-full py-2.5 bg-surface-container text-outline font-bold text-xs rounded-xl text-center block cursor-not-allowed">
+                    Max Attempts Reached
+                  </button>
+                {% endif %}
+              {% else %}
+                <a href="{% url 'classroom:take_quiz' quiz_id=quiz.id %}" class="w-full py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl text-center block transition shadow-sm">
+                  Start Assessment &rarr;
+                </a>
+              {% endif %}
+            {% else %}
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-outline text-[11px]">Total Student Attempts: <strong>{{ item.total_attempts }}</strong></span>
+                <a href="{% url 'classroom:take_quiz' quiz_id=quiz.id %}" class="px-3 py-1.5 bg-surface-container hover:bg-surface-bright text-deep-navy font-bold rounded-lg border border-outline-variant/30 text-[11px]">
+                  Preview Test
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endwith %}
+      {% empty %}
+        <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-dashed border-outline-variant/40 space-y-3">
+          <i class="fa-solid fa-file-circle-question text-3xl text-outline"></i>
+          <h3 class="text-base font-bold text-deep-navy">No Quizzes Published Yet</h3>
+          <p class="text-xs text-on-surface-variant max-w-sm mx-auto">
+            Interactive quizzes and curriculum evaluations will appear here once published by academic tutors.
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,547 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Suspended | Edukom Academic</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f6f8fb;
+      background-image:
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.9) 0%, rgba(240, 244, 248, 0.6) 60%, rgba(230, 236, 244, 0.8) 100%);
+      color: #1e293b;
+      min-h-screen: 100vh;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+    }
+
+    /* Main Container */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+    }
+
+    .container {
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 3.5rem;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Left Graphics Illustration */
+    .graphic-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 420px;
+    }
+
+    /* Watermark 503 / 404 */
+    .watermark-bg {
+      position: absolute;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 16rem;
+      font-weight: 900;
+      color: rgba(220, 228, 238, 0.45);
+      user-select: none;
+      letter-spacing: -8px;
+      z-index: 1;
+      line-height: 1;
+    }
+
+    /* Radar System */
+    .radar-system {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    /* Rings */
+    .ring-outer {
+      position: absolute;
+      inset: 0;
+      border: 1px dashed #cbd5e1;
+      border-radius: 50%;
+      animation: rotateSlow 40s linear infinite;
+    }
+
+    .ring-inner {
+      position: absolute;
+      inset: 35px;
+      border: 1px solid rgba(203, 213, 225, 0.6);
+      border-radius: 50%;
+    }
+
+    @keyframes rotateSlow {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Dots on Radar Axis */
+    .dot-top {
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      background: #84cc16;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(132, 204, 22, 0.6);
+    }
+
+    .dot-bottom {
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      background: #0f2942;
+      border-radius: 50%;
+    }
+
+    /* Floating Icon Cards */
+    .floating-card {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 10px 25px -5px rgba(15, 41, 66, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+      border: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+      z-index: 4;
+    }
+
+    .floating-card svg {
+      width: 22px;
+      height: 22px;
+      stroke: #64748b;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .card-top-left {
+      top: 20px;
+      left: 0px;
+      animation: floatSmooth 6s ease-in-out infinite;
+    }
+
+    .card-mid-right {
+      top: 130px;
+      right: -10px;
+      animation: floatSmooth 7s ease-in-out infinite 1s;
+    }
+
+    .card-bottom-right {
+      bottom: 25px;
+      right: 60px;
+      animation: floatSmooth 5.5s ease-in-out infinite 0.5s;
+    }
+
+    @keyframes floatSmooth {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    /* Central Compass / Status Badge */
+    .center-badge {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow:
+        0 20px 40px -10px rgba(15, 41, 66, 0.12),
+        0 0 0 12px rgba(255, 255, 255, 0.7),
+        0 0 0 13px rgba(226, 232, 240, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+
+    .compass-circle {
+      width: 72px;
+      height: 72px;
+      background: #0f2b5c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2);
+    }
+
+    .compass-circle svg {
+      width: 36px;
+      height: 36px;
+      stroke: #ffffff;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* Right Content Area */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    /* Pill Badge */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #e9eef5;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 1.5rem;
+      border: 1px solid #cbd5e1;
+    }
+
+    .status-pill .dot {
+      width: 8px;
+      height: 8px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.85);
+      }
+    }
+
+    /* Headline Title */
+    .main-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: #0b2545;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    /* Paragraph Body */
+    .description {
+      font-size: 1.1rem;
+      color: #64748b;
+      line-height: 1.65;
+      margin-bottom: 2rem;
+      max-width: 520px;
+      font-weight: 400;
+    }
+
+    /* Button Group */
+    .button-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #0b2545;
+      color: #ffffff;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(11, 37, 69, 0.25);
+      border: 2px solid #0b2545;
+    }
+
+    .btn-primary:hover {
+      background-color: #133863;
+      border-color: #133863;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(11, 37, 69, 0.35);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: transparent;
+      color: #0b2545;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: 12px;
+      text-decoration: none;
+      border: 2px solid #cbd5e1;
+      transition: all 0.25s ease;
+    }
+
+    .btn-secondary:hover {
+      border-color: #0b2545;
+      background-color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    /* Bottom Footer Bar */
+    .footer-bar {
+      background-color: #001848;
+      color: #ffffff;
+      padding: 1.5rem 2rem;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .footer-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .brand-dot {
+      color: #84cc16;
+    }
+
+    .copyright-text {
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        text-align: center;
+      }
+
+      .content-area {
+        align-items: center;
+      }
+
+      .description {
+        max-width: 100%;
+      }
+
+      .main-title {
+        font-size: 2.35rem;
+      }
+
+      .graphic-container {
+        height: 320px;
+      }
+
+      .watermark-bg {
+        font-size: 11rem;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+    <div class="container">
+
+      <!-- Left Visual Graphic Illustration -->
+      <div class="graphic-container">
+        <!-- Giant 503 / 404 Watermark -->
+        <div class="watermark-bg">503</div>
+
+        <!-- Radar Rings and Floating Icons -->
+        <div class="radar-system">
+          <div class="ring-outer"></div>
+          <div class="ring-inner"></div>
+
+          <div class="dot-top"></div>
+          <div class="dot-bottom"></div>
+
+          <!-- Floating Document Icon -->
+          <div class="floating-card card-top-left">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+
+          <!-- Floating Image Icon -->
+          <div class="floating-card card-mid-right">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+
+          <!-- Floating Search Icon -->
+          <div class="floating-card card-bottom-right">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+
+          <!-- Central Sphere Compass Badge -->
+          <div class="center-badge">
+            <div class="compass-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side Content -->
+      <div class="content-area">
+        <!-- Status Pill -->
+        <div class="status-pill">
+          <span class="dot"></span>
+          <span>Account Suspended</span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="main-title">
+          Service Temporarily<br>Unavailable
+        </h1>
+
+        <!-- Paragraph Description -->
+        <p class="description">
+          This platform is currently offline due to administrative or account updates. If you are the platform owner or
+          administrator, please contact Edukom Support to restore full access.
+        </p>
+
+        <!-- Actions -->
+        <div class="button-group">
+          <a href="mailto:support@edukom.ng?subject=Account%20Suspension%20Inquiry" class="btn-primary">
+            <span>Contact Support</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+          <a href="javascript:location.reload()" class="btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            <span>Refresh Page</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Bottom Dark Navy Footer -->
+  <footer class="footer-bar">
+    <div class="footer-content">
+      <a href="#" class="brand-logo">
+        Edukom<span class="brand-dot">.</span>
+      </a>
+      <p class="copyright-text">
+        © 2026 Edukom Academic. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+</body>
+
+</html>

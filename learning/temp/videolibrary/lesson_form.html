@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} - Creator Studio - Edukom{% endblock %}
+
+{% block main %}
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-2xl mx-auto space-y-6">
+    
+    <!-- Breadcrumb -->
+    <div class="flex items-center justify-between">
+      <a href="{% url 'videolibrary:studio_course_curriculum' course.id %}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-indigo-600 transition">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back to Curriculum Builder</span>
+      </a>
+      <span class="text-xs text-slate-400">Lesson ID: <strong class="font-mono text-slate-600">{{ lesson.id|slice:":8" }}</strong></span>
+    </div>
+
+    <!-- Edit Lesson Card -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+      <div class="p-6 sm:p-8 border-b border-slate-100 flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-black text-slate-900 tracking-tight">{{ title }}</h1>
+          <p class="text-xs text-slate-500 mt-0.5">
+            {{ course.title }} &bull; Lesson #{{ lesson.order }}
+          </p>
+        </div>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-5">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div class="sm:col-span-3 space-y-1">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              Lesson Title <span class="text-rose-500">*</span>
+            </label>
+            {{ form.title }}
+            {% if form.title.errors %}
+              <p class="text-[11px] text-rose-600 font-semibold">{{ form.title.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              Sequence #
+            </label>
+            {{ form.order }}
+            {% if form.order.errors %}
+              <p class="text-[11px] text-rose-600 font-semibold">{{ form.order.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              Duration (Minutes)
+            </label>
+            {{ form.duration_minutes }}
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              DRM Encryption
+            </label>
+            <div class="pt-2 flex items-center gap-2">
+              {{ form.is_drm_protected }}
+              <span class="text-xs text-slate-700 font-semibold">Enforce AES-128 DRM Protection</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            Lesson Description
+          </label>
+          {{ form.description }}
+        </div>
+
+        <!-- Video Source Options -->
+        <div class="p-5 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-4">
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+              Direct Video File (Max 500MB)
+            </label>
+            {% if lesson.video_file %}
+              <p class="text-[11px] text-emerald-700 font-semibold mb-1">
+                <i class="fa-solid fa-circle-check"></i> Current file: {{ lesson.video_file.name }}
+              </p>
+            {% endif %}
+            {{ form.video_file }}
+          </div>
+
+          <div class="pt-2 border-t border-slate-200/60 space-y-1">
+            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+              External Video / Streaming URL
+            </label>
+            {{ form.video_url }}
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+          <a href="{% url 'videolibrary:studio_course_curriculum' course.id %}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+            Cancel
+          </a>
+          <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            <span>Save Lesson Changes</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock main %}

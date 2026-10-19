@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Assessment Result: {{ quiz.title }} | Edukom LMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-canvas-gray py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto space-y-8">
+
+    <!-- Result Hero Banner -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative overflow-hidden">
+      {% if attempt.passed %}
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      {% else %}
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+      {% endif %}
+
+      <div class="space-y-2 z-10">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider {% if attempt.passed %}bg-emerald-100 text-emerald-800 border border-emerald-300{% else %}bg-amber-100 text-amber-800 border border-amber-300{% endif %}">
+            {% if attempt.passed %}Passed Assessment{% else %}Needs Revision{% endif %}
+          </span>
+          <span class="text-xs text-outline font-medium">Completed on {{ attempt.completed_at|date:"d M Y, H:i" }}</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-deep-navy">{{ quiz.title }}</h1>
+        <p class="text-xs text-on-surface-variant">
+          Candidate: <strong>{{ attempt.student.first_name }} {{ attempt.student.last_name }}</strong> &bull; Subject: {{ quiz.subject.name }} ({{ quiz.class_level }})
+        </p>
+      </div>
+
+      <!-- Big Score Pill -->
+      <div class="z-10 text-center sm:text-right shrink-0">
+        <div class="inline-block p-4 sm:p-5 rounded-3xl {% if attempt.passed %}bg-emerald-50 border border-emerald-200{% else %}bg-amber-50 border border-amber-200{% endif %}">
+          <span class="text-3xl sm:text-4xl font-black {% if attempt.passed %}text-emerald-700{% else %}text-amber-700{% endif %} block">
+            {{ attempt.percentage|floatformat:1 }}%
+          </span>
+          <span class="text-[11px] font-bold text-on-surface-variant block mt-1">
+            {{ attempt.score|floatformat:1 }} / {{ attempt.max_score|floatformat:1 }} Points
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Actions -->
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <a href="{% url 'classroom:quiz_list' %}" class="px-4 py-2.5 bg-white border border-outline-variant/30 text-deep-navy text-xs font-bold rounded-xl hover:bg-surface-container transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-arrow-left"></i> All Quizzes
+        </a>
+        <a href="{% url 'dashboard_dispatcher' %}" class="px-4 py-2.5 bg-white border border-outline-variant/30 text-deep-navy text-xs font-bold rounded-xl hover:bg-surface-container transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-gauge"></i> My Dashboard
+        </a>
+      </div>
+
+      {% if can_reattempt %}
+      <a href="{% url 'classroom:take_quiz' quiz_id=quiz.id %}" class="px-5 py-2.5 bg-deep-navy hover:bg-primary-container text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-2">
+        <i class="fa-solid fa-rotate-right text-amber-400"></i> Re-take Quiz
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- Detailed Question Breakdown -->
+    <div class="space-y-4">
+      <h3 class="text-base font-bold text-deep-navy">Question Breakdown &amp; Explanations</h3>
+
+      {% for item in breakdown %}
+      <div class="bg-white rounded-3xl p-6 sm:p-7 shadow-sm border {% if item.is_correct %}border-emerald-200{% else %}border-rose-200{% endif %} space-y-3">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white shrink-0 {% if item.is_correct %}bg-emerald-600{% else %}bg-rose-600{% endif %}">
+              {% if item.is_correct %}
+                <i class="fa-solid fa-check"></i>
+              {% else %}
+                <i class="fa-solid fa-xmark"></i>
+              {% endif %}
+            </span>
+            <span class="text-xs font-bold text-outline uppercase tracking-wider">
+              Question {{ forloop.counter }}
+            </span>
+          </div>
+
+          <span class="text-xs font-bold {% if item.is_correct %}text-emerald-700{% else %}text-rose-700{% endif %}">
+            {{ item.points_earned }} / {{ item.points_possible }} pt{{ item.points_possible|pluralize }}
+          </span>
+        </div>
+
+        <p class="text-sm font-bold text-deep-navy whitespace-pre-line leading-relaxed">
+          {{ item.question_text }}
+        </p>
+
+        <!-- Answers Comparison -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+          <div class="p-3.5 rounded-2xl {% if item.is_correct %}bg-emerald-50 text-emerald-950 border border-emerald-200{% else %}bg-rose-50 text-rose-950 border border-rose-200{% endif %}">
+            <span class="text-[10px] font-black uppercase tracking-wider block mb-1 opacity-70">Your Response:</span>
+            <span class="font-semibold">{{ item.chosen_option }}</span>
+          </div>
+
+          {% if not item.is_correct %}
+          <div class="p-3.5 rounded-2xl bg-emerald-50 text-emerald-950 border border-emerald-200">
+            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-800 block mb-1">Correct Answer:</span>
+            <span class="font-semibold">{{ item.correct_option }}</span>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Educational Explanation -->
+        {% if item.explanation %}
+        <div class="p-3.5 bg-surface-container rounded-2xl text-deep-navy border border-outline-variant/20 text-xs">
+          <span class="text-[10px] font-black uppercase tracking-wider text-outline block mb-1">
+            <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Academic Explanation &amp; Rationale:
+          </span>
+          <p class="leading-relaxed whitespace-pre-line text-on-surface-variant">{{ item.explanation }}</p>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

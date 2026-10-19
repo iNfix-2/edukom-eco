@@ -271,17 +271,54 @@ class AttendanceRecord(models.Model):
         return f"{self.user.username} ({self.role}) in {self.session.title} at {self.joined_at}"
 
 
+class ClassroomSignal(models.Model):
+    """
+    Real-time signaling & event broker for WebRTC peer connections,
+    synchronized digital whiteboard, in-class chat, and screen sharing across devices.
+    """
+    id = models.BigAutoField(primary_key=True)
+    session = models.ForeignKey(ClassSession, on_delete=models.CASCADE, related_name='signals')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    sender_name = models.CharField(max_length=150, blank=True)
+    sender_role = models.CharField(max_length=20, default='STUDENT')
+    signal_type = models.CharField(max_length=50, db_index=True)
+    payload = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['id']
+        indexes = [
+            models.Index(fields=['session', 'id']),
+            models.Index(fields=['session', 'signal_type', 'id']),
+        ]
+
+    def __str__(self):
+        return f"Signal {self.id} ({self.signal_type}) from {self.sender_name} in {self.session.title}"
+
+
+class ResourceType(models.TextChoices):
+    WORKSHEET = 'WORKSHEET', 'Worksheet & Exercises'
+    NOTES = 'NOTES', 'Study Notes & Presentation'
+    PAST_PAPER = 'PAST_PAPER', 'Past Exam Paper'
+    VIDEO = 'VIDEO', 'Recorded Video / Lesson'
+    OTHER = 'OTHER', 'Other Reference Material'
+
+
 class LessonResource(models.Model):
     """
-    Worksheet, reading material, or assignment resource uploaded for a session.
+    Worksheet, reading material, past paper, or video resource uploaded for a session or booking.
     Protected with extension and MIME-type restrictions to prevent malware/stored XSS.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    session = models.ForeignKey(ClassSession, on_delete=models.CASCADE, related_name='resources')
+    booking = models.ForeignKey(ClassBooking, on_delete=models.CASCADE, null=True, blank=True, related_name='resources')
+    session = models.ForeignKey(ClassSession, on_delete=models.CASCADE, null=True, blank=True, related_name='resources')
     title = models.CharField(max_length=255)
-    file = models.FileField(upload_to='classroom_resources/%Y/%m/')
+    resource_type = models.CharField(max_length=30, choices=ResourceType.choices, default=ResourceType.WORKSHEET, db_index=True)
+    description = models.TextField(blank=True)
+    file = models.FileField(upload_to='classroom_resources/%Y/%m/', null=True, blank=True)
     file_size = models.PositiveIntegerField(default=0, help_text="Size in bytes")
     content_type = models.CharField(max_length=100, blank=True)
+    video_url = models.URLField(max_length=500, blank=True, help_text="Direct link or embed URL for video lesson (YouTube, Vimeo, Cloud Storage, etc.)")
     uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -289,7 +326,8 @@ class LessonResource(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.title} ({self.session.title})"
+        target = self.session.title if self.session else (self.booking.subject.name if self.booking else "General")
+        return f"{self.title} [{self.get_resource_type_display()}] ({target})"
 
 
 class LessonFeedback(models.Model):

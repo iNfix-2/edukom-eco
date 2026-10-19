@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tutor Rate Matrix - Edukom Payroll{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto space-y-8">
+    <div class="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div>
+        <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-indigo-600"></i>
+          <span>Tutor Rate Matrix</span>
+        </h1>
+        <p class="text-sm text-slate-500 mt-1">Configure base hourly pay rates across student class levels, delivery modes, and client timezones.</p>
+      </div>
+      <a href="{% url 'payroll:dashboard' %}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition">
+        &larr; Back to Dashboard
+      </a>
+    </div>
+
+    {% if messages %}
+      <div class="space-y-2">
+        {% for message in messages %}
+          <div class="p-4 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200">
+        <h2 class="text-base font-bold text-slate-800">Active Rate Tiers</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Class Level</th>
+              <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Delivery Mode</th>
+              <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Timezone Zone</th>
+              <th class="px-6 py-3 text-right font-bold text-slate-500 uppercase tracking-wider">Hourly Rate</th>
+              <th class="px-6 py-3 text-right font-bold text-slate-500 uppercase tracking-wider">Quick Update</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 bg-white">
+            {% for tier in tiers %}
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="px-6 py-4 font-bold text-slate-900">{{ tier.class_level }}</td>
+              <td class="px-6 py-4 text-slate-600">{{ tier.delivery_mode }}</td>
+              <td class="px-6 py-4 text-slate-600">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800">
+                  {{ tier.get_timezone_category_display }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right font-black text-slate-900">
+                {{ tier.currency }} {{ tier.hourly_rate|floatformat:2 }}/hr
+              </td>
+              <td class="px-6 py-4 text-right">
+                <form method="POST" class="inline-flex items-center gap-2">
+                  {% csrf_token %}
+                  <input type="hidden" name="tier_id" value="{{ tier.id }}">
+                  <input type="number" step="100" name="hourly_rate" value="{{ tier.hourly_rate }}" class="w-28 px-2.5 py-1 text-xs border border-slate-300 rounded-lg text-right focus:ring-1 focus:ring-indigo-500">
+                  <button type="submit" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition shadow-sm">
+                    Save
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="px-6 py-12 text-center text-slate-400">
+                <p>No rate tiers initialized yet. Run the rate seed command or add them via Django Admin.</p>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

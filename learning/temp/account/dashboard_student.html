@@ -1,0 +1,486 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Learning Dashboard | Edukom LMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-canvas-gray py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- Top Student Identity Hero Banner -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+      <div class="absolute -right-12 -top-12 w-48 h-48 bg-vibrant-lime/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex items-center space-x-5 z-10">
+        <div class="relative">
+          {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="{{ user.username }}" class="w-20 h-20 rounded-2xl object-cover border-2 border-vibrant-lime shadow-md">
+          {% else %}
+            <div class="w-20 h-20 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center text-3xl font-black shadow-md border-2 border-vibrant-lime">
+              {{ user.first_name|default:user.username|make_list|first|upper }}
+            </div>
+          {% endif %}
+          <span class="absolute -bottom-1 -right-1 px-2 py-0.5 bg-vibrant-lime text-deep-navy text-[10px] font-black rounded-md uppercase tracking-wider shadow">
+            Student
+          </span>
+        </div>
+
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-2xl sm:text-3xl font-bold text-deep-navy">{{ user.get_full_name|default:user.username }}</h1>
+            <span class="px-3 py-1 bg-surface-container rounded-full text-xs font-semibold text-secondary">
+              {{ student.class_level|default:"Year 10" }} &bull; {{ student.curriculum|default:"British Curriculum" }}
+            </span>
+          </div>
+          <p class="text-sm text-on-surface-variant mt-1">
+            {{ profile.headline|default:"Active Academic Learner &bull; Enrolled in Edukom Live Academy" }}
+          </p>
+          <p class="text-xs text-outline mt-0.5">
+            <i class="fa-solid fa-earth-americas text-deep-navy/70 mr-1"></i> Timezone: <strong>{{ profile.timezone|default:"Africa/Lagos" }}</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick KPI Badges -->
+      <div class="flex flex-wrap items-center gap-3 z-10">
+        <div class="bg-surface-container px-4 py-3 rounded-2xl border border-outline-variant/20 text-center min-w-[100px]">
+          <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Hours Learned</span>
+          <span class="text-xl font-black text-deep-navy">{{ total_study_hours }} hrs</span>
+        </div>
+        <div class="bg-surface-container px-4 py-3 rounded-2xl border border-outline-variant/20 text-center min-w-[100px]">
+          <span class="text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Curriculum Path</span>
+          <span class="text-xl font-black text-vibrant-lime" style="color: #4b6700;">{{ progress_percentage }}%</span>
+        </div>
+        <a href="{% url 'classroom:calendar_sync' %}" class="px-4 py-3 bg-white border border-outline-variant/40 text-deep-navy font-bold text-xs rounded-2xl hover:bg-surface-container transition shadow-sm flex items-center gap-1.5" title="Download .ics calendar file">
+          <i class="fa-regular fa-calendar-days text-blue-600"></i> Calendar Sync
+        </a>
+        <a href="{% url 'profile_settings' %}" class="px-4 py-3 bg-deep-navy text-on-primary font-semibold text-xs rounded-2xl hover:bg-primary-container transition shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-pen"></i> Edit Profile
+        </a>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN LMS LAYOUT -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- LEFT 2 COLUMNS: Learning History Path & Live Classrooms -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- 1. CURRICULUM LEARNING HISTORY PATH (LMS MILESTONES) -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/20 gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="p-2 bg-vibrant-lime/20 text-deep-navy rounded-xl">
+                  <i class="fa-solid fa-route text-lg"></i>
+                </span>
+                <h2 class="text-xl font-bold text-deep-navy">My Curriculum Learning Path &amp; Records</h2>
+              </div>
+              <p class="text-xs text-on-surface-variant mt-1">
+                Your verified module progression, mastery scores, and tutor assessment history.
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-bold text-outline uppercase">{{ completed_milestones }}/{{ total_milestones }} Completed</span>
+              <div class="w-24 bg-surface-container rounded-full h-2.5 overflow-hidden">
+                <div class="bg-vibrant-lime h-2.5 rounded-full" style="width: {{ progress_percentage }}%; background-color: #A9D156;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestones Timeline -->
+          <div class="mt-6 space-y-4">
+            {% for m in milestones %}
+            <div class="p-5 rounded-2xl border transition-all {% if m.status == 'COMPLETED' or m.status == 'MASTERED' %}bg-surface-container-low border-vibrant-lime/40{% elif m.status == 'IN_PROGRESS' %}bg-white border-deep-navy/30 shadow-md ring-1 ring-deep-navy/20{% else %}bg-surface-bright border-outline-variant/20 opacity-70{% endif %}">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-start gap-3.5">
+                  <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 {% if m.status == 'COMPLETED' or m.status == 'MASTERED' %}bg-vibrant-lime text-deep-navy{% elif m.status == 'IN_PROGRESS' %}bg-deep-navy text-white animate-pulse{% else %}bg-outline-variant/30 text-outline{% endif %}">
+                    {% if m.status == 'COMPLETED' or m.status == 'MASTERED' %}
+                      <i class="fa-solid fa-check"></i>
+                    {% else %}
+                      {{ m.order }}
+                    {% endif %}
+                  </div>
+                  <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="text-xs font-extrabold uppercase tracking-wide text-secondary">{{ m.subject.name }}</span>
+                      <span class="text-xs text-outline">&bull;</span>
+                      <span class="text-xs text-on-surface-variant">{{ m.curriculum }}</span>
+                    </div>
+                    <h3 class="text-base font-bold text-deep-navy mt-0.5">{{ m.module_title }}</h3>
+                    {% if m.tutor_feedback %}
+                      <p class="text-xs text-on-surface-variant/90 mt-1.5 italic bg-white/70 p-2.5 rounded-xl border border-outline-variant/10">
+                        <i class="fa-solid fa-comment-dots text-deep-navy/60 mr-1"></i> "{{ m.tutor_feedback }}"
+                      </p>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                  {% if m.comprehension_score %}
+                    <div class="text-right">
+                      <span class="text-xs text-outline block">Mastery Score</span>
+                      <span class="text-sm font-black text-deep-navy">{{ m.comprehension_score }}%</span>
+                    </div>
+                  {% endif %}
+
+                  {% if m.status == 'COMPLETED' or m.status == 'MASTERED' %}
+                    <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full flex items-center gap-1.5">
+                      <i class="fa-solid fa-circle-check text-[10px]"></i> Mastered
+                    </span>
+                  {% elif m.status == 'IN_PROGRESS' %}
+                    <span class="px-3 py-1 bg-blue-100 text-deep-navy text-xs font-bold rounded-full flex items-center gap-1.5">
+                      <i class="fa-solid fa-spinner fa-spin text-[10px]"></i> In Progress
+                    </span>
+                  {% else %}
+                    <span class="px-3 py-1 bg-surface-container text-outline text-xs font-semibold rounded-full">
+                      Upcoming
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-on-surface-variant">
+              <i class="fa-solid fa-book-open text-3xl text-outline mb-2"></i>
+              <p class="text-sm font-semibold">Your curriculum learning path will be initialized upon your first class.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- 2. UPCOMING LIVE WEBRTC CLASSROOMS -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-6 border-b border-outline-variant/20">
+            <div class="flex items-center gap-2">
+              <span class="p-2 bg-rose-100 text-rose-600 rounded-xl">
+                <i class="fa-solid fa-video text-lg"></i>
+              </span>
+              <h2 class="text-xl font-bold text-deep-navy">Upcoming Live Classes</h2>
+            </div>
+            <span class="text-xs font-bold text-outline uppercase">{{ upcoming_sessions.count }} Scheduled</span>
+          </div>
+
+          <div class="mt-6 space-y-4">
+            {% for sess in upcoming_sessions %}
+            <div class="p-5 rounded-2xl border border-outline-variant/20 bg-surface-bright hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 bg-deep-navy text-white text-[11px] font-bold rounded-md">
+                    {{ sess.booking.subject.name }}
+                  </span>
+                  <span class="text-xs text-outline">{{ sess.duration_minutes }} Mins</span>
+                </div>
+                <h3 class="text-base font-bold text-deep-navy mt-1">{{ sess.title }}</h3>
+                <p class="text-xs text-on-surface-variant mt-0.5">
+                  Tutor: <strong>{{ sess.booking.tutor.display_name }}</strong> &bull; Schedule: <strong>{{ sess.dual_time_display }}</strong>
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0">
+                <a href="{% url 'classroom:live_room' sess.id %}" target="_blank" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+                  <i class="fa-solid fa-door-open"></i> Join Classroom
+                </a>
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-on-surface-variant">
+              <i class="fa-solid fa-calendar-xmark text-3xl text-outline mb-2"></i>
+              <p class="text-sm font-semibold">No live classes scheduled for today.</p>
+              <a href="{% url 'GetATutor' %}" class="inline-block mt-3 px-4 py-2 bg-vibrant-lime text-deep-navy font-bold text-xs rounded-xl hover:brightness-105 transition">
+                Book a Session
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- 3. COMPLETED SESSIONS & TUTOR LESSON NOTES -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-6 border-b border-outline-variant/20">
+            <div class="flex items-center gap-2">
+              <span class="p-2 bg-blue-100 text-deep-navy rounded-xl">
+                <i class="fa-solid fa-clipboard-check text-lg"></i>
+              </span>
+              <h2 class="text-xl font-bold text-deep-navy">Past Lessons & Tutor Reports</h2>
+            </div>
+          </div>
+
+          <div class="mt-6 space-y-4">
+            {% for s in past_sessions %}
+            <div class="p-5 rounded-2xl border border-outline-variant/20 bg-white space-y-3">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-bold text-deep-navy">{{ s.title }}</h4>
+                  <p class="text-xs text-outline">{{ s.start_time|date:"M d, Y" }} &bull; {{ s.booking.tutor.display_name }}</p>
+                </div>
+                <span class="px-2.5 py-0.5 bg-green-100 text-green-800 text-xs font-bold rounded-md">
+                  Completed
+                </span>
+              </div>
+
+              {% if s.lesson_topic %}
+              <div class="p-4 bg-surface-container rounded-2xl text-xs space-y-2">
+                <p><strong>Topic Covered:</strong> {{ s.lesson_topic }}</p>
+                {% if s.lesson_notes %}<p><strong>Tutor Summary:</strong> {{ s.lesson_notes }}</p>{% endif %}
+                {% if s.homework_assigned %}
+                  <p class="text-deep-navy font-semibold"><strong>Homework Assigned:</strong> {{ s.homework_assigned }}</p>
+
+                  <div class="mt-3 pt-3 border-t border-outline-variant/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      {% with sub=s.homework_submissions.first %}
+                        {% if sub %}
+                          <div class="flex items-center gap-2">
+                            <span class="text-[11px] font-bold {% if sub.status == 'GRADED' %}text-green-700 bg-green-50 border border-green-200{% else %}text-indigo-700 bg-indigo-50 border border-indigo-200{% endif %} px-2.5 py-0.5 rounded-full">
+                              <i class="fa-solid fa-file-circle-check mr-1"></i> {{ sub.get_status_display }}
+                            </span>
+                            {% if sub.grade %}
+                              <span class="text-xs font-black text-deep-navy">Grade: {{ sub.grade }}</span>
+                            {% endif %}
+                            {% if sub.attachment %}
+                              <a href="{% url 'classroom:download_homework' sub.id %}" class="text-[11px] text-deep-navy font-bold underline decoration-vibrant-lime hover:text-secondary ml-1">
+                                <i class="fa-solid fa-paperclip"></i> View Attached File
+                              </a>
+                            {% endif %}
+                          </div>
+                          {% if sub.tutor_feedback %}
+                            <p class="text-[11px] text-on-surface-variant mt-1.5 italic bg-white p-2 rounded-xl border border-outline-variant/20">
+                              <i class="fa-solid fa-comment-dots text-secondary mr-1"></i> Tutor Feedback: "{{ sub.tutor_feedback }}"
+                            </p>
+                          {% endif %}
+                        {% else %}
+                          <span class="text-[11px] text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 font-semibold inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-clock"></i> Awaiting Your Submission
+                          </span>
+                        {% endif %}
+                      {% endwith %}
+                    </div>
+
+                    <button type="button" onclick="toggleHomeworkModal('{{ s.id }}')" class="px-3.5 py-1.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 self-start sm:self-auto shrink-0">
+                      <i class="fa-solid fa-upload text-[11px]"></i>
+                      <span>Submit Homework</span>
+                    </button>
+                  </div>
+
+                  <!-- Expandable Submission Box for session s.id -->
+                  <div id="hw-box-{{ s.id }}" class="hidden mt-3 p-4 bg-white rounded-2xl border-2 border-dashed border-deep-navy/30 space-y-3">
+                    <div class="flex justify-between items-center">
+                      <h5 class="text-xs font-bold text-deep-navy">Submit Assignment: {{ s.title }}</h5>
+                      <button type="button" onclick="toggleHomeworkModal('{{ s.id }}')" class="text-xs text-outline hover:text-deep-navy font-bold">✕ Close</button>
+                    </div>
+                    <form action="{% url 'classroom:submit_homework' s.id %}" method="post" enctype="multipart/form-data" class="space-y-3 text-xs">
+                      {% csrf_token %}
+                      <div>
+                        <label class="block font-bold text-deep-navy mb-1">Written Solution / Answers</label>
+                        <textarea name="content" rows="3" placeholder="Type your answers, explanation, or essay response..." class="w-full p-2.5 bg-surface-container rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none"></textarea>
+                      </div>
+                      <div>
+                        <label class="block font-bold text-deep-navy mb-1">Attach File (PDF, Word, or Image - Max 20MB)</label>
+                        <input type="file" name="attachment" class="w-full text-xs text-on-surface-variant file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-deep-navy file:text-white hover:file:bg-primary-container cursor-pointer">
+                      </div>
+                      <button type="submit" class="px-4 py-2 bg-vibrant-lime text-deep-navy font-bold text-xs rounded-xl shadow-sm hover:brightness-105 transition flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Submit to Tutor
+                      </button>
+                    </form>
+                  </div>
+                {% endif %}
+              </div>
+              {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">No completed lesson notes yet.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT 1 COLUMN: DRM Library, Worksheets, Tuition -->
+      <div class="space-y-8">
+
+        <!-- DRM Encrypted Video Library Quick Resume -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-play-circle text-vibrant-lime text-lg" style="color: #4b6700;"></i>
+              <span>Watch History (DRM)</span>
+            </h3>
+            <a href="{% url 'videolibrary:catalog' %}" class="text-xs font-bold text-deep-navy hover:underline">
+              Library &rarr;
+            </a>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            {% for watch in watch_history %}
+            <div class="p-3.5 rounded-2xl bg-surface-bright border border-outline-variant/10 space-y-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-xs font-bold text-deep-navy line-clamp-1">{{ watch.lesson.title }}</p>
+                  <p class="text-[11px] text-outline">{{ watch.lesson.course.title }}</p>
+                </div>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded bg-surface-container text-deep-navy">
+                  {{ watch.last_watched_seconds }}s
+                </span>
+              </div>
+              <div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+                <div class="bg-deep-navy h-1.5 rounded-full" style="width: {% widthratio watch.last_watched_seconds watch.lesson.duration_seconds 100 %}%;"></div>
+              </div>
+              <a href="{% url 'videolibrary:watch_lesson' watch.lesson.id %}" class="block text-center text-xs font-bold text-deep-navy hover:underline pt-1">
+                Resume Playback &rarr;
+              </a>
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">No video watch history yet.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Class Worksheets & Resources Vault -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-file-pdf text-indigo-600"></i>
+              <span>Class Vault & Worksheets</span>
+            </h3>
+          </div>
+
+          <div class="mt-4 space-y-2.5">
+            {% for res in resources %}
+            <div class="p-3 rounded-2xl bg-surface-container-low flex items-center justify-between gap-3 text-xs">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <i class="fa-solid fa-file-arrow-down text-deep-navy text-sm shrink-0"></i>
+                <span class="font-bold text-deep-navy truncate">{{ res.title }}</span>
+              </div>
+              <a href="{% url 'classroom:download_resource' res.id %}" class="px-2.5 py-1 bg-white border border-outline-variant/30 rounded-lg font-bold text-[11px] text-deep-navy hover:bg-deep-navy hover:text-white transition shrink-0">
+                Get
+              </a>
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">No uploaded worksheets yet.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Interactive Quizzes & Assessments -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-blue-700"></i>
+              <span>Quizzes &amp; Tests</span>
+            </h3>
+            <a href="{% url 'classroom:quiz_list' %}" class="text-xs font-bold text-deep-navy hover:underline">
+              Take Quiz &rarr;
+            </a>
+          </div>
+
+          <div class="mt-4 space-y-2.5">
+            {% for att in quiz_attempts %}
+            <div class="p-3 rounded-2xl bg-surface-container-low flex items-center justify-between gap-3 text-xs">
+              <div>
+                <p class="font-bold text-deep-navy truncate max-w-[150px]">{{ att.quiz.title }}</p>
+                <p class="text-[10px] text-outline">{{ att.completed_at|date:"M d" }}</p>
+              </div>
+              <div class="text-right">
+                <span class="px-2 py-0.5 rounded font-black text-[10px] uppercase {% if att.passed %}bg-emerald-100 text-emerald-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                  {{ att.percentage }}%
+                </span>
+                <a href="{% url 'classroom:quiz_result' att.id %}" class="block text-[10px] text-deep-navy font-bold hover:underline mt-0.5">
+                  Report &rarr;
+                </a>
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4">
+              <p class="text-xs text-outline mb-2">No quiz attempts yet.</p>
+              <a href="{% url 'classroom:quiz_list' %}" class="px-3 py-1.5 bg-deep-navy text-white text-[11px] font-bold rounded-xl inline-block hover:bg-primary-container">
+                Browse Quizzes
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Official Course Completion Certificates -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-award text-amber-600"></i>
+              <span>My Certificates</span>
+            </h3>
+          </div>
+
+          <div class="mt-4 space-y-2.5">
+            {% for cert in certificates %}
+            <div class="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200 flex items-center justify-between gap-3 text-xs">
+              <div>
+                <span class="px-1.5 py-0.5 bg-amber-200 text-amber-900 rounded font-black text-[9px] uppercase">{{ cert.grade_achieved }}</span>
+                <p class="font-bold text-deep-navy mt-1">{{ cert.subject.name }}</p>
+                <p class="text-[10px] text-outline font-mono">{{ cert.certificate_code }}</p>
+              </div>
+              <a href="{% url 'classroom:view_certificate' certificate_code=cert.certificate_code %}" target="_blank" class="px-2.5 py-1.5 bg-deep-navy text-white font-bold text-[11px] rounded-lg hover:bg-primary-container transition shrink-0 flex items-center gap-1">
+                <i class="fa-solid fa-print"></i> View
+              </a>
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">Official certificates are conferred upon curriculum milestone mastery.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Invoices & Tuition Subscriptions -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-receipt text-secondary"></i>
+              <span>Tuition & Invoices</span>
+            </h3>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            {% for inv in invoices %}
+            <div class="p-3.5 rounded-2xl border border-outline-variant/20 bg-surface-bright flex justify-between items-center text-xs">
+              <div>
+                <p class="font-bold text-deep-navy">{{ inv.invoice_number }}</p>
+                <p class="text-[11px] text-outline">{{ inv.currency }} {{ inv.amount }} &bull; {{ inv.created_at|date:"M d" }}</p>
+              </div>
+              <div>
+                {% if inv.status == 'PAID' %}
+                  <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-green-100 text-green-800 inline-flex items-center gap-1">
+                    <i class="fa-solid fa-check-circle text-xs"></i> Paid
+                  </span>
+                {% else %}
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-800">Pending</span>
+                    <a href="{% url 'payments:checkout' inv.id %}" class="px-3 py-1 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-sm transition inline-flex items-center gap-1">
+                      <span>Pay Now</span>
+                      <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">No billing records found.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleHomeworkModal(sessionId) {
+  const box = document.getElementById('hw-box-' + sessionId);
+  if (box) {
+    box.classList.toggle('hidden');
+    if (!box.classList.contains('hidden')) {
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+}
+</script>
+{% endblock %}

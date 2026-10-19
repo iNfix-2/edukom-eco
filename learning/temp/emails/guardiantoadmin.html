@@ -1,0 +1,73 @@
+{% autoescape off %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Guardian Registration</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #002769;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        h1, h3 {
+            color: #ffffff;
+        }
+        .content {
+            padding: 20px;
+            color: #555555;
+        }
+        .footer {
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #555555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>New Guardian Registration</h1>
+        </div>
+
+        <div class="content">
+            <p>Hello Admin,</p>
+            <p>A new guardian has just signed up for tutorship for their ward. Below are the details:</p>
+            <ul>
+                <li><strong>Name:</strong> {{ guardian.first_name }} {{ guardian.last_name }}</li>
+                <li><strong>Email:</strong> {{ guardian.email }}</li>
+                <li><strong>Phone:</strong> {{ guardian.phone }}</li>
+                <li><strong>Preferred Lesson Type:</strong> {{ guardian.lesson_type }}</li>
+            </ul>
+            <p>Please take the necessary steps to review the information and contact the guardian if required. Thank you!</p>
+            <a href="https://www.edukom.ng{% url 'detailGuardian' guardian.uid %}">View full details</a>
+        </div>
+
+        <div class="footer">
+            <p>Best regards,<br>Your Education Platform Team</p>
+        </div>
+
+    </div>
+
+</body>
+</html>
+{% endautoescape %}

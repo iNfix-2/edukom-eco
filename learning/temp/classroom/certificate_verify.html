@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Verify Credential: {{ code }} | Edukom Academic LMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-canvas-gray py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+  <div class="max-w-xl w-full space-y-6">
+
+    <div class="text-center space-y-2">
+      <img src="{% static 'IMG/logo.png' %}" alt="Edukom Identity" class="h-16 w-auto mx-auto drop-shadow-sm">
+      <h1 class="text-2xl font-bold text-deep-navy">Certificate Verification Portal</h1>
+      <p class="text-xs text-on-surface-variant">Public academic credential validation registry</p>
+    </div>
+
+    <!-- Verification Result Card -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-outline-variant/30 space-y-6">
+      
+      {% if is_verified %}
+        <!-- Verified Success -->
+        <div class="text-center space-y-3 pb-6 border-b border-outline-variant/20">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto text-2xl shadow-inner">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-black uppercase tracking-wider">
+              Verified Authentic
+            </span>
+            <h2 class="text-lg font-bold text-deep-navy mt-2">Official Edukom Academic Credential</h2>
+            <p class="text-xs font-mono text-outline">{{ certificate.certificate_code }}</p>
+          </div>
+        </div>
+
+        <!-- Verified Metadata Details -->
+        <div class="space-y-3 text-xs">
+          <div class="flex justify-between py-2 border-b border-outline-variant/10">
+            <span class="text-on-surface-variant font-medium">Recipient Name:</span>
+            <span class="font-bold text-deep-navy">{{ certificate.student.first_name }} {{ certificate.student.last_name }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-outline-variant/10">
+            <span class="text-on-surface-variant font-medium">Subject / Course:</span>
+            <span class="font-bold text-deep-navy">{{ certificate.subject.name }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-outline-variant/10">
+            <span class="text-on-surface-variant font-medium">Curriculum &amp; Level:</span>
+            <span class="font-bold text-deep-navy">{{ certificate.class_level }} &bull; {{ certificate.curriculum }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-outline-variant/10">
+            <span class="text-on-surface-variant font-medium">Grade Awarded:</span>
+            <span class="font-black text-amber-700">{{ certificate.grade_achieved }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-outline-variant/10">
+            <span class="text-on-surface-variant font-medium">Issue Date:</span>
+            <span class="font-bold text-deep-navy">{{ certificate.issue_date|date:"F d, Y" }}</span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-outline-variant/10">
+            <span class="text-on-surface-variant font-medium">Conferred By:</span>
+            <span class="font-bold text-deep-navy">{{ certificate.instructor_name }}</span>
+          </div>
+        </div>
+
+        <div class="pt-2 text-center">
+          <p class="text-[11px] text-outline">
+            <i class="fa-solid fa-lock text-emerald-600 mr-1"></i> Cryptographically validated against Edukom's immutable academic ledger.
+          </p>
+        </div>
+
+      {% elif certificate and certificate.is_revoked %}
+        <!-- Revoked -->
+        <div class="text-center space-y-3 pb-4">
+          <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center mx-auto text-2xl">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-black uppercase tracking-wider">
+            Certificate Revoked
+          </span>
+          <h2 class="text-base font-bold text-deep-navy">This credential has been revoked</h2>
+          <p class="text-xs text-on-surface-variant">
+            {{ certificate.revocation_reason|default:"Revoked by the Edukom Academic Directorate." }}
+          </p>
+        </div>
+
+      {% else %}
+        <!-- Not Found -->
+        <div class="text-center space-y-3 pb-4">
+          <div class="w-16 h-16 rounded-full bg-surface-container text-outline flex items-center justify-center mx-auto text-2xl">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <span class="px-3 py-1 bg-surface-container text-outline rounded-full text-xs font-black uppercase tracking-wider">
+            Record Not Found
+          </span>
+          <h2 class="text-base font-bold text-deep-navy">No Matching Certificate Found</h2>
+          <p class="text-xs text-on-surface-variant">
+            Reference code <strong class="font-mono text-deep-navy">{{ code }}</strong> is not recognized in our database. Please verify the code on your certificate.
+          </p>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Return Home -->
+    <div class="text-center">
+      <a href="/" class="text-xs font-bold text-deep-navy hover:underline">
+        &larr; Return to Edukom Homepage
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

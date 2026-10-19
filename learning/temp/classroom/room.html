@@ -1,0 +1,2287 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ session.title }} | Edukom Live Virtual Classroom{% endblock %}
+
+{% block content %}
+<div class="h-[calc(100vh-4rem)] flex flex-col bg-slate-950 text-slate-100 overflow-hidden select-none">
+
+  <!-- TOP BAR: Classroom Telemetry, Timer & Controls -->
+  <header class="h-14 bg-slate-900/90 backdrop-blur border-b border-slate-800 px-4 sm:px-6 flex items-center justify-between shrink-0 z-20">
+    <!-- Left: Status & Session Title -->
+    <div class="flex items-center space-x-3 overflow-hidden">
+      <!-- Recording Status Pill -->
+      <button id="recBadge" onclick="toggleRecording()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30 transition hover:bg-rose-500/30 shrink-0" title="NDPR / COPPA Safeguard: Encrypted Live Lesson Recording">
+        <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+        <span id="recText">REC</span>
+      </button>
+
+      <div class="h-4 w-px bg-slate-800 shrink-0"></div>
+
+      <div class="truncate">
+        <div class="flex items-center gap-2">
+          <h1 class="text-sm font-bold text-white truncate max-w-xs sm:max-w-md">{{ session.title }}</h1>
+          <span class="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-md bg-indigo-950 text-indigo-300 border border-indigo-800 font-semibold uppercase">
+            {{ session.booking.subject.name }} &bull; {{ session.booking.class_level }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: Live Elapsed Timer -->
+    <div class="hidden md:flex items-center gap-2 bg-slate-950 px-3 py-1 rounded-full border border-slate-800 text-xs">
+      <i class="fa-regular fa-clock text-indigo-400"></i>
+      <span class="font-mono font-bold text-slate-200" id="sessionTimer">00:00</span>
+      <span class="text-slate-500">/ {{ session.duration_minutes }}m</span>
+      <span class="text-[10px] text-emerald-400 font-semibold ml-1 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 1080p HD
+      </span>
+    </div>
+
+    <!-- Right: Participant Role & Exit/Conclude -->
+    <div class="flex items-center space-x-3 shrink-0">
+      <div class="hidden sm:flex items-center gap-2 text-xs text-slate-400">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span class="text-slate-200 font-semibold">{{ user_name }}</span>
+        <span class="px-1.5 py-0.5 rounded text-[10px] uppercase font-bold {% if is_tutor %}bg-indigo-600/30 text-indigo-300 border border-indigo-500/40{% else %}bg-amber-600/30 text-amber-300 border border-amber-500/40{% endif %}">
+          {{ role }}
+        </span>
+      </div>
+
+      {% if is_tutor %}
+        <button onclick="openNotesModal()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+          <i class="fa-solid fa-flag-checkered"></i>
+          <span>End Class & Notes</span>
+        </button>
+      {% else %}
+        <a href="{% url 'classroom:student_portal' %}" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-1">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <span>Leave Room</span>
+        </a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- MAIN STAGE & SIDE DRAWER -->
+  <div class="flex-1 flex overflow-hidden relative">
+
+    <!-- PRIMARY STAGE (Video Tiles, Screen-Share, or Full Whiteboard) -->
+    <main class="flex-1 flex flex-col relative bg-slate-950 overflow-hidden">
+
+      <!-- Dedicated Remote Audio Receiver (Unmuted for clean bidirectional voice) -->
+      <audio id="remoteAudio" autoplay playsinline class="hidden"></audio>
+
+      <!-- Autoplay Policy Audio Unblock Pill -->
+      <div id="audioAutoplayBanner" class="hidden absolute top-3 left-1/2 -translate-x-1/2 z-40 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold animate-bounce cursor-pointer border border-indigo-400" onclick="unlockAudioPlayback()">
+        <i class="fa-solid fa-volume-high text-sm"></i>
+        <span>Click to Enable Remote Audio</span>
+      </div>
+
+      <!-- Floating New Worksheet Live Notification Banner -->
+      <div id="newResourceBanner" class="hidden absolute top-14 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 backdrop-blur border border-indigo-500/60 shadow-2xl px-4 py-2.5 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
+        <div class="w-8 h-8 rounded-xl bg-indigo-600/30 text-indigo-400 flex items-center justify-center text-sm shrink-0">
+          <i class="fa-solid fa-file-circle-check"></i>
+        </div>
+        <div class="text-xs">
+          <p class="font-bold text-white flex items-center gap-1.5">
+            <span>New Worksheet Shared!</span>
+            <span class="text-[10px] px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-semibold">Live Sync</span>
+          </p>
+          <p id="newResourceBannerText" class="text-slate-300 text-[11px] truncate max-w-xs sm:max-w-sm">Worksheet title</p>
+        </div>
+        <button onclick="openResourceFromBanner()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs transition shadow flex items-center gap-1 shrink-0">
+          <i class="fa-solid fa-folder-open text-[10px]"></i> View
+        </button>
+        <button onclick="dismissResourceBanner()" class="text-slate-400 hover:text-white text-xs p-1 ml-1" title="Dismiss">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- View 1: Video Conference Grid (Default) -->
+      <div id="videoGridView" class="flex-1 p-4 sm:p-6 flex items-center justify-center overflow-hidden">
+        <div class="w-full max-w-6xl h-full max-h-[720px] grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+
+          <!-- Tile 1: Tutor Feed -->
+          <div class="relative bg-slate-900 rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl flex flex-col justify-between group">
+            <!-- Video element for real webcam feed -->
+            <video id="tutorVideoElement" autoplay playsinline {% if is_tutor %}muted{% endif %} class="absolute inset-0 w-full h-full object-cover hidden z-10"></video>
+
+            <!-- Fallback Graphic Avatar Tile -->
+            <div id="tutorAvatarTile" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-slate-950 z-0">
+              <div class="relative">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-indigo-600/20 border-2 border-indigo-500/50 flex items-center justify-center text-indigo-400 text-4xl font-black shadow-inner shadow-indigo-500/20">
+                  <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center text-[10px] text-white">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+              <h3 class="mt-4 text-base font-bold text-slate-100">{{ session.booking.tutor.display_name }}</h3>
+              <p class="text-xs text-indigo-400 font-medium">Educator &bull; {{ session.booking.subject.name }}</p>
+            </div>
+
+            <!-- Tile Top Badges -->
+            <div class="relative z-20 p-3.5 flex items-center justify-between pointer-events-none">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-900/80 backdrop-blur text-emerald-400 border border-slate-700/60 flex items-center gap-1.5 shadow">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Tutor Feed</span>
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900/80 text-slate-400 border border-slate-800">
+                1080p &bull; 60fps
+              </span>
+            </div>
+
+            <!-- Tile Bottom Controls / Mic Indicator -->
+            <div class="relative z-20 p-3.5 bg-gradient-to-t from-slate-950/90 to-transparent flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span id="tutorMicBadge" class="w-7 h-7 rounded-full bg-slate-900/90 border border-slate-700 text-emerald-400 flex items-center justify-center text-xs shadow">
+                  <i class="fa-solid fa-microphone"></i>
+                </span>
+                <span class="text-xs font-semibold text-white drop-shadow">{{ session.booking.tutor.display_name }}</span>
+              </div>
+              <!-- Speaking visualizer bars -->
+              <div id="tutorSpeakingMeter" class="flex items-end gap-1 h-3.5" title="Live Voice Activity">
+                <span class="meter-bar w-1 h-1.5 bg-slate-700 rounded-full transition-all duration-75"></span>
+                <span class="meter-bar w-1 h-1.5 bg-slate-700 rounded-full transition-all duration-75"></span>
+                <span class="meter-bar w-1 h-1.5 bg-slate-700 rounded-full transition-all duration-75"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tile 2: Student Feed -->
+          <div class="relative bg-slate-900 rounded-3xl border border-slate-800/80 overflow-hidden shadow-2xl flex flex-col justify-between group">
+            <!-- Video element for student real webcam feed -->
+            <video id="studentVideoElement" autoplay playsinline {% if not is_tutor %}muted{% endif %} class="absolute inset-0 w-full h-full object-cover hidden z-10"></video>
+
+            <!-- Fallback Graphic Avatar Tile -->
+            <div id="studentAvatarTile" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-slate-950 z-0">
+              <div class="relative">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-amber-600/20 border-2 border-amber-500/50 flex items-center justify-center text-amber-400 text-4xl font-black shadow-inner shadow-amber-500/20">
+                  <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center text-[10px] text-white">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+              <h3 class="mt-4 text-base font-bold text-slate-100">{{ session.booking.student.first_name }} {{ session.booking.student.last_name }}</h3>
+              <p class="text-xs text-amber-400 font-medium">Student &bull; {{ session.booking.class_level }}</p>
+            </div>
+
+            <!-- Tile Top Badges -->
+            <div class="relative z-20 p-3.5 flex items-center justify-between pointer-events-none">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-900/80 backdrop-blur text-emerald-400 border border-slate-700/60 flex items-center gap-1.5 shadow">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>Student Feed</span>
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900/80 text-slate-400 border border-slate-800">
+                Connected &bull; HD
+              </span>
+            </div>
+
+            <!-- Tile Bottom Controls / Mic Indicator -->
+            <div class="relative z-20 p-3.5 bg-gradient-to-t from-slate-950/90 to-transparent flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span id="studentMicBadge" class="w-7 h-7 rounded-full bg-slate-900/90 border border-slate-700 text-emerald-400 flex items-center justify-center text-xs shadow">
+                  <i class="fa-solid fa-microphone"></i>
+                </span>
+                <span class="text-xs font-semibold text-white drop-shadow">{{ session.booking.student.first_name }}</span>
+              </div>
+              <!-- Speaking visualizer bars -->
+              <div id="studentSpeakingMeter" class="flex items-end gap-1 h-3.5" title="Live Voice Activity">
+                <span class="meter-bar w-1 h-1.5 bg-slate-700 rounded-full transition-all duration-75"></span>
+                <span class="meter-bar w-1 h-1.5 bg-slate-700 rounded-full transition-all duration-75"></span>
+                <span class="meter-bar w-1 h-1.5 bg-slate-700 rounded-full transition-all duration-75"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- View 2: Live Screen Sharing Stage (Shown when active) -->
+      <div id="screenShareView" class="hidden flex-1 flex flex-col p-4 bg-black relative">
+        <div class="absolute top-6 left-6 z-30 flex items-center gap-3 bg-slate-900/90 backdrop-blur px-4 py-2 rounded-2xl border border-slate-700 shadow-xl">
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></span>
+          <span class="text-xs font-bold text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-desktop text-indigo-400"></i> Presenting Screen / Application Window
+          </span>
+          <button onclick="stopScreenShare()" class="ml-2 px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow transition">
+            Stop Sharing
+          </button>
+        </div>
+        <video id="screenShareVideo" autoplay playsinline class="w-full h-full object-contain bg-black rounded-2xl border border-slate-800"></video>
+      </div>
+
+      <!-- View 3: Full-Stage Interactive Collaborative Whiteboard (Shown when active) -->
+      <div id="whiteboardView" class="hidden flex-1 flex flex-col bg-slate-900 relative p-3">
+        <!-- Whiteboard Floating Toolbar -->
+        <div class="mb-2 bg-slate-950/90 backdrop-blur border border-slate-800 rounded-2xl p-2.5 flex flex-wrap items-center justify-between gap-2 shadow-xl z-20">
+          <!-- Drawing Tools -->
+          <div class="flex items-center gap-1">
+            <button onclick="setWhiteboardTool('pen')" id="wbToolPen" class="wb-tool-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-pen"></i> Pen
+            </button>
+            <button onclick="setWhiteboardTool('highlighter')" id="wbToolHighlighter" class="wb-tool-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-highlighter"></i> Highlighter
+            </button>
+            <button onclick="setWhiteboardTool('eraser')" id="wbToolEraser" class="wb-tool-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-eraser"></i> Eraser
+            </button>
+            <button onclick="setWhiteboardTool('line')" id="wbToolLine" class="wb-tool-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-slash"></i> Line
+            </button>
+            <button onclick="setWhiteboardTool('rect')" id="wbToolRect" class="wb-tool-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+              <i class="fa-regular fa-square"></i> Box
+            </button>
+            <button onclick="setWhiteboardTool('circle')" id="wbToolCircle" class="wb-tool-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+              <i class="fa-regular fa-circle"></i> Circle
+            </button>
+            <button onclick="setWhiteboardTool('text')" id="wbToolText" class="wb-tool-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-font"></i> Text
+            </button>
+          </div>
+
+          <!-- Color Palette -->
+          <div class="flex items-center gap-1.5 px-2 py-1 bg-slate-900 rounded-xl border border-slate-800">
+            <button onclick="setWhiteboardColor('#ffffff')" class="w-5 h-5 rounded-full bg-white border border-slate-400 focus:scale-125 transition" title="White"></button>
+            <button onclick="setWhiteboardColor('#818cf8')" class="w-5 h-5 rounded-full bg-indigo-400 focus:scale-125 transition" title="Indigo"></button>
+            <button onclick="setWhiteboardColor('#34d399')" class="w-5 h-5 rounded-full bg-emerald-400 focus:scale-125 transition" title="Emerald"></button>
+            <button onclick="setWhiteboardColor('#fbbf24')" class="w-5 h-5 rounded-full bg-amber-400 focus:scale-125 transition" title="Amber"></button>
+            <button onclick="setWhiteboardColor('#f87171')" class="w-5 h-5 rounded-full bg-red-400 focus:scale-125 transition" title="Coral"></button>
+            <button onclick="setWhiteboardColor('#c084fc')" class="w-5 h-5 rounded-full bg-purple-400 focus:scale-125 transition" title="Purple"></button>
+          </div>
+
+          <!-- Stroke Size & Actions -->
+          <div class="flex items-center gap-2">
+            <input type="range" id="wbStrokeWidth" min="1" max="20" value="3" onchange="wbLineWidth = this.value" class="w-20 accent-indigo-500 cursor-pointer" title="Stroke Width">
+            <button onclick="clearWhiteboard()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1">
+              <i class="fa-solid fa-trash-can"></i> Clear
+            </button>
+            <button onclick="downloadWhiteboard()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-xl text-xs font-bold transition flex items-center gap-1" title="Save whiteboard board as image">
+              <i class="fa-solid fa-download"></i> Save Board
+            </button>
+            <button onclick="toggleWhiteboard()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1">
+              <i class="fa-solid fa-xmark"></i> Close Board
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="flex-1 w-full h-full relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl cursor-crosshair">
+          <canvas id="whiteboardCanvas" class="w-full h-full block"></canvas>
+        </div>
+      </div>
+
+      <!-- FLOATING ZOOM-LIKE BOTTOM CONTROLS BAR -->
+      <div class="h-20 bg-slate-900/90 backdrop-blur border-t border-slate-800/80 px-4 sm:px-8 flex items-center justify-between z-20 shrink-0">
+
+        <!-- Left Controls: Audio / Video Devices -->
+        <div class="flex items-center space-x-3">
+          <!-- Mic Toggle -->
+          <div class="flex items-center bg-slate-800 rounded-2xl p-1 border border-slate-700/60 shadow">
+            <button id="btnMic" onclick="toggleMicrophone()" class="px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-white bg-slate-700 hover:bg-slate-600 transition" title="Mute/Unmute Mic">
+              <i id="micIcon" class="fa-solid fa-microphone text-emerald-400"></i>
+              <span id="micLabel" class="hidden sm:inline">Mute</span>
+            </button>
+          </div>
+
+          <!-- Camera Toggle -->
+          <div class="flex items-center bg-slate-800 rounded-2xl p-1 border border-slate-700/60 shadow">
+            <button id="btnCam" onclick="toggleCamera()" class="px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-white bg-slate-700 hover:bg-slate-600 transition" title="Start/Stop Webcam">
+              <i id="camIcon" class="fa-solid fa-video text-emerald-400"></i>
+              <span id="camLabel" class="hidden sm:inline">Camera</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Center Controls: Screen Share, Whiteboard, Layout -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <!-- Screen Share Button -->
+          <button id="btnScreenShare" onclick="toggleScreenShare()" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Share Screen / Presentation">
+            <i class="fa-solid fa-desktop text-base"></i>
+          </button>
+
+          <!-- Whiteboard Button -->
+          <button id="btnWhiteboard" onclick="toggleWhiteboard()" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center text-white transition shadow-lg shadow-indigo-600/30" title="Open Interactive Collaborative Whiteboard">
+            <i class="fa-solid fa-pen-ruler text-base"></i>
+          </button>
+
+          <!-- Live Chat Toggle -->
+          <button id="btnChatToggle" onclick="toggleDrawer('chat')" class="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="In-Class Chat">
+            <i class="fa-solid fa-comment-dots text-base"></i>
+            <span id="chatUnreadDot" class="hidden absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></span>
+          </button>
+
+          <!-- Shared Resources Vault Toggle -->
+          <button id="btnVaultToggle" onclick="toggleDrawer('resources')" class="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Shared Worksheets & Files">
+            <i class="fa-solid fa-folder-open text-base"></i>
+            <span id="bottomVaultBadge" class="absolute -top-1 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-black bg-indigo-600 text-white shadow">
+              {{ session.resources.all|length }}
+            </span>
+            <span id="vaultPingDot" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping"></span>
+          </button>
+
+          <!-- Class Info Toggle -->
+          <button onclick="toggleDrawer('info')" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Lesson Info">
+            <i class="fa-solid fa-circle-info text-base"></i>
+          </button>
+        </div>
+
+        <!-- Right Controls: Leave / End Call -->
+        <div>
+          {% if is_tutor %}
+            <button onclick="openNotesModal()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl text-xs shadow-lg shadow-rose-600/30 transition flex items-center gap-2">
+              <i class="fa-solid fa-phone-slash"></i>
+              <span class="hidden sm:inline">Conclude Class</span>
+            </button>
+          {% else %}
+            <a href="{% url 'classroom:student_portal' %}" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl text-xs shadow-lg shadow-rose-600/30 transition flex items-center gap-2">
+              <i class="fa-solid fa-phone-slash"></i>
+              <span class="hidden sm:inline">Leave Room</span>
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- RIGHT SLIDE-OUT COLLAPSIBLE DRAWER (Chat / Worksheets / Details) -->
+    <aside id="sideDrawer" class="w-80 sm:w-96 bg-slate-900 border-l border-slate-800 flex flex-col z-20 transition-all duration-300 shrink-0">
+
+      <!-- Drawer Tabs Header -->
+      <div class="h-14 border-b border-slate-800 flex items-center justify-between px-4 bg-slate-950/60">
+        <div class="flex items-center gap-1">
+          <button onclick="switchDrawerTab('chat')" id="tabChatBtn" class="drawer-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white transition">
+            Chat
+          </button>
+          <button onclick="switchDrawerTab('resources')" id="tabResourcesBtn" class="drawer-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+            Worksheets (<span id="tabWorksheetCount">{{ session.resources.all|length }}</span>)
+          </button>
+          <button onclick="switchDrawerTab('info')" id="tabInfoBtn" class="drawer-tab-btn px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+            Info
+          </button>
+        </div>
+
+        <button onclick="toggleDrawer(null)" class="text-slate-400 hover:text-white p-1 text-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- TAB 1: IN-CLASS LIVE CHAT -->
+      <div id="drawerTabChat" class="flex-1 flex flex-col overflow-hidden p-4">
+        <!-- Chat Messages Feed -->
+        <div id="chatMessageList" class="flex-1 overflow-y-auto space-y-3 pr-1 text-xs">
+          <!-- Welcome automated message -->
+          <div class="p-3 rounded-2xl bg-indigo-950/60 border border-indigo-800/40 text-slate-300 text-center">
+            <i class="fa-solid fa-shield-halved text-indigo-400 mb-1"></i>
+            <p class="font-bold text-indigo-200">Encrypted Classroom Session</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Welcome! Chat messages, worksheets, and annotations are recorded for quality assurance.</p>
+          </div>
+
+          <div class="flex items-start gap-2.5">
+            <div class="w-7 h-7 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white text-xs shrink-0">
+              T
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-200 text-xs">{{ session.booking.tutor.display_name }}</span>
+                <span class="text-[10px] text-slate-500">Live</span>
+              </div>
+              <div class="mt-1 p-2.5 rounded-2xl bg-slate-800 text-slate-200 border border-slate-700/60 leading-relaxed">
+                Hello {{ session.booking.student.first_name }}! Ready to start today's lesson on {{ session.booking.subject.name }}?
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Emojis -->
+        <div class="py-2 flex items-center gap-2 border-t border-slate-800 mt-2">
+          <button onclick="sendQuickEmoji('👍')" class="hover:scale-125 transition text-sm">👍</button>
+          <button onclick="sendQuickEmoji('👏')" class="hover:scale-125 transition text-sm">👏</button>
+          <button onclick="sendQuickEmoji('💡')" class="hover:scale-125 transition text-sm">💡</button>
+          <button onclick="sendQuickEmoji('❓')" class="hover:scale-125 transition text-sm">❓</button>
+          <button onclick="sendQuickEmoji('✍️')" class="hover:scale-125 transition text-sm">✍️</button>
+          <button onclick="sendQuickEmoji('🎉')" class="hover:scale-125 transition text-sm">🎉</button>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form onsubmit="handleSendChatMessage(event)" class="flex items-center gap-2">
+          <input type="text" id="chatInputText" placeholder="Type a message to class..." autocomplete="off" class="flex-1 px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <button type="submit" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- TAB 2: WORKSHEETS & STUDY MATERIALS VAULT -->
+      <div id="drawerTabResources" class="hidden flex-1 flex flex-col overflow-hidden p-4 space-y-4">
+        <div>
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Lesson Materials</h4>
+            <span id="worksheetCountBadge" class="text-[11px] text-indigo-400 font-semibold">{{ session.resources.all|length }} Files</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-0.5">Download worksheets and study guides prepared for this class.</p>
+        </div>
+
+        <!-- File List -->
+        <div id="worksheetFileList" class="flex-1 overflow-y-auto space-y-2 pr-1">
+          {% for res in session.resources.all %}
+            <div id="worksheetCard-{{ res.id }}" data-resource-id="{{ res.id }}" class="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-between gap-3 hover:border-slate-700 transition">
+              <div class="flex items-center gap-2.5 truncate">
+                <div class="w-8 h-8 rounded-xl bg-indigo-950 border border-indigo-800 text-indigo-400 flex items-center justify-center shrink-0">
+                  {% if res.resource_type == 'VIDEO' %}
+                    <i class="fa-solid fa-video text-xs"></i>
+                  {% elif res.resource_type == 'PAST_PAPER' %}
+                    <i class="fa-solid fa-file-contract text-xs"></i>
+                  {% else %}
+                    <i class="fa-solid fa-file-pdf text-xs"></i>
+                  {% endif %}
+                </div>
+                <div class="truncate">
+                  <p class="text-xs font-bold text-slate-200 truncate">{{ res.title }}</p>
+                  <p class="text-[10px] text-slate-500">{{ res.get_resource_type_display }} &bull; {{ res.file_size|filesizeformat }}</p>
+                </div>
+              </div>
+
+              {% if res.file %}
+                <a href="{% url 'classroom:download_resource' res.id %}" class="px-2.5 py-1.5 bg-slate-800 hover:bg-indigo-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0">
+                  <i class="fa-solid fa-download text-[11px]"></i>
+                </a>
+              {% elif res.video_url %}
+                <a href="{{ res.video_url }}" target="_blank" class="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0">
+                  <i class="fa-solid fa-play text-[11px]"></i>
+                </a>
+              {% endif %}
+            </div>
+          {% empty %}
+            <div id="worksheetEmptyState" class="text-center py-8 text-slate-500 space-y-2">
+              <i class="fa-regular fa-folder-open text-3xl"></i>
+              <p class="text-xs font-medium">No worksheets uploaded for this session yet.</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- In-Class File Uploader for Tutor -->
+        <div class="pt-3 border-t border-slate-800 space-y-3">
+          <h5 class="text-xs font-bold text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-cloud-arrow-up text-indigo-400"></i>
+            <span>Upload New Material</span>
+          </h5>
+          <form id="uploadResourceForm" onsubmit="handleUploadResource(event)" method="POST" action="{% url 'classroom:upload_resource' session.id %}" enctype="multipart/form-data" class="space-y-2.5 text-xs">
+            {% csrf_token %}
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Title</label>
+              <input type="text" id="uploadTitleInput" name="title" placeholder="e.g. Worksheet: Factoring Quadratics" required class="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Resource Category</label>
+              <select id="uploadTypeSelect" name="resource_type" class="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <option value="WORKSHEET">Worksheet & Exercises</option>
+                <option value="NOTES">Study Notes & Slides</option>
+                <option value="PAST_PAPER">Past Exam Paper</option>
+                <option value="VIDEO">Video / Recording</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Attach File (PDF, Word, PPTX, Video)</label>
+              <input type="file" id="uploadFileInput" name="resource_file" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-400 mb-1">Or Direct Video / Resource URL</label>
+              <input type="url" id="uploadUrlInput" name="video_url" placeholder="https://..." class="w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+
+            <button type="submit" id="btnUploadResource" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5">
+              <i id="uploadBtnIcon" class="fa-solid fa-arrow-up-from-bracket"></i>
+              <span id="uploadBtnText">Share with Class</span>
+            </button>
+            <p id="uploadStatusMsg" class="hidden text-[11px] text-center mt-1"></p>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 3: LESSON & PARTICIPANT INFO -->
+      <div id="drawerTabInfo" class="hidden flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+        <div>
+          <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[11px]">Academic Details</h4>
+          <div class="mt-2 space-y-2 bg-slate-950 p-3.5 rounded-2xl border border-slate-800">
+            <div>
+              <span class="text-slate-500 block text-[10px] uppercase font-bold">Subject & Level</span>
+              <span class="font-bold text-slate-200">{{ session.booking.subject.name }} ({{ session.booking.class_level }})</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block text-[10px] uppercase font-bold">Curriculum</span>
+              <span class="font-bold text-indigo-400">{{ session.booking.curriculum }}</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block text-[10px] uppercase font-bold">Scheduled Time</span>
+              <span class="font-bold text-slate-200">{{ session.dual_time_display }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[11px]">Participants</h4>
+          <div class="mt-2 space-y-2">
+            <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-indigo-600/30 text-indigo-400 font-bold flex items-center justify-center">
+                  {{ session.booking.tutor.display_name|slice:":1" }}
+                </div>
+                <div>
+                  <p class="font-bold text-slate-200">{{ session.booking.tutor.display_name }}</p>
+                  <p class="text-[10px] text-slate-500">Educator / Host</p>
+                </div>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
+                Online
+              </span>
+            </div>
+
+            <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-amber-600/30 text-amber-400 font-bold flex items-center justify-center">
+                  {{ session.booking.student.first_name|slice:":1" }}
+                </div>
+                <div>
+                  <p class="font-bold text-slate-200">{{ session.booking.student.first_name }} {{ session.booking.student.last_name }}</p>
+                  <p class="text-[10px] text-slate-500">Student</p>
+                </div>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
+                Active
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-indigo-950/40 rounded-2xl border border-indigo-900/50 text-[11px] text-indigo-300">
+          <i class="fa-solid fa-lock mr-1"></i> WebRTC peer connection encrypted with DTLS-SRTP standards.
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+</div>
+
+<!-- MODAL: CONCLUDE CLASS & SUBMIT LESSON NOTES (TUTOR ONLY) -->
+{% if is_tutor %}
+<div id="notesModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+  <div class="bg-white text-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+    <div class="flex justify-between items-center pb-4 border-b border-slate-200">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+          <i class="fa-solid fa-clipboard-check text-lg"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Conclude Class & Notes</h3>
+          <p class="text-xs text-slate-500">Summary will be emailed directly to guardian</p>
+        </div>
+      </div>
+      <button onclick="closeNotesModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form method="POST" action="{% url 'classroom:submit_notes' session.id %}" class="space-y-4 mt-5 text-left text-xs">
+      {% csrf_token %}
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Topic Covered Today *</label>
+        <input type="text" name="lesson_topic" required placeholder="e.g. Quadratic Equations: Completing the Square" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Tutor Remarks & Student Comprehension *</label>
+        <textarea name="lesson_notes" rows="3" required placeholder="Detail the student's engagement, strengths, and areas requiring review..." class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+      </div>
+
+      <div>
+        <label class="block font-bold text-slate-700 mb-1">Homework Assigned</label>
+        <input type="text" name="homework_assigned" placeholder="e.g. Textbook Page 112 Exercises 1-10 due next Tuesday" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+      </div>
+
+      <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-[11px] text-amber-800">
+        <i class="fa-solid fa-bell mr-1"></i> Submitting will mark the session as <strong>COMPLETED</strong>, log attendance duration, and queue payroll credit.
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeNotesModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">
+          Cancel
+        </button>
+        <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+          <i class="fa-solid fa-paper-plane"></i> Finalize Class & Send Report
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<script>
+  // ============================================================================
+  // EDUKOM MULTI-DEVICE REAL-TIME CLASSROOM & WEBRTC ENGINE
+  // ============================================================================
+  const SESSION_ID = "{{ session.id }}";
+  const USER_ID = {{ user_id }};
+  const USER_NAME = "{{ user_name|escapejs }}";
+  const USER_ROLE = "{{ role }}";
+  const IS_TUTOR = {{ is_tutor|yesno:"true,false" }};
+  const SEND_SIGNAL_URL = "{% url 'classroom:send_signal' session.id %}";
+  const POLL_SIGNAL_URL = "{% url 'classroom:poll_signals' session.id %}";
+  const CSRF_TOKEN = "{{ csrf_token }}";
+
+  // Telemetry & State
+  let lastSignalId = 0;
+  let peerConnection = null;
+  let dataChannel = null;
+  let localMediaStream = null;
+  let localAudioStream = null;
+  let localAudioTrack = null;
+  let localCameraTrack = null;
+  let screenStream = null;
+  let isCameraOn = false;
+  let isMicMuted = false;
+  let isPeerConnected = false;
+  let iceCandidatesQueue = [];
+  let audioContext = null;
+
+  // WebRTC Configuration using Google STUN Servers
+  const RTC_CONFIG = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' }
+    ]
+  };
+
+  // 1. Session Duration Timer
+  let secondsElapsed = 0;
+  const timerElem = document.getElementById('sessionTimer');
+  setInterval(() => {
+    secondsElapsed++;
+    const mins = Math.floor(secondsElapsed / 60);
+    const secs = secondsElapsed % 60;
+    if (timerElem) {
+      timerElem.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+  }, 1000);
+
+  // 2. HTTP Signaling Service (Works reliably across all devices, Wi-Fi, and networks)
+  async function sendSignal(type, payload) {
+    try {
+      const resp = await fetch(SEND_SIGNAL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': CSRF_TOKEN
+        },
+        body: JSON.stringify({
+          signal_type: type,
+          payload: payload
+        })
+      });
+      return await resp.json();
+    } catch (e) {
+      console.warn("Signal send error:", e);
+    }
+  }
+
+  // Fast signaling poll loop
+  async function pollSignals() {
+    try {
+      const resp = await fetch(`${POLL_SIGNAL_URL}?after_id=${lastSignalId}`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      if (data.success && data.signals && data.signals.length > 0) {
+        for (const sig of data.signals) {
+          lastSignalId = Math.max(lastSignalId, sig.id);
+          if (!sig.is_self) {
+            await handleIncomingSignal(sig);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Signal poll error:", err);
+    }
+  }
+
+  // Broadcast via WebRTC DataChannel (Sub-millisecond) with HTTP fallback
+  function broadcastRealtime(msgObj) {
+    const raw = JSON.stringify(msgObj);
+    let sentViaDataChannel = false;
+    if (dataChannel && dataChannel.readyState === 'open') {
+      try {
+        dataChannel.send(raw);
+        sentViaDataChannel = true;
+      } catch (err) {
+        sentViaDataChannel = false;
+      }
+    }
+    // Also send via HTTP signal so messages are 100% guaranteed even if P2P is establishing
+    if (msgObj.type !== 'wb_point') {
+      sendSignal(msgObj.type, msgObj);
+    }
+  }
+
+  // 3. Audio Context & Live Voice Speaking Meter (Web Audio API)
+  function getAudioContext() {
+    if (!audioContext) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        audioContext = new AudioCtx();
+      }
+    }
+    if (audioContext && audioContext.state === 'suspended') {
+      audioContext.resume().catch(e => console.log('AudioContext resume notice:', e));
+    }
+    return audioContext;
+  }
+
+  function setupSpeakingMeter(stream, targetRole) {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      const tracks = stream.getAudioTracks();
+      if (!tracks || tracks.length === 0) return;
+
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 128;
+      analyser.smoothingTimeConstant = 0.4;
+      source.connect(analyser);
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      const meterElem = document.getElementById(targetRole === 'tutor' ? 'tutorSpeakingMeter' : 'studentSpeakingMeter');
+      if (!meterElem) return;
+      const bars = meterElem.querySelectorAll('.meter-bar');
+
+      function pollMeter() {
+        if (!tracks[0] || !tracks[0].enabled || tracks[0].readyState === 'ended') {
+          bars.forEach(bar => {
+            bar.style.height = '4px';
+            bar.classList.remove('bg-emerald-400');
+            bar.classList.add('bg-slate-700');
+          });
+          requestAnimationFrame(pollMeter);
+          return;
+        }
+
+        analyser.getByteFrequencyData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < bufferLength; i++) {
+          sum += dataArray[i];
+        }
+        const avg = sum / bufferLength;
+
+        if (avg > 10) {
+          const intensity = Math.min(1, avg / 45);
+          bars.forEach((bar, idx) => {
+            const factor = (idx === 1) ? 1.3 : 0.8;
+            const h = Math.max(4, Math.min(16, 4 + intensity * 12 * factor));
+            bar.style.height = `${h}px`;
+            bar.classList.remove('bg-slate-700');
+            bar.classList.add('bg-emerald-400');
+          });
+        } else {
+          bars.forEach(bar => {
+            bar.style.height = '4px';
+            bar.classList.remove('bg-emerald-400');
+            bar.classList.add('bg-slate-700');
+          });
+        }
+
+        requestAnimationFrame(pollMeter);
+      }
+
+      requestAnimationFrame(pollMeter);
+    } catch (e) {
+      console.warn("Speaking meter setup error:", e);
+    }
+  }
+
+  function unlockAudioPlayback() {
+    const remoteAudio = document.getElementById('remoteAudio');
+    if (remoteAudio && remoteAudio.srcObject) {
+      remoteAudio.muted = false;
+      remoteAudio.play().then(() => {
+        const banner = document.getElementById('audioAutoplayBanner');
+        if (banner) banner.classList.add('hidden');
+      }).catch(e => console.log('Audio unlock waiting:', e));
+    }
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume().catch(e => console.log('AudioContext resume waiting:', e));
+    }
+    const banner = document.getElementById('audioAutoplayBanner');
+    if (banner) banner.classList.add('hidden');
+  }
+
+  // 4. WebRTC Peer Connection Setup
+  function initWebRTC() {
+    peerConnection = new RTCPeerConnection(RTC_CONFIG);
+
+    // Setup Negotiated DataChannel (No handshake delay)
+    dataChannel = peerConnection.createDataChannel('edukom_realtime', {
+      negotiated: true,
+      id: 0
+    });
+
+    dataChannel.onopen = () => {
+      console.log("WebRTC DataChannel connected with peer!");
+      updatePeerStatusBadge(true);
+    };
+
+    dataChannel.onclose = () => {
+      console.log("WebRTC DataChannel closed");
+    };
+
+    dataChannel.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        handleRealtimeEvent(msg);
+      } catch (e) {
+        console.warn("Error parsing dataChannel message:", e);
+      }
+    };
+
+    // Pre-allocate transceivers to negotiate bidirectional audio & video m-lines in SDP upfront
+    try {
+      peerConnection.addTransceiver('audio', { direction: 'sendrecv' });
+      peerConnection.addTransceiver('video', { direction: 'sendrecv' });
+    } catch (e) {
+      console.warn("Transceiver initialization notice:", e);
+    }
+
+    // Attach existing local audio track if already initialized
+    if (localAudioTrack) {
+      attachAudioTrackToPeer(localAudioTrack);
+    }
+
+    // When remote media track arrives from the other device
+    peerConnection.ontrack = (event) => {
+      console.log("Received remote media stream track:", event.track.kind);
+      const remoteStream = event.streams[0] || new MediaStream([event.track]);
+
+      if (event.track.kind === 'audio') {
+        const remoteAudio = document.getElementById('remoteAudio');
+        if (remoteAudio) {
+          remoteAudio.srcObject = remoteStream;
+          remoteAudio.muted = false;
+          remoteAudio.play().then(() => {
+            const banner = document.getElementById('audioAutoplayBanner');
+            if (banner) banner.classList.add('hidden');
+          }).catch(err => {
+            console.log("Remote audio autoplay waiting for user interaction:", err);
+            const banner = document.getElementById('audioAutoplayBanner');
+            if (banner) banner.classList.remove('hidden');
+          });
+        }
+        setupSpeakingMeter(remoteStream, IS_TUTOR ? 'student' : 'tutor');
+      }
+
+      if (event.track.kind === 'video') {
+        const remoteVid = IS_TUTOR ? document.getElementById('studentVideoElement') : document.getElementById('tutorVideoElement');
+        const remoteAvatar = IS_TUTOR ? document.getElementById('studentAvatarTile') : document.getElementById('tutorAvatarTile');
+
+        if (remoteVid) {
+          remoteVid.srcObject = remoteStream;
+          remoteVid.muted = false;
+          remoteVid.classList.remove('hidden');
+        }
+        if (remoteAvatar) {
+          remoteAvatar.classList.add('hidden');
+        }
+      }
+
+      updatePeerStatusBadge(true);
+    };
+
+    // ICE Candidate Discovery
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        sendSignal('candidate', event.candidate);
+      }
+    };
+
+    peerConnection.onconnectionstatechange = () => {
+      console.log("WebRTC Connection State:", peerConnection.connectionState);
+      if (peerConnection.connectionState === 'connected') {
+        updatePeerStatusBadge(true);
+      } else if (peerConnection.connectionState === 'disconnected' || peerConnection.connectionState === 'failed') {
+        updatePeerStatusBadge(false);
+      }
+    };
+
+    // If Tutor (Initiator), initiate offer when room is ready
+    if (IS_TUTOR) {
+      setTimeout(createAndSendOffer, 1500);
+    }
+  }
+
+  function attachAudioTrackToPeer(track) {
+    if (!peerConnection || !track) return;
+    try {
+      const transceivers = peerConnection.getTransceivers ? peerConnection.getTransceivers() : [];
+      const audioTransceiver = transceivers.find(t => 
+        (t.sender && t.sender.track && t.sender.track.kind === 'audio') ||
+        (t.receiver && t.receiver.track && t.receiver.track.kind === 'audio')
+      );
+      if (audioTransceiver && audioTransceiver.sender) {
+        audioTransceiver.sender.replaceTrack(track);
+        audioTransceiver.direction = 'sendrecv';
+      } else {
+        const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'audio');
+        if (sender) {
+          sender.replaceTrack(track);
+        } else {
+          peerConnection.addTrack(track, localAudioStream || new MediaStream([track]));
+          if (peerConnection.signalingState === 'stable') {
+            if (IS_TUTOR) {
+              createAndSendOffer();
+            } else {
+              sendSignal('renegotiate', { sender: USER_NAME });
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Could not attach audio track to peer:", err);
+    }
+  }
+
+  async function createAndSendOffer() {
+    if (!peerConnection) return;
+    try {
+      const offer = await peerConnection.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      });
+      await peerConnection.setLocalDescription(offer);
+      await sendSignal('offer', offer);
+      console.log("WebRTC Offer dispatched to peer");
+    } catch (e) {
+      console.warn("Error creating WebRTC offer:", e);
+    }
+  }
+
+  // 5. Incoming Signal Dispatcher
+  async function handleIncomingSignal(sig) {
+    const type = sig.signal_type;
+    const payload = sig.payload;
+
+    if (type === 'presence') {
+      // Peer arrived in the classroom
+      updatePeerStatusBadge(true);
+      if (IS_TUTOR && peerConnection && peerConnection.signalingState === 'stable') {
+        createAndSendOffer();
+      }
+      // If Tutor has active whiteboard drawings, synchronize state with the newly joined student
+      if (IS_TUTOR && whiteboardHistory && whiteboardHistory.length > 0) {
+        broadcastRealtime({
+          type: 'whiteboard_sync',
+          history: whiteboardHistory,
+          isWbActive: isWbActive
+        });
+      }
+    } else if (type === 'renegotiate') {
+      // Peer added tracks and requested renegotiation
+      if (IS_TUTOR && peerConnection && peerConnection.signalingState === 'stable') {
+        createAndSendOffer();
+      }
+    } else if (type === 'offer') {
+      // Received SDP Offer (on student or peer device)
+      if (!peerConnection) initWebRTC();
+      try {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+        // Flush any queued candidates
+        while (iceCandidatesQueue.length > 0) {
+          const cand = iceCandidatesQueue.shift();
+          await peerConnection.addIceCandidate(cand);
+        }
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        await sendSignal('answer', answer);
+        console.log("WebRTC Answer dispatched to tutor");
+      } catch (err) {
+        console.warn("Error handling offer:", err);
+      }
+    } else if (type === 'answer') {
+      // Received SDP Answer (on tutor device)
+      if (peerConnection) {
+        try {
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+          while (iceCandidatesQueue.length > 0) {
+            const cand = iceCandidatesQueue.shift();
+            await peerConnection.addIceCandidate(cand);
+          }
+          console.log("WebRTC Peer connection established successfully!");
+        } catch (err) {
+          console.warn("Error handling answer:", err);
+        }
+      }
+    } else if (type === 'candidate') {
+      // ICE candidate exchange
+      if (payload && payload.candidate) {
+        const iceCandidate = new RTCIceCandidate(payload);
+        if (peerConnection && peerConnection.remoteDescription) {
+          await peerConnection.addIceCandidate(iceCandidate);
+        } else {
+          iceCandidatesQueue.push(iceCandidate);
+        }
+      }
+    } else if (type === 'media_state') {
+      // Remote camera or mic state change
+      handleRemoteMediaState(payload, sig.sender_role);
+    } else if (type === 'chat') {
+      // Incoming In-Class Chat Message
+      renderReceivedChatMessage(payload);
+    } else if (type === 'whiteboard_view') {
+      // Remote peer opened or closed whiteboard stage
+      handleRemoteWhiteboardView(payload);
+    } else if (type === 'whiteboard') {
+      // Incoming Whiteboard Drawing Action (stroke, shape, clear)
+      handleRemoteWhiteboardAction(payload);
+    } else if (type === 'wb_point') {
+      // Real-time live stroke streaming
+      handleRemoteWhiteboardPoint(payload);
+    } else if (type === 'whiteboard_sync') {
+      // Full whiteboard history synchronization
+      handleRemoteWhiteboardSync(payload);
+    } else if (type === 'screen_state') {
+      // Screen share toggled by peer
+      handleRemoteScreenShare(payload);
+    } else if (type === 'new_resource') {
+      // Incoming shared worksheet or lesson material
+      handleIncomingNewResource(payload);
+    }
+  }
+
+  function handleRealtimeEvent(msg) {
+    if (msg.type === 'chat') {
+      renderReceivedChatMessage(msg);
+    } else if (msg.type === 'whiteboard_view') {
+      handleRemoteWhiteboardView(msg);
+    } else if (msg.type === 'whiteboard') {
+      handleRemoteWhiteboardAction(msg);
+    } else if (msg.type === 'wb_point') {
+      handleRemoteWhiteboardPoint(msg);
+    } else if (msg.type === 'whiteboard_sync') {
+      handleRemoteWhiteboardSync(msg);
+    } else if (msg.type === 'screen_state') {
+      handleRemoteScreenShare(msg);
+    } else if (msg.type === 'new_resource') {
+      handleIncomingNewResource(msg.resource || msg.payload || msg);
+    }
+  }
+
+  function updatePeerStatusBadge(connected) {
+    isPeerConnected = connected;
+    const studentMic = document.getElementById('studentMicBadge');
+    const tutorMic = document.getElementById('tutorMicBadge');
+    const badge = IS_TUTOR ? studentMic : tutorMic;
+    if (badge) {
+      if (connected) {
+        badge.classList.remove('text-slate-400');
+        badge.classList.add('text-emerald-400');
+      }
+    }
+  }
+
+  // 6. Microphone & Audio Stream Handlers
+  async function initLocalAudio() {
+    if (localAudioTrack && localAudioTrack.readyState === 'live') {
+      return localAudioStream;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        },
+        video: false
+      });
+      localAudioStream = stream;
+      localAudioTrack = stream.getAudioTracks()[0];
+      localAudioTrack.enabled = !isMicMuted;
+
+      // Attach audio track to WebRTC peer connection
+      if (peerConnection) {
+        attachAudioTrackToPeer(localAudioTrack);
+      }
+
+      // Connect local speaking visualizer meter
+      setupSpeakingMeter(stream, IS_TUTOR ? 'tutor' : 'student');
+
+      // Update UI button and indicator
+      updateLocalMicUI(isMicMuted);
+
+      // Broadcast media state
+      sendSignal('media_state', { cam: isCameraOn, mic: !isMicMuted });
+      broadcastRealtime({ type: 'media_state', cam: isCameraOn, mic: !isMicMuted });
+
+      return stream;
+    } catch (err) {
+      console.warn("Microphone access could not be acquired:", err);
+      return null;
+    }
+  }
+
+  async function toggleMicrophone() {
+    // If mic hasn't been initialized yet, initialize it
+    if (!localAudioTrack || localAudioTrack.readyState === 'ended') {
+      const stream = await initLocalAudio();
+      if (!stream) {
+        alert("Could not access microphone. Please check browser permissions and make sure your microphone is connected.");
+        return;
+      }
+      return;
+    }
+
+    isMicMuted = !isMicMuted;
+    localAudioTrack.enabled = !isMicMuted;
+
+    updateLocalMicUI(isMicMuted);
+
+    sendSignal('media_state', { cam: isCameraOn, mic: !isMicMuted });
+    broadcastRealtime({ type: 'media_state', cam: isCameraOn, mic: !isMicMuted });
+  }
+
+  function updateLocalMicUI(muted) {
+    const micIcon = document.getElementById('micIcon');
+    const micLabel = document.getElementById('micLabel');
+    const btnMic = document.getElementById('btnMic');
+    const myMicBadge = IS_TUTOR ? document.getElementById('tutorMicBadge') : document.getElementById('studentMicBadge');
+
+    if (muted) {
+      if (micIcon) micIcon.className = "fa-solid fa-microphone-slash text-rose-400";
+      if (micLabel) micLabel.textContent = "Unmute";
+      if (btnMic) {
+        btnMic.classList.add('bg-rose-900/40', 'border-rose-500');
+        btnMic.classList.remove('bg-slate-700');
+      }
+      if (myMicBadge) {
+        myMicBadge.innerHTML = '<i class="fa-solid fa-microphone-slash text-rose-400"></i>';
+      }
+    } else {
+      if (micIcon) micIcon.className = "fa-solid fa-microphone text-emerald-400";
+      if (micLabel) micLabel.textContent = "Mute";
+      if (btnMic) {
+        btnMic.classList.remove('bg-rose-900/40', 'border-rose-500');
+        btnMic.classList.add('bg-slate-700');
+      }
+      if (myMicBadge) {
+        myMicBadge.innerHTML = '<i class="fa-solid fa-microphone text-emerald-400"></i>';
+      }
+    }
+  }
+
+  // 7. Camera Stream Handlers
+  async function toggleCamera() {
+    const myVid = IS_TUTOR ? document.getElementById('tutorVideoElement') : document.getElementById('studentVideoElement');
+    const myAvatar = IS_TUTOR ? document.getElementById('tutorAvatarTile') : document.getElementById('studentAvatarTile');
+    const camIcon = document.getElementById('camIcon');
+    const camLabel = document.getElementById('camLabel');
+    const btnCam = document.getElementById('btnCam');
+
+    if (!isCameraOn) {
+      try {
+        const vStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        localCameraTrack = vStream.getVideoTracks()[0];
+
+        // Combine tracks for local preview
+        const combinedTracks = [localCameraTrack];
+        if (localAudioTrack) combinedTracks.push(localAudioTrack);
+        localMediaStream = new MediaStream(combinedTracks);
+
+        myVid.srcObject = localMediaStream;
+        myVid.muted = true; // Local preview must always be muted to prevent local echo
+        myVid.classList.remove('hidden');
+        myAvatar.classList.add('hidden');
+        isCameraOn = true;
+
+        // Add or replace video track in WebRTC
+        if (peerConnection) {
+          const transceivers = peerConnection.getTransceivers ? peerConnection.getTransceivers() : [];
+          const videoTransceiver = transceivers.find(t => 
+            (t.sender && t.sender.track && t.sender.track.kind === 'video') ||
+            (t.receiver && t.receiver.track && t.receiver.track.kind === 'video')
+          );
+          if (videoTransceiver && videoTransceiver.sender) {
+            videoTransceiver.sender.replaceTrack(localCameraTrack);
+            videoTransceiver.direction = 'sendrecv';
+          } else {
+            const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+            if (sender) {
+              sender.replaceTrack(localCameraTrack);
+            } else {
+              peerConnection.addTrack(localCameraTrack, localMediaStream);
+            }
+          }
+        }
+
+        camIcon.className = "fa-solid fa-video text-emerald-400";
+        if (camLabel) camLabel.textContent = "Stop Video";
+        btnCam.classList.add('border-emerald-500');
+
+        sendSignal('media_state', { cam: true, mic: !isMicMuted });
+        broadcastRealtime({ type: 'media_state', cam: true, mic: !isMicMuted });
+      } catch (err) {
+        console.warn("Camera permission denied or camera not found:", err);
+        alert("Camera permission denied or camera hardware unavailable.");
+      }
+    } else {
+      if (localCameraTrack) {
+        localCameraTrack.stop();
+        localCameraTrack = null;
+      }
+      if (peerConnection) {
+        const transceivers = peerConnection.getTransceivers ? peerConnection.getTransceivers() : [];
+        const videoTransceiver = transceivers.find(t => 
+          (t.sender && t.sender.track && t.sender.track.kind === 'video') ||
+          (t.receiver && t.receiver.track && t.receiver.track.kind === 'video')
+        );
+        if (videoTransceiver && videoTransceiver.sender) {
+          videoTransceiver.sender.replaceTrack(null);
+        } else {
+          const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+          if (sender) {
+            sender.replaceTrack(null);
+          }
+        }
+      }
+
+      myVid.classList.add('hidden');
+      myAvatar.classList.remove('hidden');
+      isCameraOn = false;
+      camIcon.className = "fa-solid fa-video-slash text-rose-400";
+      if (camLabel) camLabel.textContent = "Start Video";
+      btnCam.classList.remove('border-emerald-500');
+
+      sendSignal('media_state', { cam: false, mic: !isMicMuted });
+      broadcastRealtime({ type: 'media_state', cam: false, mic: !isMicMuted });
+    }
+  }
+
+  function handleRemoteMediaState(state, senderRole) {
+    const peerIsTutor = (senderRole === 'TUTOR');
+    const remoteVid = peerIsTutor ? document.getElementById('tutorVideoElement') : document.getElementById('studentVideoElement');
+    const remoteAvatar = peerIsTutor ? document.getElementById('tutorAvatarTile') : document.getElementById('studentAvatarTile');
+    const remoteMicBadge = peerIsTutor ? document.getElementById('tutorMicBadge') : document.getElementById('studentMicBadge');
+
+    if (state.cam !== undefined && remoteVid && remoteAvatar) {
+      if (state.cam) {
+        remoteVid.classList.remove('hidden');
+        remoteAvatar.classList.add('hidden');
+      } else {
+        remoteVid.classList.add('hidden');
+        remoteAvatar.classList.remove('hidden');
+      }
+    }
+
+    if (state.mic !== undefined && remoteMicBadge) {
+      if (state.mic) {
+        remoteMicBadge.innerHTML = '<i class="fa-solid fa-microphone text-emerald-400"></i>';
+      } else {
+        remoteMicBadge.innerHTML = '<i class="fa-solid fa-microphone-slash text-rose-400"></i>';
+      }
+    }
+  }
+
+  // 6. Multi-Device Screen Sharing
+  async function toggleScreenShare() {
+    const screenView = document.getElementById('screenShareView');
+    const videoGrid = document.getElementById('videoGridView');
+    const whiteboardView = document.getElementById('whiteboardView');
+    const screenVid = document.getElementById('screenShareVideo');
+
+    if (!screenStream) {
+      try {
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        screenVid.srcObject = screenStream;
+        screenView.classList.remove('hidden');
+        videoGrid.classList.add('hidden');
+        whiteboardView.classList.add('hidden');
+
+        // Replace video track in WebRTC to broadcast live screen to other device
+        if (peerConnection) {
+          const videoTrack = screenStream.getVideoTracks()[0];
+          const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+          if (sender) {
+            sender.replaceTrack(videoTrack);
+          } else {
+            peerConnection.addTrack(videoTrack, screenStream);
+          }
+        }
+
+        // Notify peer device
+        broadcastRealtime({
+          type: 'screen_state',
+          active: true,
+          presenter: USER_NAME
+        });
+
+        screenStream.getVideoTracks()[0].onended = () => {
+          stopScreenShare();
+        };
+      } catch (e) {
+        console.warn("Screen share cancelled or not supported:", e);
+      }
+    } else {
+      stopScreenShare();
+    }
+  }
+
+  function stopScreenShare() {
+    const screenView = document.getElementById('screenShareView');
+    const videoGrid = document.getElementById('videoGridView');
+    const screenVid = document.getElementById('screenShareVideo');
+
+    if (screenStream) {
+      screenStream.getTracks().forEach(t => t.stop());
+      screenStream = null;
+    }
+    screenVid.srcObject = null;
+    screenView.classList.add('hidden');
+    videoGrid.classList.remove('hidden');
+
+    // Restore webcam track if camera is on
+    if (peerConnection && isCameraOn && localCameraTrack) {
+      const transceivers = peerConnection.getTransceivers ? peerConnection.getTransceivers() : [];
+      const videoTransceiver = transceivers.find(t => 
+        (t.sender && t.sender.track && t.sender.track.kind === 'video') ||
+        (t.receiver && t.receiver.track && t.receiver.track.kind === 'video')
+      );
+      if (videoTransceiver && videoTransceiver.sender) {
+        videoTransceiver.sender.replaceTrack(localCameraTrack);
+      } else {
+        const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+        if (sender) sender.replaceTrack(localCameraTrack);
+      }
+    } else if (peerConnection) {
+      const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+      if (sender) sender.replaceTrack(null);
+    }
+
+    broadcastRealtime({
+      type: 'screen_state',
+      active: false
+    });
+  }
+
+  function handleRemoteScreenShare(payload) {
+    const screenView = document.getElementById('screenShareView');
+    const videoGrid = document.getElementById('videoGridView');
+    const screenVid = document.getElementById('screenShareVideo');
+
+    if (payload.active) {
+      // Remote peer is presenting their screen
+      screenView.classList.remove('hidden');
+      videoGrid.classList.add('hidden');
+      // If WebRTC stream contains the screen track, attach it
+      if (peerConnection) {
+        const remoteStreams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
+        if (remoteStreams.length > 0) {
+          screenVid.srcObject = remoteStreams[0];
+        }
+      }
+    } else {
+      screenView.classList.add('hidden');
+      videoGrid.classList.remove('hidden');
+    }
+  }
+
+  // 7. Synchronized Collaborative Whiteboard (Across all devices)
+  let wbCanvas = document.getElementById('whiteboardCanvas');
+  let wbCtx = null;
+  let isWbActive = false;
+  let wbDrawing = false;
+  let wbTool = 'pen';
+  let wbColor = '#818cf8';
+  let wbLineWidth = 3;
+  let currentStrokePoints = [];
+  let whiteboardHistory = [];
+  let wbStartX = 0;
+  let wbStartY = 0;
+  let wbLastX = 0;
+  let wbLastY = 0;
+  let wbSnapshot = null;
+  let remoteLiveX = null;
+  let remoteLiveY = null;
+
+  function initWhiteboard() {
+    if (!wbCanvas) return;
+    wbCtx = wbCanvas.getContext('2d');
+    resizeWhiteboard();
+    window.addEventListener('resize', resizeWhiteboard);
+
+    wbCanvas.addEventListener('mousedown', startWbDraw);
+    wbCanvas.addEventListener('mousemove', moveWbDraw);
+    wbCanvas.addEventListener('mouseup', endWbDraw);
+    wbCanvas.addEventListener('mouseleave', endWbDraw);
+
+    // Touch support for tablets & mobile phones
+    wbCanvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const mouseEvent = new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY });
+      wbCanvas.dispatchEvent(mouseEvent);
+    }, { passive: false });
+
+    wbCanvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const mouseEvent = new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY });
+      wbCanvas.dispatchEvent(mouseEvent);
+    }, { passive: false });
+
+    wbCanvas.addEventListener('touchend', (e) => {
+      const mouseEvent = new MouseEvent('mouseup', {});
+      wbCanvas.dispatchEvent(mouseEvent);
+    });
+  }
+
+  function resizeWhiteboard() {
+    if (!wbCanvas || !wbCanvas.parentElement) return;
+    const rect = wbCanvas.parentElement.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      wbCanvas.width = rect.width;
+      wbCanvas.height = rect.height;
+      redrawWhiteboardHistory();
+    }
+  }
+
+  function redrawWhiteboardHistory() {
+    if (!wbCanvas || !wbCtx) return;
+    wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
+    for (const item of whiteboardHistory) {
+      renderWhiteboardItem(item);
+    }
+  }
+
+  function renderWhiteboardItem(item) {
+    if (!wbCanvas || !wbCtx) return;
+    const w = wbCanvas.width;
+    const h = wbCanvas.height;
+
+    wbCtx.save();
+    wbCtx.lineCap = 'round';
+    wbCtx.lineJoin = 'round';
+
+    if (item.type === 'stroke' && item.points && item.points.length > 0) {
+      if (item.tool === 'eraser') {
+        wbCtx.strokeStyle = '#020617';
+        wbCtx.lineWidth = (item.lineWidth || 3) * 4;
+      } else if (item.tool === 'highlighter') {
+        wbCtx.strokeStyle = (item.color || '#818cf8') + '55';
+        wbCtx.lineWidth = (item.lineWidth || 3) * 4;
+      } else {
+        wbCtx.strokeStyle = item.color || '#818cf8';
+        wbCtx.lineWidth = item.lineWidth || 3;
+      }
+
+      wbCtx.beginPath();
+      const p0 = item.points[0];
+      wbCtx.moveTo(p0[0] * w, p0[1] * h);
+      for (let i = 1; i < item.points.length; i++) {
+        const pt = item.points[i];
+        wbCtx.lineTo(pt[0] * w, pt[1] * h);
+      }
+      wbCtx.stroke();
+    } else if (item.type === 'shape') {
+      wbCtx.strokeStyle = item.color || '#818cf8';
+      wbCtx.lineWidth = item.lineWidth || 3;
+      const sx = item.start[0] * w;
+      const sy = item.start[1] * h;
+      const ex = item.end[0] * w;
+      const ey = item.end[1] * h;
+
+      wbCtx.beginPath();
+      if (item.tool === 'line') {
+        wbCtx.moveTo(sx, sy);
+        wbCtx.lineTo(ex, ey);
+      } else if (item.tool === 'rect') {
+        wbCtx.strokeRect(Math.min(sx, ex), Math.min(sy, ey), Math.abs(ex - sx), Math.abs(ey - sy));
+      } else if (item.tool === 'circle') {
+        const rx = Math.abs(ex - sx) / 2;
+        const ry = Math.abs(ey - sy) / 2;
+        const cx = Math.min(sx, ex) + rx;
+        const cy = Math.min(sy, ey) + ry;
+        wbCtx.ellipse(cx, cy, Math.max(1, rx), Math.max(1, ry), 0, 0, 2 * Math.PI);
+      }
+      wbCtx.stroke();
+    } else if (item.type === 'text') {
+      wbCtx.fillStyle = item.color || '#ffffff';
+      wbCtx.font = `bold ${Math.max(13, Math.round(w * 0.016))}px Inter, sans-serif`;
+      wbCtx.fillText(item.text, item.x * w, item.y * h);
+    }
+
+    wbCtx.restore();
+  }
+
+  function toggleWhiteboard(isRemote = false) {
+    const wbView = document.getElementById('whiteboardView');
+    const videoGrid = document.getElementById('videoGridView');
+    const btnWhiteboard = document.getElementById('btnWhiteboard');
+
+    isWbActive = !isWbActive;
+
+    if (isWbActive) {
+      if (screenStream) stopScreenShare();
+      videoGrid.classList.add('hidden');
+      wbView.classList.remove('hidden');
+      if (btnWhiteboard) {
+        btnWhiteboard.classList.remove('bg-indigo-600');
+        btnWhiteboard.classList.add('bg-emerald-600');
+      }
+      setTimeout(() => {
+        resizeWhiteboard();
+        redrawWhiteboardHistory();
+      }, 50);
+    } else {
+      wbView.classList.add('hidden');
+      videoGrid.classList.remove('hidden');
+      if (btnWhiteboard) {
+        btnWhiteboard.classList.remove('bg-emerald-600');
+        btnWhiteboard.classList.add('bg-indigo-600');
+      }
+    }
+
+    if (!isRemote) {
+      broadcastRealtime({
+        type: 'whiteboard_view',
+        active: isWbActive,
+        sender: USER_NAME
+      });
+    }
+  }
+
+  function handleRemoteWhiteboardView(payload) {
+    const wbView = document.getElementById('whiteboardView');
+    const videoGrid = document.getElementById('videoGridView');
+    const btnWhiteboard = document.getElementById('btnWhiteboard');
+
+    if (payload.active) {
+      isWbActive = true;
+      if (screenStream) stopScreenShare();
+      videoGrid.classList.add('hidden');
+      wbView.classList.remove('hidden');
+      if (btnWhiteboard) {
+        btnWhiteboard.classList.remove('bg-indigo-600');
+        btnWhiteboard.classList.add('bg-emerald-600');
+      }
+      setTimeout(() => {
+        resizeWhiteboard();
+        redrawWhiteboardHistory();
+      }, 50);
+    } else {
+      isWbActive = false;
+      wbView.classList.add('hidden');
+      videoGrid.classList.remove('hidden');
+      if (btnWhiteboard) {
+        btnWhiteboard.classList.remove('bg-emerald-600');
+        btnWhiteboard.classList.add('bg-indigo-600');
+      }
+    }
+  }
+
+  function setWhiteboardTool(tool) {
+    wbTool = tool;
+    document.querySelectorAll('.wb-tool-btn').forEach(btn => {
+      btn.classList.remove('bg-indigo-600', 'text-white');
+      btn.classList.add('bg-slate-800', 'text-slate-300');
+    });
+    const activeBtn = document.getElementById('wbTool' + tool.charAt(0).toUpperCase() + tool.slice(1));
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+      activeBtn.classList.add('bg-indigo-600', 'text-white');
+    }
+  }
+
+  function setWhiteboardColor(color) {
+    wbColor = color;
+  }
+
+  function startWbDraw(e) {
+    wbDrawing = true;
+    const rect = wbCanvas.getBoundingClientRect();
+    wbStartX = e.clientX - rect.left;
+    wbStartY = e.clientY - rect.top;
+    wbLastX = wbStartX;
+    wbLastY = wbStartY;
+
+    if (wbTool === 'text') {
+      const text = prompt("Enter text for whiteboard note:");
+      if (text && text.trim()) {
+        const item = {
+          type: 'text',
+          tool: 'text',
+          color: wbColor,
+          text: text.trim(),
+          x: wbStartX / wbCanvas.width,
+          y: wbStartY / wbCanvas.height
+        };
+        whiteboardHistory.push(item);
+        renderWhiteboardItem(item);
+        broadcastRealtime({
+          type: 'whiteboard',
+          action: 'item',
+          item: item
+        });
+      }
+      wbDrawing = false;
+      return;
+    }
+
+    if (['line', 'rect', 'circle'].includes(wbTool)) {
+      wbSnapshot = wbCtx.getImageData(0, 0, wbCanvas.width, wbCanvas.height);
+      return;
+    }
+
+    currentStrokePoints = [[wbStartX / wbCanvas.width, wbStartY / wbCanvas.height]];
+
+    // Stream live ink start to peer via DataChannel
+    if (dataChannel && dataChannel.readyState === 'open') {
+      dataChannel.send(JSON.stringify({
+        type: 'wb_point',
+        action: 'start',
+        tool: wbTool,
+        color: wbColor,
+        lineWidth: wbLineWidth,
+        x: wbStartX / wbCanvas.width,
+        y: wbStartY / wbCanvas.height
+      }));
+    }
+  }
+
+  function moveWbDraw(e) {
+    if (!wbDrawing) return;
+    const rect = wbCanvas.getBoundingClientRect();
+    const curX = e.clientX - rect.left;
+    const curY = e.clientY - rect.top;
+
+    if (['line', 'rect', 'circle'].includes(wbTool)) {
+      if (wbSnapshot) wbCtx.putImageData(wbSnapshot, 0, 0);
+      wbCtx.save();
+      wbCtx.strokeStyle = wbColor;
+      wbCtx.lineWidth = wbLineWidth;
+      wbCtx.beginPath();
+      if (wbTool === 'line') {
+        wbCtx.moveTo(wbStartX, wbStartY);
+        wbCtx.lineTo(curX, curY);
+      } else if (wbTool === 'rect') {
+        wbCtx.strokeRect(Math.min(wbStartX, curX), Math.min(wbStartY, curY), Math.abs(curX - wbStartX), Math.abs(curY - wbStartY));
+      } else if (wbTool === 'circle') {
+        const rx = Math.abs(curX - wbStartX) / 2;
+        const ry = Math.abs(curY - wbStartY) / 2;
+        wbCtx.ellipse(Math.min(wbStartX, curX) + rx, Math.min(wbStartY, curY) + ry, Math.max(1, rx), Math.max(1, ry), 0, 0, 2 * Math.PI);
+      }
+      wbCtx.stroke();
+      wbCtx.restore();
+      return;
+    }
+
+    const normX = curX / wbCanvas.width;
+    const normY = curY / wbCanvas.height;
+    currentStrokePoints.push([normX, normY]);
+
+    wbCtx.save();
+    wbCtx.lineCap = 'round';
+    wbCtx.lineJoin = 'round';
+    if (wbTool === 'eraser') {
+      wbCtx.strokeStyle = '#020617';
+      wbCtx.lineWidth = wbLineWidth * 4;
+    } else if (wbTool === 'highlighter') {
+      wbCtx.strokeStyle = wbColor + '55';
+      wbCtx.lineWidth = wbLineWidth * 4;
+    } else {
+      wbCtx.strokeStyle = wbColor;
+      wbCtx.lineWidth = wbLineWidth;
+    }
+    wbCtx.beginPath();
+    wbCtx.moveTo(wbLastX, wbLastY);
+    wbCtx.lineTo(curX, curY);
+    wbCtx.stroke();
+    wbCtx.restore();
+
+    wbLastX = curX;
+    wbLastY = curY;
+
+    // Stream live point to other device in real-time
+    if (dataChannel && dataChannel.readyState === 'open') {
+      dataChannel.send(JSON.stringify({
+        type: 'wb_point',
+        action: 'move',
+        tool: wbTool,
+        color: wbColor,
+        lineWidth: wbLineWidth,
+        x: normX,
+        y: normY
+      }));
+    }
+  }
+
+  function endWbDraw(e) {
+    if (!wbDrawing) return;
+    wbDrawing = false;
+    const rect = wbCanvas.getBoundingClientRect();
+    const curX = (e && e.clientX ? e.clientX : wbLastX) - rect.left;
+    const curY = (e && e.clientY ? e.clientY : wbLastY) - rect.top;
+
+    if (['line', 'rect', 'circle'].includes(wbTool)) {
+      const item = {
+        type: 'shape',
+        tool: wbTool,
+        color: wbColor,
+        lineWidth: wbLineWidth,
+        start: [wbStartX / wbCanvas.width, wbStartY / wbCanvas.height],
+        end: [curX / wbCanvas.width, curY / wbCanvas.height]
+      };
+      whiteboardHistory.push(item);
+      renderWhiteboardItem(item);
+      broadcastRealtime({
+        type: 'whiteboard',
+        action: 'item',
+        item: item
+      });
+      wbSnapshot = null;
+      return;
+    }
+
+    if (currentStrokePoints.length > 1) {
+      const item = {
+        type: 'stroke',
+        tool: wbTool,
+        color: wbColor,
+        lineWidth: wbLineWidth,
+        points: currentStrokePoints
+      };
+      whiteboardHistory.push(item);
+      broadcastRealtime({
+        type: 'whiteboard',
+        action: 'item',
+        item: item
+      });
+    }
+
+    if (dataChannel && dataChannel.readyState === 'open') {
+      dataChannel.send(JSON.stringify({
+        type: 'wb_point',
+        action: 'end'
+      }));
+    }
+    currentStrokePoints = [];
+  }
+
+  function handleRemoteWhiteboardPoint(data) {
+    if (!wbCanvas || !wbCtx) return;
+    const w = wbCanvas.width;
+    const h = wbCanvas.height;
+
+    if (data.action === 'start') {
+      remoteLiveX = data.x * w;
+      remoteLiveY = data.y * h;
+      return;
+    }
+
+    if (data.action === 'end') {
+      remoteLiveX = null;
+      remoteLiveY = null;
+      return;
+    }
+
+    if (data.action === 'move' && remoteLiveX !== null) {
+      const curX = data.x * w;
+      const curY = data.y * h;
+
+      wbCtx.save();
+      wbCtx.lineCap = 'round';
+      wbCtx.lineJoin = 'round';
+      if (data.tool === 'eraser') {
+        wbCtx.strokeStyle = '#020617';
+        wbCtx.lineWidth = (data.lineWidth || 3) * 4;
+      } else if (data.tool === 'highlighter') {
+        wbCtx.strokeStyle = (data.color || '#818cf8') + '55';
+        wbCtx.lineWidth = (data.lineWidth || 3) * 4;
+      } else {
+        wbCtx.strokeStyle = data.color || '#818cf8';
+        wbCtx.lineWidth = data.lineWidth || 3;
+      }
+      wbCtx.beginPath();
+      wbCtx.moveTo(remoteLiveX, remoteLiveY);
+      wbCtx.lineTo(curX, curY);
+      wbCtx.stroke();
+      wbCtx.restore();
+
+      remoteLiveX = curX;
+      remoteLiveY = curY;
+    }
+  }
+
+  function handleRemoteWhiteboardAction(data) {
+    if (!wbCanvas || !wbCtx) return;
+
+    if (data.action === 'clear') {
+      whiteboardHistory = [];
+      wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
+      return;
+    }
+
+    if (data.action === 'item' && data.item) {
+      whiteboardHistory.push(data.item);
+      renderWhiteboardItem(data.item);
+    } else if (data.action === 'stroke' && data.points) {
+      const item = {
+        type: 'stroke',
+        tool: data.tool,
+        color: data.color,
+        lineWidth: data.lineWidth,
+        points: data.points
+      };
+      whiteboardHistory.push(item);
+      renderWhiteboardItem(item);
+    }
+  }
+
+  function handleRemoteWhiteboardSync(data) {
+    if (data.history && Array.isArray(data.history)) {
+      whiteboardHistory = data.history;
+      if (data.isWbActive && !isWbActive) {
+        toggleWhiteboard(true);
+      } else {
+        redrawWhiteboardHistory();
+      }
+    }
+  }
+
+  function clearWhiteboard() {
+    if (confirm("Clear whiteboard annotations for everyone in class?")) {
+      whiteboardHistory = [];
+      wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
+      broadcastRealtime({
+        type: 'whiteboard',
+        action: 'clear'
+      });
+    }
+  }
+
+  function downloadWhiteboard() {
+    const link = document.createElement('a');
+    link.download = `whiteboard-${new Date().toISOString().slice(0, 10)}.png`;
+    link.href = wbCanvas.toDataURL();
+    link.click();
+  }
+
+  // 8. Synchronized In-Class Live Chat
+  function toggleDrawer(tab) {
+    const drawer = document.getElementById('sideDrawer');
+    if (!tab) {
+      drawer.classList.toggle('hidden');
+    } else {
+      drawer.classList.remove('hidden');
+      switchDrawerTab(tab);
+    }
+  }
+
+  function switchDrawerTab(tabName) {
+    document.getElementById('drawerTabChat').classList.add('hidden');
+    document.getElementById('drawerTabResources').classList.add('hidden');
+    document.getElementById('drawerTabInfo').classList.add('hidden');
+
+    document.querySelectorAll('.drawer-tab-btn').forEach(btn => {
+      btn.classList.remove('bg-indigo-600', 'text-white');
+      btn.classList.add('text-slate-400');
+    });
+
+    if (tabName === 'chat') {
+      document.getElementById('drawerTabChat').classList.remove('hidden');
+      document.getElementById('tabChatBtn').classList.add('bg-indigo-600', 'text-white');
+      document.getElementById('chatUnreadDot').classList.add('hidden');
+    } else if (tabName === 'resources') {
+      document.getElementById('drawerTabResources').classList.remove('hidden');
+      document.getElementById('tabResourcesBtn').classList.add('bg-indigo-600', 'text-white');
+      const pingDot = document.getElementById('vaultPingDot');
+      if (pingDot) pingDot.classList.add('hidden');
+    } else if (tabName === 'info') {
+      document.getElementById('drawerTabInfo').classList.remove('hidden');
+      document.getElementById('tabInfoBtn').classList.add('bg-indigo-600', 'text-white');
+    }
+  }
+
+  function handleSendChatMessage(e) {
+    e.preventDefault();
+    const input = document.getElementById('chatInputText');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    const now = new Date();
+    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    const chatPayload = {
+      type: 'chat',
+      text: msg,
+      sender: USER_NAME,
+      role: USER_ROLE,
+      time: timeStr
+    };
+
+    appendChatMessage(USER_NAME, msg, USER_ROLE, timeStr, true);
+    broadcastRealtime(chatPayload);
+    input.value = "";
+  }
+
+  function sendQuickEmoji(emoji) {
+    const now = new Date();
+    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const chatPayload = {
+      type: 'chat',
+      text: emoji,
+      sender: USER_NAME,
+      role: USER_ROLE,
+      time: timeStr
+    };
+    appendChatMessage(USER_NAME, emoji, USER_ROLE, timeStr, true);
+    broadcastRealtime(chatPayload);
+  }
+
+  function renderReceivedChatMessage(data) {
+    appendChatMessage(data.sender || 'Participant', data.text || '', data.role || 'Student', data.time, false);
+    // Show red unread dot if chat drawer is closed
+    const drawer = document.getElementById('sideDrawer');
+    const chatTab = document.getElementById('drawerTabChat');
+    if (drawer.classList.contains('hidden') || chatTab.classList.contains('hidden')) {
+      document.getElementById('chatUnreadDot').classList.remove('hidden');
+    }
+  }
+
+  function appendChatMessage(sender, text, roleTag, timeStr, isSelf) {
+    const list = document.getElementById('chatMessageList');
+    if (!list) return;
+    const time = timeStr || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const initial = (sender || 'P').charAt(0).toUpperCase();
+    const isTutor = (roleTag === 'TUTOR' || roleTag === 'Tutor');
+
+    const msgHtml = `
+      <div class="flex items-start gap-2.5 animate-in fade-in slide-in-from-bottom-2 duration-150">
+        <div class="w-7 h-7 rounded-xl ${isTutor ? 'bg-indigo-600' : 'bg-amber-600'} flex items-center justify-center font-bold text-white text-xs shrink-0 shadow">
+          ${initial}
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-200 text-xs">${escapeHtml(sender)}</span>
+            <span class="text-[10px] text-slate-500">${time}</span>
+          </div>
+          <div class="mt-1 p-2.5 rounded-2xl ${isSelf ? 'bg-indigo-950/80 border border-indigo-700/60' : 'bg-slate-800 border border-slate-700/60'} text-slate-100 leading-relaxed break-words">
+            ${escapeHtml(text)}
+          </div>
+        </div>
+      </div>
+    `;
+    list.insertAdjacentHTML('beforeend', msgHtml);
+    list.scrollTop = list.scrollHeight;
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  function toggleRecording() {
+    const recText = document.getElementById('recText');
+    if (recText.textContent === 'REC') {
+      recText.textContent = 'PAUSED';
+      recText.parentElement.classList.replace('text-rose-400', 'text-amber-400');
+    } else {
+      recText.textContent = 'REC';
+      recText.parentElement.classList.replace('text-amber-400', 'text-rose-400');
+    }
+  }
+
+  function openNotesModal() {
+    const modal = document.getElementById('notesModal');
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  function closeNotesModal() {
+    const modal = document.getElementById('notesModal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  // 8.1 Real-Time Live Worksheet & Study Material Synchronization
+  let resourceBannerTimeout = null;
+
+  async function handleUploadResource(e) {
+    e.preventDefault();
+    const form = e.target;
+    const titleInput = document.getElementById('uploadTitleInput');
+    const fileInput = document.getElementById('uploadFileInput');
+    const urlInput = document.getElementById('uploadUrlInput');
+    const btn = document.getElementById('btnUploadResource');
+    const btnIcon = document.getElementById('uploadBtnIcon');
+    const btnText = document.getElementById('uploadBtnText');
+    const statusMsg = document.getElementById('uploadStatusMsg');
+
+    const title = titleInput ? titleInput.value.trim() : '';
+    const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+    const hasUrl = urlInput && urlInput.value.trim().length > 0;
+
+    if (!hasFile && !hasUrl) {
+      if (statusMsg) {
+        statusMsg.textContent = "Please select a file or enter a direct video/resource URL.";
+        statusMsg.className = "text-[11px] text-center mt-1 text-rose-400";
+        statusMsg.classList.remove('hidden');
+      }
+      return;
+    }
+
+    // Set loading state without page reload
+    if (btn) {
+      btn.disabled = true;
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
+    }
+    if (btnIcon) btnIcon.className = 'fa-solid fa-spinner fa-spin';
+    if (btnText) btnText.textContent = 'Uploading material...';
+    if (statusMsg) statusMsg.classList.add('hidden');
+
+    try {
+      const formData = new FormData(form);
+      const resp = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      if (!resp.ok) {
+        let errDesc = `Upload failed (HTTP ${resp.status})`;
+        try {
+          const errJson = await resp.json();
+          if (errJson && errJson.error) errDesc = errJson.error;
+        } catch (_) {}
+        throw new Error(errDesc);
+      }
+
+      const data = await resp.json();
+      if (data.success && data.resource) {
+        // Render locally on tutor's screen
+        renderNewResourceCard(data.resource);
+
+        // Realtime sync to student via WebRTC DataChannel
+        broadcastRealtime({
+          type: 'new_resource',
+          resource: data.resource
+        });
+
+        // Broadcast automated chat announcement
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const chatNotice = `📁 Shared new ${data.resource.resource_type_display || 'material'}: "${data.resource.title}"`;
+        appendChatMessage(USER_NAME, chatNotice, USER_ROLE, timeStr, true);
+        broadcastRealtime({
+          type: 'chat',
+          text: chatNotice,
+          sender: USER_NAME,
+          role: USER_ROLE,
+          time: timeStr
+        });
+
+        // Reset form fields
+        form.reset();
+        if (statusMsg) {
+          statusMsg.textContent = "✓ Material uploaded and synced live!";
+          statusMsg.className = "text-[11px] text-center mt-1 text-emerald-400 font-medium";
+          statusMsg.classList.remove('hidden');
+          setTimeout(() => {
+            if (statusMsg) statusMsg.classList.add('hidden');
+          }, 4000);
+        }
+      } else {
+        if (statusMsg) {
+          statusMsg.textContent = data.error || "Upload failed. Please check file format and size.";
+          statusMsg.className = "text-[11px] text-center mt-1 text-rose-400";
+          statusMsg.classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      console.error("Resource upload error:", err);
+      if (statusMsg) {
+        statusMsg.textContent = err.message || "Upload failed due to network error.";
+        statusMsg.className = "text-[11px] text-center mt-1 text-rose-400";
+        statusMsg.classList.remove('hidden');
+      }
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
+      if (btnIcon) btnIcon.className = 'fa-solid fa-arrow-up-from-bracket';
+      if (btnText) btnText.textContent = 'Share with Class';
+    }
+  }
+
+  function handleIncomingNewResource(res) {
+    if (!res) return;
+    const resData = res.resource || res;
+    if (!resData || !resData.id) return;
+
+    // Avoid duplicate render
+    if (document.getElementById(`worksheetCard-${resData.id}`) || document.querySelector(`[data-resource-id="${resData.id}"]`)) {
+      return;
+    }
+
+    renderNewResourceCard(resData);
+    showNewResourceBanner(resData);
+
+    // If worksheets drawer tab is not currently open, show alert badge / ping dot
+    const drawer = document.getElementById('sideDrawer');
+    const resTab = document.getElementById('drawerTabResources');
+    if (drawer.classList.contains('hidden') || resTab.classList.contains('hidden')) {
+      const pingDot = document.getElementById('vaultPingDot');
+      if (pingDot) pingDot.classList.remove('hidden');
+    }
+  }
+
+  function renderNewResourceCard(res) {
+    if (!res || !res.id) return;
+    if (document.getElementById(`worksheetCard-${res.id}`)) return;
+
+    const list = document.getElementById('worksheetFileList');
+    if (!list) return;
+
+    // Remove empty state placeholder if present
+    const emptyState = document.getElementById('worksheetEmptyState');
+    if (emptyState) emptyState.remove();
+
+    // Determine category icon
+    let iconClass = 'fa-solid fa-file-pdf';
+    if (res.resource_type === 'VIDEO') {
+      iconClass = 'fa-solid fa-video';
+    } else if (res.resource_type === 'PAST_PAPER') {
+      iconClass = 'fa-solid fa-file-contract';
+    } else if (res.resource_type === 'NOTES') {
+      iconClass = 'fa-solid fa-book-open';
+    }
+
+    // Determine action button
+    let actionBtnHtml = '';
+    if (res.download_url) {
+      actionBtnHtml = `
+        <a href="${res.download_url}" class="px-2.5 py-1.5 bg-slate-800 hover:bg-indigo-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0" title="Download">
+          <i class="fa-solid fa-download text-[11px]"></i>
+        </a>
+      `;
+    } else if (res.video_url) {
+      actionBtnHtml = `
+        <a href="${escapeHtml(res.video_url)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shrink-0" title="Watch Video">
+          <i class="fa-solid fa-play text-[11px]"></i>
+        </a>
+      `;
+    }
+
+    const cardHtml = `
+      <div id="worksheetCard-${res.id}" data-resource-id="${res.id}" class="p-3 bg-slate-950 rounded-2xl border border-indigo-500/50 flex items-center justify-between gap-3 hover:border-indigo-400 transition animate-in fade-in slide-in-from-top-2 duration-300">
+        <div class="flex items-center gap-2.5 truncate">
+          <div class="w-8 h-8 rounded-xl bg-indigo-950 border border-indigo-800 text-indigo-400 flex items-center justify-center shrink-0">
+            <i class="${iconClass} text-xs"></i>
+          </div>
+          <div class="truncate">
+            <p class="text-xs font-bold text-slate-100 truncate">${escapeHtml(res.title)}</p>
+            <p class="text-[10px] text-slate-400">${escapeHtml(res.resource_type_display || 'Worksheet')} &bull; ${escapeHtml(res.file_size_display || 'Shared')}</p>
+          </div>
+        </div>
+        ${actionBtnHtml}
+      </div>
+    `;
+
+    list.insertAdjacentHTML('afterbegin', cardHtml);
+    updateWorksheetCounts();
+  }
+
+  function updateWorksheetCounts() {
+    const list = document.getElementById('worksheetFileList');
+    const count = list ? list.querySelectorAll('[data-resource-id]').length : 0;
+
+    const tabBadge = document.getElementById('tabWorksheetCount');
+    if (tabBadge) tabBadge.textContent = count;
+
+    const vaultBadge = document.getElementById('bottomVaultBadge');
+    if (vaultBadge) vaultBadge.textContent = count;
+
+    const countBadge = document.getElementById('worksheetCountBadge');
+    if (countBadge) countBadge.textContent = `${count} Files`;
+  }
+
+  function showNewResourceBanner(res) {
+    const banner = document.getElementById('newResourceBanner');
+    const text = document.getElementById('newResourceBannerText');
+    if (!banner || !text) return;
+
+    text.textContent = res.title + (res.resource_type_display ? ` (${res.resource_type_display})` : '');
+    banner.classList.remove('hidden');
+
+    if (resourceBannerTimeout) clearTimeout(resourceBannerTimeout);
+    resourceBannerTimeout = setTimeout(() => {
+      dismissResourceBanner();
+    }, 8000);
+  }
+
+  function dismissResourceBanner() {
+    const banner = document.getElementById('newResourceBanner');
+    if (banner) banner.classList.add('hidden');
+    if (resourceBannerTimeout) {
+      clearTimeout(resourceBannerTimeout);
+      resourceBannerTimeout = null;
+    }
+  }
+
+  function openResourceFromBanner() {
+    dismissResourceBanner();
+    toggleDrawer('resources');
+    const pingDot = document.getElementById('vaultPingDot');
+    if (pingDot) pingDot.classList.add('hidden');
+  }
+
+  // 9. Startup & Presence Heartbeat
+  document.addEventListener('DOMContentLoaded', () => {
+    initWhiteboard();
+    initWebRTC();
+
+    // Unlock browser audio autoplay on first interaction anywhere
+    ['click', 'touchstart', 'keydown'].forEach(evt => {
+      window.addEventListener(evt, () => {
+        unlockAudioPlayback();
+      }, { once: true });
+    });
+
+    // Proactively initialize microphone audio upon room entry
+    initLocalAudio().then(stream => {
+      if (stream) {
+        console.log("Classroom microphone initialized and active");
+      }
+    }).catch(e => {
+      console.log("Microphone waiting for user interaction:", e);
+    });
+
+    // Broadcast presence immediately to announce arrival to other device
+    sendSignal('presence', { user: USER_NAME, role: USER_ROLE });
+
+    // Start signaling poll loop (every 1 second)
+    setInterval(pollSignals, 1000);
+
+    // Keepalive presence beacon every 15s
+    setInterval(() => {
+      sendSignal('presence', { user: USER_NAME, role: USER_ROLE });
+    }, 15000);
+  });
+</script>
+{% endblock %}

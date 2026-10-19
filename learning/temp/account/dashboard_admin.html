@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Executive Administration Dashboard | Edukom LMS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-canvas-gray py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- Top Admin Banner -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+      <div class="flex items-center space-x-5 z-10">
+        <div class="w-16 h-16 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center text-3xl font-black shadow-md border-2 border-vibrant-lime">
+          <i class="fa-solid fa-crown"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl sm:text-3xl font-bold text-deep-navy">Platform Executive Dashboard</h1>
+            <span class="px-2.5 py-0.5 bg-deep-navy text-vibrant-lime text-xs font-black rounded-full uppercase tracking-wider">
+              Administrator
+            </span>
+          </div>
+          <p class="text-sm text-on-surface-variant mt-1">
+            Governance, role access control, financial summaries, and infrastructure monitoring.
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex flex-wrap items-center gap-2.5 z-10">
+        <a href="/admin/" target="_blank" class="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl border border-outline-variant/30 transition flex items-center gap-2">
+          <i class="fa-solid fa-gear"></i> Django Admin
+        </a>
+        <a href="{% url 'payroll:dashboard' %}" class="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl border border-outline-variant/30 transition flex items-center gap-2">
+          <i class="fa-solid fa-file-invoice-dollar"></i> Payroll Runs
+        </a>
+      </div>
+    </div>
+
+    <!-- 5 EXECUTIVE KPI CARDS -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Total Users</span>
+        <span class="text-2xl sm:text-3xl font-black text-deep-navy mt-1 block">{{ total_users }}</span>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Active Students</span>
+        <span class="text-2xl sm:text-3xl font-black text-deep-navy mt-1 block">{{ total_students }}</span>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Verified Tutors</span>
+        <span class="text-2xl sm:text-3xl font-black text-deep-navy mt-1 block">{{ total_tutors }}</span>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Completed Classes</span>
+        <span class="text-2xl sm:text-3xl font-black text-secondary mt-1 block" style="color: #4b6700;">{{ completed_sessions }}</span>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/20 shadow-sm text-center col-span-2 md:col-span-1">
+        <span class="text-xs font-bold text-outline uppercase tracking-wider block">Gross Revenue</span>
+        <span class="text-2xl sm:text-3xl font-black text-green-700 mt-1 block">NGN {{ gross_revenue|default:"0.00" }}</span>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN ADMIN LAYOUT -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- LEFT 2 COLUMNS: User Role Management Table -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- USER ROLES MANAGEMENT -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/20 gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-deep-navy flex items-center gap-2">
+                <i class="fa-solid fa-users-gear text-deep-navy"></i>
+                <span>Account &amp; Role Access Management</span>
+              </h2>
+              <p class="text-xs text-on-surface-variant mt-0.5">Assign student, tutor, staff, or admin capabilities.</p>
+            </div>
+
+            <!-- Role Filter Pills -->
+            <div class="flex items-center gap-1.5 bg-surface-container p-1 rounded-xl">
+              <a href="{% url 'dashboard_admin' %}" class="px-2.5 py-1 text-xs font-bold rounded-lg {% if not selected_role %}bg-white text-deep-navy shadow-sm{% else %}text-outline hover:text-deep-navy{% endif %}">
+                All
+              </a>
+              {% for code, label in all_roles %}
+              <a href="?role={{ code }}" class="px-2.5 py-1 text-xs font-bold rounded-lg {% if selected_role == code %}bg-white text-deep-navy shadow-sm{% else %}text-outline hover:text-deep-navy{% endif %}">
+                {{ label }}
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mt-6 overflow-x-auto">
+            <table class="min-w-full divide-y divide-outline-variant/20 text-xs">
+              <thead class="bg-surface-container text-deep-navy">
+                <tr>
+                  <th class="px-4 py-3 text-left font-bold">User</th>
+                  <th class="px-4 py-3 text-left font-bold">Email</th>
+                  <th class="px-4 py-3 text-center font-bold">Current Role</th>
+                  <th class="px-4 py-3 text-right font-bold">Change Role</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-outline-variant/10">
+                {% for u in users_page %}
+                <tr>
+                  <td class="px-4 py-3.5 font-bold text-deep-navy">
+                    {{ u.get_full_name|default:u.username }}
+                    <span class="block text-[10px] text-outline font-normal">Joined {{ u.date_joined|date:"M d, Y" }}</span>
+                  </td>
+                  <td class="px-4 py-3.5 text-on-surface-variant">{{ u.email|default:"No email set" }}</td>
+                  <td class="px-4 py-3.5 text-center">
+                    {% if u.profile.role == 'ADMIN' %}
+                      <span class="px-2.5 py-0.5 bg-purple-100 text-purple-800 text-[11px] font-black rounded-full">Admin</span>
+                    {% elif u.profile.role == 'STAFF' %}
+                      <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-[11px] font-bold rounded-full">Staff</span>
+                    {% elif u.profile.role == 'TUTOR' %}
+                      <span class="px-2.5 py-0.5 bg-blue-100 text-blue-800 text-[11px] font-bold rounded-full">Tutor</span>
+                    {% else %}
+                      <span class="px-2.5 py-0.5 bg-vibrant-lime/30 text-deep-navy text-[11px] font-bold rounded-full">Student</span>
+                    {% endif %}
+                  </td>
+                  <td class="px-4 py-3.5 text-right">
+                    <form action="{% url 'update_user_role' u.id %}" method="post" class="inline-flex items-center gap-1.5">
+                      {% csrf_token %}
+                      <select name="role" class="px-2 py-1 bg-surface-bright border border-outline-variant/30 rounded text-[11px] font-bold text-deep-navy focus:outline-none">
+                        {% for code, label in all_roles %}
+                          <option value="{{ code }}" {% if u.profile.role == code %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                      </select>
+                      <button type="submit" class="px-2 py-1 bg-deep-navy text-white rounded text-[11px] font-bold hover:bg-primary-container transition">
+                        Update
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4" class="text-center py-6 text-outline">No users matching filter.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          {% if users_page.has_other_pages %}
+          <div class="mt-6 flex justify-between items-center text-xs text-outline pt-4 border-t border-outline-variant/20">
+            <span>Page {{ users_page.number }} of {{ users_page.paginator.num_pages }}</span>
+            <div class="flex gap-2">
+              {% if users_page.has_previous %}
+                <a href="?page={{ users_page.previous_page_number }}{% if selected_role %}&role={{ selected_role }}{% endif %}" class="px-3 py-1 bg-surface-container rounded font-bold hover:text-deep-navy">Previous</a>
+              {% endif %}
+              {% if users_page.has_next %}
+                <a href="?page={{ users_page.next_page_number }}{% if selected_role %}&role={{ selected_role }}{% endif %}" class="px-3 py-1 bg-surface-container rounded font-bold hover:text-deep-navy">Next</a>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- RECENT PAYROLL BATCHES -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-6 border-b border-outline-variant/20">
+            <h2 class="text-xl font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-money-check-dollar text-green-700"></i>
+              <span>Recent Payroll Runs & Settlements</span>
+            </h2>
+            <a href="{% url 'payroll:dashboard' %}" class="text-xs font-bold text-deep-navy hover:underline">All &rarr;</a>
+          </div>
+
+          <div class="mt-6 space-y-3">
+            {% for pr in recent_payroll_runs %}
+            <div class="p-4 rounded-2xl bg-surface-bright border border-outline-variant/20 flex justify-between items-center text-xs">
+              <div>
+                <p class="font-bold text-deep-navy">{{ pr.period_start|date:"M d" }} - {{ pr.period_end|date:"M d, Y" }}</p>
+                <p class="text-outline">{{ pr.items.count }} Tutors &bull; {{ pr.total_hours }} Hours Logged</p>
+              </div>
+              <div class="text-right">
+                <span class="font-black text-deep-navy block">{{ pr.currency }} {{ pr.total_net }}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold {% if pr.status == 'PAID' %}bg-green-100 text-green-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                  {{ pr.status }}
+                </span>
+              </div>
+            </div>
+            {% empty %}
+            <p class="text-xs text-outline text-center py-4">No payroll runs on record.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT 1 COLUMN: Telemetry & Security Stream -->
+      <div class="space-y-8">
+
+        <!-- LIVE INFRASTRUCTURE TELEMETRY (/healthz) -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-server text-indigo-600"></i>
+              <span>Live Infrastructure Health</span>
+            </h3>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-black {% if telemetry.status == 'healthy' %}bg-green-100 text-green-800{% else %}bg-rose-100 text-rose-800{% endif %}">
+              {{ telemetry.status|upper }}
+            </span>
+          </div>
+
+          <div class="mt-4 space-y-3 text-xs">
+            <div class="p-3 rounded-2xl bg-surface-bright flex justify-between items-center">
+              <span class="font-bold text-deep-navy">PostgreSQL 16 DB</span>
+              <span class="font-bold text-green-700">Online ({{ telemetry.components.database.latency_ms|default:0 }}ms)</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-surface-bright flex justify-between items-center">
+              <span class="font-bold text-deep-navy">Redis 7 Cache</span>
+              <span class="font-bold text-green-700">{{ telemetry.components.redis_cache.status|default:"ok"|upper }}</span>
+            </div>
+            <div class="p-3 rounded-2xl bg-surface-bright flex justify-between items-center">
+              <span class="font-bold text-deep-navy">Disk Free Headroom</span>
+              <span class="font-bold text-deep-navy">{{ telemetry.components.disk_headroom.free_gb|default:"84" }} GB ({{ telemetry.components.disk_headroom.percent_free|default:"85" }}%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORENSIC SECURITY AUDIT STREAM -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-rose-600"></i>
+              <span>Forensic Security Stream</span>
+            </h3>
+          </div>
+
+          <div class="mt-4 space-y-2 text-[11px] font-mono">
+            {% for ev in security_events %}
+            <div class="p-2.5 rounded-xl bg-slate-900 text-emerald-400 overflow-x-auto leading-relaxed border border-slate-800">
+              {{ ev }}
+            </div>
+            {% empty %}
+            <div class="p-4 rounded-xl bg-surface-bright text-center text-outline text-xs font-sans">
+              Security audit stream active & recording events into rotating log archive.
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

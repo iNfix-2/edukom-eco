@@ -7,6 +7,8 @@ urlpatterns = [
     # Virtual Classroom & WebRTC Entry
     path('session/<uuid:session_id>/', views.classroom_live_view, name='live_room'),
     path('session/<uuid:session_id>/notes/', views.submit_lesson_notes, name='submit_notes'),
+    path('session/<uuid:session_id>/signal/send/', views.send_classroom_signal, name='send_signal'),
+    path('session/<uuid:session_id>/signal/poll/', views.poll_classroom_signals, name='poll_signals'),
 
     # Portals
     path('tutor/portal/', views.tutor_portal_dashboard, name='tutor_portal'),
@@ -15,9 +17,15 @@ urlpatterns = [
     # LMS to Payroll Direct Bridge
     path('dispatch-to-payroll/', views.dispatch_lms_sessions_to_payroll, name='dispatch_payroll'),
 
+    # Live Session Scheduling & Instant Class Launcher
+    path('schedule/new/', views.schedule_session_view, name='schedule_session'),
+    path('instant/new/', views.instant_session_view, name='instant_session'),
+
     # Phase 2 Safeguards: Resources, Cancellations, and Feedback
     path('session/<uuid:session_id>/resources/upload/', views.upload_lesson_resource, name='upload_resource'),
+    path('vault/upload/', views.upload_material_view, name='upload_material'),
     path('resource/<uuid:resource_id>/download/', views.download_lesson_resource, name='download_resource'),
+    path('resource/<uuid:resource_id>/delete/', views.delete_resource_view, name='delete_resource'),
     path('session/<uuid:session_id>/cancel/', views.cancel_session_view, name='cancel_session'),
     path('session/<uuid:session_id>/feedback/', views.submit_lesson_feedback, name='submit_feedback'),
 

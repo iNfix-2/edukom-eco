@@ -1,0 +1,1017 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tutor Teaching Portal & LMS Hub | Edukom{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-canvas-gray py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- TOP TUTOR IDENTITY & QUICK ACTIONS HERO -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden">
+      <div class="absolute -right-16 -top-16 w-56 h-56 bg-deep-navy/5 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Tutor Info -->
+      <div class="flex items-center space-x-5 z-10">
+        <div class="relative shrink-0">
+          {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="{{ tutor.display_name }}" class="w-20 h-20 rounded-2xl object-cover border-2 border-deep-navy shadow-md">
+          {% else %}
+            <div class="w-20 h-20 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center text-3xl font-black shadow-md border-2 border-deep-navy">
+              {{ tutor.display_name|slice:":1"|upper }}
+            </div>
+          {% endif %}
+          <span class="absolute -bottom-1 -right-1 px-2 py-0.5 bg-deep-navy text-white text-[10px] font-black rounded-md uppercase tracking-wider shadow">
+            Tutor
+          </span>
+        </div>
+
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-2xl sm:text-3xl font-bold text-deep-navy">{{ tutor.display_name }}</h1>
+            {% if tutor.is_verified %}
+              <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full flex items-center gap-1">
+                <i class="fa-solid fa-certificate text-[11px]"></i> Verified Educator
+              </span>
+            {% endif %}
+          </div>
+          <p class="text-sm text-on-surface-variant mt-1">
+            {{ profile.headline|default:"Academic Tutor & Educational Consultant" }}
+          </p>
+          <div class="flex flex-wrap items-center gap-3 text-xs text-outline mt-1.5">
+            <span>Base Rate: <strong>{{ tutor.currency }} {{ tutor.hourly_base_rate|floatformat:2 }}/hr</strong></span>
+            <span>&bull;</span>
+            <span>Timezone: <strong>{{ profile.timezone|default:"Africa/Lagos (WAT)" }}</strong></span>
+            <span>&bull;</span>
+            <span class="text-emerald-700 font-semibold flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Available for Live Classes
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Bar -->
+      <div class="flex flex-wrap items-center gap-3 z-10">
+        <button onclick="openModal('instantClassModal')" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Start Instant Class</span>
+        </button>
+
+        <button onclick="openModal('scheduleModal')" class="px-4 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+          <i class="fa-regular fa-calendar-plus"></i>
+          <span>Schedule Class</span>
+        </button>
+
+        <button onclick="openModal('uploadModal')" class="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold text-xs rounded-xl shadow-sm transition flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Upload Material / Video</span>
+        </button>
+
+        <a href="{% url 'classroom:calendar_sync' %}" class="px-3.5 py-2.5 bg-white border border-outline-variant/40 text-deep-navy font-bold text-xs rounded-xl hover:bg-surface-container transition shadow-sm flex items-center gap-1.5" title="Download tutor schedule (.ics)">
+          <i class="fa-regular fa-calendar-days text-amber-600"></i>
+          <span>Sync .ics</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- METRICS TELEMETRY CARDS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-outline uppercase tracking-wider block">Month Teaching</span>
+          <span class="text-2xl font-black text-deep-navy mt-1 block">{{ monthly_hours }} hrs</span>
+          <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+            <i class="fa-solid fa-arrow-trend-up"></i> Verified Attendance
+          </span>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+          <i class="fa-regular fa-clock"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-outline uppercase tracking-wider block">Accrued Payout</span>
+          <span class="text-2xl font-black text-emerald-700 mt-1 block">{{ tutor.currency }} {{ monthly_earnings|floatformat:2 }}</span>
+          <span class="text-[11px] text-outline mt-0.5 block">Bi-weekly payroll</span>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-coins"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-outline uppercase tracking-wider block">Active Students</span>
+          <span class="text-2xl font-black text-deep-navy mt-1 block">{{ active_bookings.count }}</span>
+          <span class="text-[11px] text-indigo-600 font-semibold mt-0.5 block">Assigned Bookings</span>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-users"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-outline uppercase tracking-wider block">QA Rating</span>
+          <div class="flex items-center gap-1 mt-1">
+            <span class="text-2xl font-black text-amber-500">★ {{ avg_rating }}</span>
+            <span class="text-xs text-outline">/ 5.0</span>
+          </div>
+          <span class="text-[11px] text-outline mt-0.5 block">{{ feedbacks.count }} Parent Reviews</span>
+        </div>
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-star"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- DYNAMIC TAB NAVIGATION BAR -->
+    <div class="bg-white rounded-2xl p-2 shadow-sm border border-outline-variant/30 flex flex-wrap items-center justify-between gap-2">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button onclick="switchTab('classes')" id="tabBtnClasses" class="nav-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 bg-deep-navy text-white shadow transition">
+          <i class="fa-solid fa-chalkboard-user"></i>
+          <span>Live Classes & Schedule</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] bg-white/20 text-white font-black">{{ upcoming_sessions.count }}</span>
+        </button>
+
+        <button onclick="switchTab('students')" id="tabBtnStudents" class="nav-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-on-surface-variant hover:bg-surface-container transition">
+          <i class="fa-solid fa-users"></i>
+          <span>My Students</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-200 text-deep-navy font-bold">{{ active_bookings.count }}</span>
+        </button>
+
+        <button onclick="switchTab('vault')" id="tabBtnVault" class="nav-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-on-surface-variant hover:bg-surface-container transition">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>Resource & Video Vault</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] bg-indigo-100 text-indigo-800 font-bold">{{ resources.count }}</span>
+        </button>
+
+        <button onclick="switchTab('homework')" id="tabBtnHomework" class="nav-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-on-surface-variant hover:bg-surface-container transition">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Homework & Grading</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] bg-purple-100 text-purple-800 font-bold">{{ homework_submissions.count }}</span>
+        </button>
+
+        <button onclick="switchTab('payouts')" id="tabBtnPayouts" class="nav-tab-btn px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-on-surface-variant hover:bg-surface-container transition">
+          <i class="fa-solid fa-building-columns"></i>
+          <span>Payouts & Payslips</span>
+        </button>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-2 pr-2">
+        <a href="{% url 'classroom:quiz_list' %}" class="px-3 py-1.5 bg-surface-container hover:bg-slate-200 text-deep-navy font-bold text-xs rounded-xl transition flex items-center gap-1.5">
+          <i class="fa-solid fa-clipboard-check text-indigo-600"></i> Quizzes
+        </a>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TAB 1: LIVE CLASSES & SCHEDULE -->
+    <!-- ====================================================================== -->
+    <div id="tabContentClasses" class="space-y-6">
+
+      <!-- Upcoming & In-Progress Sessions -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/20 gap-4">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-video"></i>
+            </span>
+            <div>
+              <h2 class="text-xl font-bold text-deep-navy">Upcoming & Active Virtual Classes</h2>
+              <p class="text-xs text-outline">Direct 1-click entry into Zoom-like WebRTC live room</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="openModal('instantClassModal')" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-bolt"></i> Instant Class
+            </button>
+            <button onclick="openModal('scheduleModal')" class="px-3.5 py-2 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-calendar-plus"></i> Schedule Class
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-4">
+          {% for sess in upcoming_sessions %}
+            <div class="p-5 rounded-2xl border border-outline-variant/30 bg-surface-bright hover:shadow-md transition flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl {% if sess.status == 'IN_PROGRESS' %}bg-rose-500/20 text-rose-600 border border-rose-500/30 animate-pulse{% else %}bg-indigo-50 text-indigo-600{% endif %} flex items-center justify-center text-xl shrink-0">
+                  <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="px-2.5 py-0.5 bg-deep-navy text-white text-[11px] font-bold rounded-md">
+                      {{ sess.booking.subject.name }}
+                    </span>
+                    <span class="text-xs text-outline">{{ sess.booking.class_level }} &bull; {{ sess.booking.curriculum }}</span>
+                    {% if sess.status == 'IN_PROGRESS' %}
+                      <span class="px-2.5 py-0.5 bg-rose-100 text-rose-800 text-[10px] font-black rounded-full flex items-center gap-1 animate-pulse">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> LIVE NOW
+                      </span>
+                    {% endif %}
+                  </div>
+
+                  <h3 class="text-base font-bold text-deep-navy mt-1">{{ sess.title }}</h3>
+                  <p class="text-xs text-on-surface-variant mt-0.5">
+                    Student: <strong>{{ sess.booking.student.first_name }} {{ sess.booking.student.last_name }}</strong>
+                    &bull; Scheduled: <strong>{{ sess.dual_time_display }}</strong> ({{ sess.duration_minutes }} Mins)
+                  </p>
+                  {% if sess.lesson_topic %}
+                    <p class="text-xs text-indigo-700 font-semibold mt-1">
+                      <i class="fa-regular fa-bookmark mr-1"></i> Topic: {{ sess.lesson_topic }}
+                    </p>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2.5 shrink-0">
+                <a href="{% url 'classroom:live_room' sess.id %}" class="px-5 py-2.5 {% if sess.status == 'IN_PROGRESS' %}bg-rose-600 hover:bg-rose-700 animate-bounce{% else %}bg-deep-navy hover:bg-primary-container{% endif %} text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+                  <i class="fa-solid fa-door-open"></i>
+                  <span>Launch Classroom</span>
+                </a>
+              </div>
+            </div>
+          {% empty %}
+            <div class="text-center py-12 text-on-surface-variant space-y-3">
+              <div class="w-16 h-16 rounded-3xl bg-surface-container flex items-center justify-center text-3xl text-outline mx-auto">
+                <i class="fa-solid fa-calendar-check"></i>
+              </div>
+              <p class="text-sm font-semibold text-deep-navy">No pending live classes scheduled for today.</p>
+              <p class="text-xs text-outline max-w-md mx-auto">Click "Start Instant Class" to begin immediately with any enrolled student, or "Schedule Class" for an upcoming session.</p>
+              <div class="pt-2 flex justify-center gap-3">
+                <button onclick="openModal('instantClassModal')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow transition">
+                  <i class="fa-solid fa-bolt mr-1"></i> Start Instant Class
+                </button>
+                <button onclick="openModal('scheduleModal')" class="px-4 py-2 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow transition">
+                  <i class="fa-solid fa-calendar-plus mr-1"></i> Schedule Class
+                </button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Recently Completed Classes & Quick Notes Submission -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+        <div class="flex items-center justify-between pb-6 border-b border-outline-variant/20">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </span>
+            <div>
+              <h2 class="text-xl font-bold text-deep-navy">Recently Concluded Lessons</h2>
+              <p class="text-xs text-outline">Verified teaching logs and recorded parent reports</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-outline uppercase">{{ past_sessions.count }} Completed</span>
+        </div>
+
+        <div class="mt-6 space-y-3">
+          {% for sess in past_sessions %}
+            <div class="p-4 rounded-2xl border border-outline-variant/20 bg-surface-bright flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-deep-navy">{{ sess.title }}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Completed</span>
+                </div>
+                <p class="text-outline mt-0.5">
+                  Student: <strong>{{ sess.booking.student.first_name }} {{ sess.booking.student.last_name }}</strong>
+                  &bull; {{ sess.start_time|date:"M d, Y" }} &bull; {{ sess.duration_minutes }} Mins
+                </p>
+                {% if sess.lesson_notes %}
+                  <p class="text-slate-600 mt-1 italic">"{{ sess.lesson_notes|truncatechars:120 }}"</p>
+                {% endif %}
+              </div>
+
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="text-outline font-mono">₦{{ sess.booking.agreed_hourly_rate|floatformat:2 }}/hr</span>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-xs text-outline text-center py-6">No concluded sessions yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TAB 2: MY ENROLLED STUDENTS -->
+    <!-- ====================================================================== -->
+    <div id="tabContentStudents" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/20 gap-4">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-users"></i>
+            </span>
+            <div>
+              <h2 class="text-xl font-bold text-deep-navy">My Enrolled Students Roster</h2>
+              <p class="text-xs text-outline">Manage active learners, curriculum levels, and start 1-click lessons</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-outline uppercase">{{ active_bookings.count }} Active Enrollments</span>
+        </div>
+
+        <div class="mt-6 overflow-x-auto">
+          <table class="min-w-full divide-y divide-outline-variant/20 text-xs">
+            <thead class="bg-surface-container text-deep-navy">
+              <tr>
+                <th class="px-5 py-3.5 text-left font-bold">Student Name</th>
+                <th class="px-5 py-3.5 text-left font-bold">Subject & Curriculum</th>
+                <th class="px-5 py-3.5 text-left font-bold">Class Level</th>
+                <th class="px-5 py-3.5 text-left font-bold">Rate</th>
+                <th class="px-5 py-3.5 text-left font-bold">Guardian Contact</th>
+                <th class="px-5 py-3.5 text-right font-bold">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/10">
+              {% for b in active_bookings %}
+              <tr class="hover:bg-surface-bright transition">
+                <td class="px-5 py-4 font-bold text-deep-navy">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 font-black flex items-center justify-center text-sm">
+                      {{ b.student.first_name|slice:":1" }}
+                    </div>
+                    <div>
+                      <p class="text-sm font-bold text-deep-navy">{{ b.student.first_name }} {{ b.student.last_name }}</p>
+                      <p class="text-[11px] text-outline">{{ b.delivery_mode }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-4 font-semibold text-secondary">
+                  <p class="text-deep-navy font-bold">{{ b.subject.name }}</p>
+                  <p class="text-[11px] text-outline">{{ b.curriculum }}</p>
+                </td>
+                <td class="px-5 py-4 text-deep-navy font-medium">{{ b.class_level }}</td>
+                <td class="px-5 py-4 font-mono font-bold text-deep-navy">{{ b.currency }} {{ b.agreed_hourly_rate|floatformat:2 }}/hr</td>
+                <td class="px-5 py-4 text-outline">
+                  <p>{{ b.student.guardian.phone|default:"-" }}</p>
+                  <p class="text-[10px]">{{ b.student.guardian.email|default:"" }}</p>
+                </td>
+                <td class="px-5 py-4 text-right space-x-1.5 whitespace-nowrap">
+                  <button onclick="prefillInstantClass('{{ b.id }}', '{{ b.student.first_name }} - {{ b.subject.name }}')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-xs transition" title="Start immediate class">
+                    <i class="fa-solid fa-bolt mr-1"></i> Class
+                  </button>
+                  <button onclick="prefillSchedule('{{ b.id }}', '{{ b.student.first_name }} - {{ b.subject.name }}')" class="px-3 py-1.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-xs transition" title="Schedule upcoming class">
+                    <i class="fa-solid fa-calendar-plus mr-1"></i> Schedule
+                  </button>
+                  <button onclick="prefillUpload('{{ b.id }}')" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold text-xs rounded-xl shadow-xs transition" title="Share worksheet or video">
+                    <i class="fa-solid fa-paperclip"></i>
+                  </button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center py-10 text-outline text-xs">No active students assigned yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TAB 3: RESOURCE & VIDEO VAULT -->
+    <!-- ====================================================================== -->
+    <div id="tabContentVault" class="space-y-6">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-outline-variant/20 gap-4">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-folder-open"></i>
+            </span>
+            <div>
+              <h2 class="text-xl font-bold text-deep-navy">Tutor Resource & Video Vault</h2>
+              <p class="text-xs text-outline">Upload worksheets, lesson notes, past papers, and recorded video lessons</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button onclick="openModal('uploadModal')" class="px-4 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Upload New Material / Video</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Tags -->
+        <div class="mt-6 flex flex-wrap items-center gap-2">
+          <button onclick="filterResources('ALL')" class="res-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-deep-navy text-white transition">
+            All Materials ({{ resources.count }})
+          </button>
+          <button onclick="filterResources('WORKSHEET')" class="res-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-slate-200 transition">
+            Worksheets & Exercises
+          </button>
+          <button onclick="filterResources('NOTES')" class="res-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-slate-200 transition">
+            Study Notes & Slides
+          </button>
+          <button onclick="filterResources('PAST_PAPER')" class="res-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-slate-200 transition">
+            Past Papers
+          </button>
+          <button onclick="filterResources('VIDEO')" class="res-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-surface-container text-on-surface-variant hover:bg-slate-200 transition">
+            Video Lessons & Recordings
+          </button>
+        </div>
+
+        <!-- Resources Grid -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="resourceCardsContainer">
+          {% for res in resources %}
+            <div class="res-card p-5 rounded-2xl border border-outline-variant/30 bg-surface-bright hover:shadow-md transition flex flex-col justify-between" data-type="{{ res.resource_type }}">
+              <div>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
+                    {% if res.resource_type == 'VIDEO' %}bg-purple-100 text-purple-800
+                    {% elif res.resource_type == 'PAST_PAPER' %}bg-amber-100 text-amber-800
+                    {% elif res.resource_type == 'NOTES' %}bg-blue-100 text-blue-800
+                    {% else %}bg-emerald-100 text-emerald-800{% endif %}">
+                    {{ res.get_resource_type_display }}
+                  </span>
+                  <span class="text-[10px] text-outline">{{ res.created_at|date:"M d, Y" }}</span>
+                </div>
+
+                <h4 class="text-sm font-bold text-deep-navy mt-2.5 line-clamp-2">{{ res.title }}</h4>
+
+                {% if res.description %}
+                  <p class="text-xs text-on-surface-variant mt-1 line-clamp-2">{{ res.description }}</p>
+                {% endif %}
+
+                <div class="mt-3 pt-3 border-t border-outline-variant/10 text-[11px] text-outline flex items-center justify-between">
+                  <span>
+                    {% if res.booking %}
+                      For: <strong>{{ res.booking.student.first_name }}</strong> ({{ res.booking.subject.name }})
+                    {% elif res.session %}
+                      Class: <strong>{{ res.session.title }}</strong>
+                    {% else %}
+                      Platform General
+                    {% endif %}
+                  </span>
+                  <span>{{ res.file_size|filesizeformat }}</span>
+                </div>
+              </div>
+
+              <!-- Action Bar -->
+              <div class="mt-4 pt-3 border-t border-outline-variant/10 flex items-center justify-between gap-2">
+                <div>
+                  {% if res.file %}
+                    <a href="{% url 'classroom:download_resource' res.id %}" class="px-3 py-1.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-xs transition inline-flex items-center gap-1.5">
+                      <i class="fa-solid fa-download text-[10px]"></i>
+                      <span>Download</span>
+                    </a>
+                  {% elif res.video_url %}
+                    <a href="{{ res.video_url }}" target="_blank" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-xs transition inline-flex items-center gap-1.5">
+                      <i class="fa-solid fa-play text-[10px]"></i>
+                      <span>Watch Video</span>
+                    </a>
+                  {% endif %}
+                </div>
+
+                <form action="{% url 'classroom:delete_resource' res.id %}" method="post" onsubmit="return confirm('Delete resource: {{ res.title }}?');">
+                  {% csrf_token %}
+                  <button type="submit" class="p-2 text-outline hover:text-rose-600 transition text-xs" title="Delete resource">
+                    <i class="fa-regular fa-trash-can"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-span-full text-center py-12 text-on-surface-variant space-y-3">
+              <div class="w-16 h-16 rounded-3xl bg-surface-container flex items-center justify-center text-3xl text-outline mx-auto">
+                <i class="fa-solid fa-folder-plus"></i>
+              </div>
+              <p class="text-sm font-semibold text-deep-navy">Your Resource & Video Vault is empty.</p>
+              <p class="text-xs text-outline max-w-md mx-auto">Upload practice worksheets, past exam papers, lecture slides, or video links to share directly with your learners.</p>
+              <button onclick="openModal('uploadModal')" class="px-4 py-2 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow transition">
+                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload First Resource
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TAB 4: HOMEWORK & GRADING -->
+    <!-- ====================================================================== -->
+    <div id="tabContentHomework" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30">
+        <div class="flex items-center justify-between pb-6 border-b border-outline-variant/20">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </span>
+            <div>
+              <h2 class="text-xl font-bold text-deep-navy">Student Homework & Assignments</h2>
+              <p class="text-xs text-outline">Review student submissions, download solution files, and record grades</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-outline uppercase">{{ homework_submissions.count }} Submissions</span>
+        </div>
+
+        <div class="mt-6 space-y-4">
+          {% for sub in homework_submissions %}
+          <div class="p-5 rounded-2xl border border-outline-variant/20 bg-surface-bright space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 bg-deep-navy text-white text-[11px] font-bold rounded-md">
+                    {{ sub.session.booking.subject.name }}
+                  </span>
+                  <span class="text-xs font-bold text-deep-navy">
+                    {{ sub.student.first_name }} {{ sub.student.last_name }}
+                  </span>
+                </div>
+                <h4 class="text-sm font-bold text-deep-navy mt-1">{{ sub.session.title }}</h4>
+                <p class="text-[11px] text-outline">Submitted {{ sub.submitted_at|date:"M d, Y H:i" }}</p>
+              </div>
+
+              <div class="flex items-center gap-2">
+                {% if sub.status == 'GRADED' %}
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1">
+                    <i class="fa-solid fa-circle-check"></i> Graded: {{ sub.grade }}
+                  </span>
+                {% elif sub.status == 'REVISION_REQUESTED' %}
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800 flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-left"></i> Needs Revision
+                  </span>
+                {% else %}
+                  <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800 flex items-center gap-1">
+                    <i class="fa-solid fa-hourglass-half"></i> Pending Review
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Student Content & Attachments -->
+            <div class="p-3.5 bg-white rounded-xl border border-outline-variant/20 text-xs space-y-2">
+              {% if sub.content %}
+                <div>
+                  <span class="font-bold text-outline uppercase text-[10px]">Student Solution:</span>
+                  <p class="text-deep-navy mt-1 whitespace-pre-line">{{ sub.content }}</p>
+                </div>
+              {% endif %}
+
+              {% if sub.attachment %}
+                <div class="pt-2 border-t border-outline-variant/10 flex items-center justify-between">
+                  <span class="text-outline text-[11px] flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-pdf text-red-500"></i> Attached Work Document
+                  </span>
+                  <a href="{% url 'classroom:download_homework' sub.id %}" class="px-3 py-1 bg-surface-container hover:bg-outline-variant/30 text-deep-navy font-bold text-xs rounded-lg transition inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> Download Submission
+                  </a>
+                </div>
+              {% endif %}
+
+              {% if sub.tutor_feedback %}
+                <div class="pt-2 border-t border-outline-variant/10 text-[11px] text-on-surface-variant italic">
+                  <strong>Current Tutor Feedback:</strong> "{{ sub.tutor_feedback }}"
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="flex justify-end">
+              <button type="button" onclick="toggleGradeBox('{{ sub.id }}')" class="px-3.5 py-1.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-pen-nib text-[11px]"></i>
+                <span>{% if sub.status == 'GRADED' %}Update Grade & Feedback{% else %}Grade This Submission{% endif %}</span>
+              </button>
+            </div>
+
+            <!-- Grading Drawer -->
+            <div id="grade-box-{{ sub.id }}" class="hidden mt-3 p-4 bg-white rounded-2xl border-2 border-dashed border-deep-navy/30 space-y-3">
+              <h5 class="text-xs font-bold text-deep-navy flex items-center justify-between">
+                <span>Enter Grade & Feedback for {{ sub.student.first_name }}</span>
+                <button type="button" onclick="toggleGradeBox('{{ sub.id }}')" class="text-outline hover:text-deep-navy font-bold">✕ Close</button>
+              </h5>
+              <form action="{% url 'classroom:grade_homework' sub.id %}" method="post" class="space-y-3 text-xs">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block font-bold text-deep-navy mb-1">Grade / Score</label>
+                    <input type="text" name="grade" value="{{ sub.grade|default:'' }}" placeholder="e.g. A*, 95/100, 18/20" class="w-full px-3 py-2 bg-surface-container rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block font-bold text-deep-navy mb-1">Assessment Status</label>
+                    <select name="status" class="w-full px-3 py-2 bg-surface-container rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
+                      <option value="GRADED" {% if sub.status == 'GRADED' %}selected{% endif %}>Graded & Approved</option>
+                      <option value="REVISION_REQUESTED" {% if sub.status == 'REVISION_REQUESTED' %}selected{% endif %}>Revision Requested (Needs Rework)</option>
+                      <option value="SUBMITTED" {% if sub.status == 'SUBMITTED' %}selected{% endif %}>Keep as Submitted</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="block font-bold text-deep-navy mb-1">Tutor Feedback & Suggestions</label>
+                  <textarea name="tutor_feedback" rows="3" placeholder="Provide constructive remarks, commend strengths, and suggest improvements..." class="w-full px-3 py-2 bg-surface-container rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">{{ sub.tutor_feedback|default:'' }}</textarea>
+                </div>
+                <button type="submit" class="px-4 py-2 bg-vibrant-lime text-deep-navy font-bold text-xs rounded-xl shadow-sm hover:brightness-105 transition flex items-center gap-2">
+                  <i class="fa-solid fa-check"></i> Save Assessment
+                </button>
+              </form>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center py-8 text-on-surface-variant">
+            <i class="fa-solid fa-folder-open text-3xl text-outline mb-2"></i>
+            <p class="text-xs font-semibold">No homework submissions from your students yet.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TAB 5: PAYOUTS, EARNINGS & QA -->
+    <!-- ====================================================================== -->
+    <div id="tabContentPayouts" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Bank Resolution & Payroll Details -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 space-y-4">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-building-columns text-emerald-700"></i>
+              <span>Payroll & Bank Details</span>
+            </h3>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            {% if payroll_account %}
+              <div class="p-4 rounded-2xl bg-surface-bright border border-outline-variant/20 space-y-2">
+                <p><strong>Account Name:</strong> {{ payroll_account.account_name }}</p>
+                <p><strong>Bank:</strong> {{ payroll_account.bank_name }} ({{ payroll_account.bank_code }})</p>
+                <p><strong>Account No:</strong> {{ payroll_account.masked_account_number }}</p>
+                <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                  <i class="fa-solid fa-shield-check"></i> NUBAN KYC Verified
+                </span>
+              </div>
+            {% else %}
+              <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800">
+                <p class="font-bold">Bank details pending verification.</p>
+                <p class="text-[11px] mt-1">Please provide your NUBAN account number to receive automated bi-weekly payroll disbursements.</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Tutor Payslips -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 space-y-4">
+          <div class="flex items-center justify-between pb-4 border-b border-outline-variant/20">
+            <h3 class="font-bold text-deep-navy flex items-center gap-2">
+              <i class="fa-solid fa-file-invoice-dollar text-secondary"></i>
+              <span>My Payslips & Records</span>
+            </h3>
+            <span class="text-xs font-bold text-outline">{{ tutor_payslips|length }} Available</span>
+          </div>
+
+          <div class="space-y-3">
+            {% for ps in tutor_payslips %}
+            <div class="p-3.5 rounded-2xl bg-surface-bright border border-outline-variant/20 text-xs flex justify-between items-center gap-2 hover:shadow-xs transition">
+              <div>
+                <p class="font-bold text-deep-navy truncate max-w-[200px]">{{ ps.payroll_run.title }}</p>
+                <p class="text-[11px] text-outline font-mono">₦{{ ps.net_pay|floatformat:2 }} &bull; {{ ps.total_hours|floatformat:1 }} hrs</p>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md {% if ps.status == 'PAID' %}bg-emerald-100 text-emerald-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                  {{ ps.status }}
+                </span>
+                <a href="{% url 'payroll:tutor_payslip' ps.id %}" target="_blank" class="px-2.5 py-1 bg-deep-navy hover:bg-primary-container text-white font-bold text-[11px] rounded-lg shadow-xs transition flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                  <span>View</span>
+                </a>
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-6 text-outline text-xs">
+              <i class="fa-solid fa-receipt text-2xl mb-1 text-outline/60"></i>
+              <p>No historical payslips generated yet.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- MODAL 1: START INSTANT CLASS -->
+<!-- ====================================================================== -->
+<div id="instantClassModal" class="hidden fixed inset-0 bg-deep-navy/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+  <div class="bg-white text-deep-navy rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-outline-variant/30 animate-in fade-in zoom-in-95 duration-200">
+    <div class="flex justify-between items-center pb-4 border-b border-outline-variant/20">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold">
+          <i class="fa-solid fa-bolt text-lg"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-deep-navy">Start Instant Live Class</h3>
+          <p class="text-xs text-outline">Enters WebRTC live room immediately</p>
+        </div>
+      </div>
+      <button onclick="closeModal('instantClassModal')" class="w-8 h-8 rounded-full bg-surface-container hover:bg-slate-200 text-outline flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form method="POST" action="{% url 'classroom:instant_session' %}" class="space-y-4 mt-5 text-left text-xs">
+      {% csrf_token %}
+      <div>
+        <label class="block font-bold text-deep-navy mb-1">Select Enrolled Student *</label>
+        <select name="booking_id" id="instantBookingSelect" required class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs font-semibold text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+          <option value="" disabled selected>-- Select Student & Subject --</option>
+          {% for b in active_bookings %}
+            <option value="{{ b.id }}">{{ b.student.first_name }} {{ b.student.last_name }} - {{ b.subject.name }} ({{ b.class_level }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label class="block font-bold text-deep-navy mb-1">Class Title (Optional)</label>
+        <input type="text" name="title" id="instantTitleInput" placeholder="e.g. Instant Revision: Mechanics & Vectors" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-bold text-deep-navy mb-1">Duration</label>
+          <select name="duration_minutes" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+            <option value="45">45 Minutes</option>
+            <option value="60" selected>60 Minutes (1 hr)</option>
+            <option value="90">90 Minutes (1.5 hr)</option>
+            <option value="120">120 Minutes (2 hr)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-deep-navy mb-1">Topic</label>
+          <input type="text" name="lesson_topic" placeholder="e.g. Chapter 5 Review" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+        </div>
+      </div>
+
+      <div class="p-3 bg-rose-50 rounded-2xl border border-rose-200 text-[11px] text-rose-800">
+        <i class="fa-solid fa-video mr-1"></i> Starting the class will immediately launch the virtual room with WebRTC video, screen share, and whiteboard enabled.
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeModal('instantClassModal')" class="px-4 py-2.5 bg-surface-container hover:bg-slate-200 text-deep-navy font-bold rounded-xl text-xs transition">
+          Cancel
+        </button>
+        <button type="submit" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+          <i class="fa-solid fa-door-open"></i> Launch Classroom Now
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- MODAL 2: SCHEDULE CLASS -->
+<!-- ====================================================================== -->
+<div id="scheduleModal" class="hidden fixed inset-0 bg-deep-navy/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+  <div class="bg-white text-deep-navy rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-outline-variant/30 animate-in fade-in zoom-in-95 duration-200">
+    <div class="flex justify-between items-center pb-4 border-b border-outline-variant/20">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+          <i class="fa-regular fa-calendar-plus text-lg"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-deep-navy">Schedule Live Class</h3>
+          <p class="text-xs text-outline">Adds to timetable with conflict verification</p>
+        </div>
+      </div>
+      <button onclick="closeModal('scheduleModal')" class="w-8 h-8 rounded-full bg-surface-container hover:bg-slate-200 text-outline flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form method="POST" action="{% url 'classroom:schedule_session' %}" class="space-y-4 mt-5 text-left text-xs">
+      {% csrf_token %}
+      <div>
+        <label class="block font-bold text-deep-navy mb-1">Select Enrolled Student *</label>
+        <select name="booking_id" id="scheduleBookingSelect" required class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs font-semibold text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+          <option value="" disabled selected>-- Select Student & Subject --</option>
+          {% for b in active_bookings %}
+            <option value="{{ b.id }}">{{ b.student.first_name }} {{ b.student.last_name }} - {{ b.subject.name }} ({{ b.class_level }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label class="block font-bold text-deep-navy mb-1">Class Title (Optional)</label>
+        <input type="text" name="title" id="scheduleTitleInput" placeholder="e.g. Physics: Electricity & Circuits" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-bold text-deep-navy mb-1">Date *</label>
+          <input type="date" name="date" id="scheduleDateInput" required class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+        </div>
+        <div>
+          <label class="block font-bold text-deep-navy mb-1">Start Time *</label>
+          <input type="time" name="start_time" required class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-bold text-deep-navy mb-1">Duration</label>
+          <select name="duration_minutes" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+            <option value="45">45 Minutes</option>
+            <option value="60" selected>60 Minutes (1 hr)</option>
+            <option value="90">90 Minutes (1.5 hr)</option>
+            <option value="120">120 Minutes (2 hr)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-deep-navy mb-1">Topic</label>
+          <input type="text" name="lesson_topic" placeholder="e.g. Ohm's Law & Series Circuits" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+        </div>
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeModal('scheduleModal')" class="px-4 py-2.5 bg-surface-container hover:bg-slate-200 text-deep-navy font-bold rounded-xl text-xs transition">
+          Cancel
+        </button>
+        <button type="submit" class="px-5 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+          <i class="fa-regular fa-calendar-check"></i> Confirm Schedule
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- MODAL 3: UPLOAD MATERIAL / VIDEO -->
+<!-- ====================================================================== -->
+<div id="uploadModal" class="hidden fixed inset-0 bg-deep-navy/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+  <div class="bg-white text-deep-navy rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-outline-variant/30 animate-in fade-in zoom-in-95 duration-200">
+    <div class="flex justify-between items-center pb-4 border-b border-outline-variant/20">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+          <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-deep-navy">Upload Resource or Video</h3>
+          <p class="text-xs text-outline">Save worksheets, lecture slides, or recorded videos</p>
+        </div>
+      </div>
+      <button onclick="closeModal('uploadModal')" class="w-8 h-8 rounded-full bg-surface-container hover:bg-slate-200 text-outline flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form method="POST" action="{% url 'classroom:upload_material' %}" enctype="multipart/form-data" class="space-y-4 mt-5 text-left text-xs">
+      {% csrf_token %}
+      <div>
+        <label class="block font-bold text-deep-navy mb-1">Resource Title *</label>
+        <input type="text" name="title" required placeholder="e.g. Pure Mathematics 1: Past Paper 2024 Solution" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-bold text-deep-navy mb-1">Material Type *</label>
+          <select name="resource_type" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs font-semibold text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+            <option value="WORKSHEET">Worksheet & Exercises</option>
+            <option value="NOTES">Study Notes & Slides</option>
+            <option value="PAST_PAPER">Past Exam Paper</option>
+            <option value="VIDEO">Recorded Video / Lesson</option>
+            <option value="OTHER">Other Material</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-deep-navy mb-1">Assign to Student (Optional)</label>
+          <select name="booking_id" id="uploadBookingSelect" class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs font-semibold text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+            <option value="">General / All Students</option>
+            {% for b in active_bookings %}
+              <option value="{{ b.id }}">{{ b.student.first_name }} - {{ b.subject.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-bold text-deep-navy mb-1">Attach File (PDF, DOCX, PPTX, XLSX, Images, MP4)</label>
+        <input type="file" name="resource_file" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-surface-container file:text-deep-navy hover:file:bg-slate-200 cursor-pointer">
+      </div>
+
+      <div>
+        <label class="block font-bold text-deep-navy mb-1">OR External Video URL (YouTube, Vimeo, Cloud Storage)</label>
+        <input type="url" name="video_url" placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..." class="w-full px-4 py-2.5 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block font-bold text-deep-navy mb-1">Description / Instructions</label>
+        <textarea name="description" rows="2" placeholder="Notes for students on how to complete this worksheet or study this video..." class="w-full px-4 py-2 bg-surface-container border border-outline-variant/30 rounded-xl text-xs text-deep-navy focus:ring-2 focus:ring-deep-navy focus:outline-none"></textarea>
+      </div>
+
+      <div class="pt-2 flex items-center justify-end gap-3">
+        <button type="button" onclick="closeModal('uploadModal')" class="px-4 py-2.5 bg-surface-container hover:bg-slate-200 text-deep-navy font-bold rounded-xl text-xs transition">
+          Cancel
+        </button>
+        <button type="submit" class="px-5 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-1.5">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Upload to Vault
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // 1. Dynamic Tab Switcher
+  function switchTab(tabKey) {
+    const tabs = ['classes', 'students', 'vault', 'homework', 'payouts'];
+    tabs.forEach(t => {
+      const content = document.getElementById('tabContent' + t.charAt(0).toUpperCase() + t.slice(1));
+      const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (content) content.classList.add('hidden');
+      if (btn) {
+        btn.classList.remove('bg-deep-navy', 'text-white', 'shadow');
+        btn.classList.add('text-on-surface-variant');
+      }
+    });
+
+    const activeContent = document.getElementById('tabContent' + tabKey.charAt(0).toUpperCase() + tabKey.slice(1));
+    const activeBtn = document.getElementById('tabBtn' + tabKey.charAt(0).toUpperCase() + tabKey.slice(1));
+    if (activeContent) activeContent.classList.remove('hidden');
+    if (activeBtn) {
+      activeBtn.classList.remove('text-on-surface-variant');
+      activeBtn.classList.add('bg-deep-navy', 'text-white', 'shadow');
+    }
+  }
+
+  // 2. Modals Control
+  function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.classList.remove('hidden');
+      // Set min date on date inputs
+      const today = new Date().toISOString().split('T')[0];
+      const dateInp = document.getElementById('scheduleDateInput');
+      if (dateInp) dateInp.min = today;
+    }
+  }
+
+  function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('hidden');
+  }
+
+  // Pre-fill helpers from student roster
+  function prefillInstantClass(bookingId, label) {
+    const select = document.getElementById('instantBookingSelect');
+    if (select) select.value = bookingId;
+    const titleInp = document.getElementById('instantTitleInput');
+    if (titleInp && label) titleInp.value = "Live Class: " + label;
+    openModal('instantClassModal');
+  }
+
+  function prefillSchedule(bookingId, label) {
+    const select = document.getElementById('scheduleBookingSelect');
+    if (select) select.value = bookingId;
+    const titleInp = document.getElementById('scheduleTitleInput');
+    if (titleInp && label) titleInp.value = "Class: " + label;
+    openModal('scheduleModal');
+  }
+
+  function prefillUpload(bookingId) {
+    const select = document.getElementById('uploadBookingSelect');
+    if (select) select.value = bookingId;
+    openModal('uploadModal');
+  }
+
+  // 3. Resource Filter
+  function filterResources(category) {
+    document.querySelectorAll('.res-filter-btn').forEach(btn => {
+      btn.classList.remove('bg-deep-navy', 'text-white');
+      btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+    });
+    event.currentTarget.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    event.currentTarget.classList.add('bg-deep-navy', 'text-white');
+
+    const cards = document.querySelectorAll('.res-card');
+    cards.forEach(card => {
+      if (category === 'ALL' || card.getAttribute('data-type') === category) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+
+  // 4. Grading Box Toggle
+  function toggleGradeBox(subId) {
+    const box = document.getElementById('grade-box-' + subId);
+    if (box) {
+      box.classList.toggle('hidden');
+      if (!box.classList.contains('hidden')) {
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }
+</script>
+{% endblock %}

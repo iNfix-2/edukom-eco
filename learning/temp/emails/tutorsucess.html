@@ -1,0 +1,37 @@
+{% autoescape on %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f5f5f5;">
+
+    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+
+        <div style="background-color: #002769; color: #ffffff; text-align: center; padding: 20px;">
+            <h1 style="color: #ffffff;">Congratulations {{ tutor.full_name | title }}!</h1>
+        </div>
+
+        <div style="padding: 20px; color: #555555;">
+            <p>Congratulations on taking the first step to become a tutor with Edukom!</p>
+            <p>Your journey with us is about to begin, opening doors to a world of educational possibilities.</p>
+            <p>Here are the next steps in the application process:</p>
+            <ol>
+                <li><strong style="color: #002769;">Application Review:</strong> Our team will carefully review your application to ensure it aligns with our requirements.</li>
+                <li><strong style="color: #002769;">Interview:</strong> If your application is successful, we will reach out to schedule an interview to discuss your qualifications and teaching approach.</li>
+                <li><strong style="color: #002769;">Orientation:</strong> Upon a successful interview, we will provide you with an orientation to familiarize you with our platform and policies.</li>
+            </ol>
+            <p>We look forward to the possibility of having you on board as part of our esteemed team of tutors.</p>
+            <p>If you have any questions or need further assistance, feel free to reply to this email.</p>
+        </div>
+
+        <div style="background-color: #f9f9f9; text-align: center; padding: 10px; font-size: 14px; color: #555555;">
+            <p>Best regards,<br>Edukom Team<br><a href="https://www.edukom.ng" style="color: #002769; text-decoration: none;">www.edukom.ng</a></p>
+        </div>
+
+    </div>
+    </body>
+</html>
+{% endautoescape %}

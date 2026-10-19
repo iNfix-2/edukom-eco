@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ run.title }} - Edukom Payroll{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+    <!-- Top Action Card -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-2xl font-black text-slate-900">{{ run.title }}</h1>
+          {% if run.status == 'APPROVED' %}
+            <span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">Approved</span>
+          {% elif run.status == 'DISBURSED' %}
+            <span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800">Disbursed</span>
+          {% else %}
+            <span class="px-3 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800">{{ run.get_status_display }}</span>
+          {% endif %}
+        </div>
+        <p class="text-sm text-slate-500 mt-1">Period: {{ run.period_start }} to {{ run.period_end }} | Source: {{ run.source_filename }}</p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <a href="{% url 'payroll:export_excel' run.id %}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition flex items-center gap-2">
+          <i class="fa-solid fa-file-excel text-emerald-600"></i>
+          <span>Export Excel</span>
+        </a>
+
+        {% if run.status == 'CALCULATED' %}
+        <form method="POST" action="{% url 'payroll:approve_run' run.id %}">
+          {% csrf_token %}
+          <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm shadow transition flex items-center gap-2">
+            <i class="fa-solid fa-stamp"></i>
+            <span>Authorize & Approve Run</span>
+          </button>
+        </form>
+        {% endif %}
+
+        {% if run.status == 'APPROVED' or run.status == 'DISBURSED' %}
+        <form method="POST" action="{% url 'payroll:send_payslips' run.id %}">
+          {% csrf_token %}
+          <button type="submit" onclick="return confirm('Send automated itemized payslips to all tutors via email?')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm shadow transition flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Email All Payslips</span>
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if messages %}
+      <div class="space-y-2">
+        {% for message in messages %}
+          <div class="p-4 rounded-xl text-sm font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Summary Metrics -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Hours</p>
+        <p class="text-3xl font-black text-slate-900 mt-2">{{ run.total_hours }} hrs</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Gross Calculated</p>
+        <p class="text-3xl font-black text-slate-700 mt-2">{{ run.currency }} {{ run.total_gross|floatformat:2 }}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Net Payable</p>
+        <p class="text-3xl font-black text-indigo-600 mt-2">{{ run.currency }} {{ run.total_net|floatformat:2 }}</p>
+      </div>
+    </div>
+
+    <!-- Line Items Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+        <h2 class="text-lg font-bold text-slate-800">Tutor Breakdown ({{ items|length }} Tutors)</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 text-sm">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Tutor</th>
+              <th class="px-6 py-3 text-left font-bold text-slate-500 uppercase tracking-wider">Bank Details</th>
+              <th class="px-6 py-3 text-right font-bold text-slate-500 uppercase tracking-wider">Hours</th>
+              <th class="px-6 py-3 text-right font-bold text-slate-500 uppercase tracking-wider">Gross Pay</th>
+              <th class="px-6 py-3 text-right font-bold text-slate-500 uppercase tracking-wider">Net Pay</th>
+              <th class="px-6 py-3 text-center font-bold text-slate-500 uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 bg-white">
+            {% for item in items %}
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="px-6 py-4">
+                <p class="font-bold text-slate-900">{{ item.tutor_name }}</p>
+                <p class="text-xs text-slate-400">{{ item.tutor_email }}</p>
+              </td>
+              <td class="px-6 py-4 text-xs">
+                {% if item.tutor and item.tutor.bank_account %}
+                  <p class="font-semibold text-slate-800">{{ item.tutor.bank_account.bank_name }}</p>
+                  <p class="font-mono text-slate-500">{{ item.tutor.bank_account.masked_account_number }}</p>
+                  <span class="inline-flex items-center text-[10px] font-bold text-emerald-600 mt-0.5">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Verified
+                  </span>
+                {% elif item.tutor %}
+                  <a href="{% url 'payroll:link_bank' item.tutor.id %}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 hover:bg-amber-100 font-semibold text-xs border border-amber-200 transition">
+                    <i class="fa-solid fa-link"></i> Link & Verify Bank
+                  </a>
+                {% else %}
+                  <span class="text-slate-400 font-medium italic">Unregistered Tutor</span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 text-right font-medium text-slate-800">
+                {{ item.total_hours }} hrs
+              </td>
+              <td class="px-6 py-4 text-right text-slate-600">
+                {{ run.currency }} {{ item.calculated_gross_pay|floatformat:2 }}
+              </td>
+              <td class="px-6 py-4 text-right font-extrabold text-indigo-600">
+                {{ run.currency }} {{ item.net_pay|floatformat:2 }}
+              </td>
+              <td class="px-6 py-4 text-center">
+                {% if item.status == 'PAID' %}
+                  <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800">
+                    Paid
+                  </span>
+                {% elif item.status == 'FAILED' %}
+                  <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-100 text-rose-800">
+                    Failed
+                  </span>
+                {% else %}
+                  <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">
+                    {{ item.status }}
+                  </span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

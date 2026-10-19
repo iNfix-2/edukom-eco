@@ -1,0 +1,699 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Core Web Vitals Preconnections -->
+  <link rel="preconnect" href="https://connect.facebook.net">
+  <link rel="preconnect" href="https://www.facebook.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+  <link rel="dns-prefetch" href="https://connect.facebook.net">
+  <link rel="dns-prefetch" href="https://www.facebook.com">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+  <!-- Meta / SEO -->
+  <title>{% block title %}Edukom Learning - Professional Private Tutoring{% endblock %}</title>
+  <meta name="description"
+    content="Edukom Learning offers professional private tutoring services for students aged 5–18 years. Bridge learning gaps and provide personalized online classes with experienced tutors.">
+  <meta name="keywords"
+    content="private tutoring, online education, learning platform, educational services, academic support">
+  <meta name="author" content="Edukom Learning">
+
+  <!-- Open Graph & Twitter -->
+  <meta property="og:title" content="Edukom Learning - Professional Private Tutoring">
+  <meta property="og:description"
+    content="Bridge learning gaps with professional private tutoring. Personalized online classes for students aged 5–18 years.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.edukom.ng">
+  <meta property="og:image" content="{% static 'IMG/logo.png' %}">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'IMG/logo.png' %}">
+
+  <!-- Tailwind CSS CDN & Custom Config -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&family=Ribeye+Marrow&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "inverse-surface": "#2f3131",
+            "surface-variant": "#e2e2e2",
+            "surface-dim": "#dadada",
+            "pure-white": "#FFFFFF",
+            "surface-container": "#eeeeee",
+            "on-primary": "#ffffff",
+            "on-tertiary-container": "#d77b5b",
+            "deep-navy": "#002769",
+            "secondary-fixed-dim": "#acd459",
+            "inverse-primary": "#b2c5ff",
+            "outline-variant": "#c4c6d2",
+            "on-background": "#1a1c1c",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed-variant": "#783117",
+            "error-container": "#ffdad6",
+            "canvas-gray": "#F5F5F5",
+            "surface-bright": "#f9f9f9",
+            "vibrant-lime": "#A9D156",
+            "tertiary-fixed": "#ffdbcf",
+            "surface-container-low": "#f3f3f3",
+            "primary-fixed": "#dae2ff",
+            "tertiary": "#320900",
+            "surface": "#f9f9f9",
+            "on-error-container": "#93000a",
+            "tertiary-fixed-dim": "#ffb59c",
+            "on-surface-variant": "#444650",
+            "on-primary-container": "#7791d8",
+            "on-primary-fixed": "#001848",
+            "surface-container-lowest": "#ffffff",
+            "primary": "#00143f",
+            "tertiary-container": "#541701",
+            "surface-container-high": "#e8e8e8",
+            "inverse-on-surface": "#f1f1f1",
+            "error": "#ba1a1a",
+            "primary-container": "#002769",
+            "secondary-fixed": "#c7f172",
+            "on-error": "#ffffff",
+            "on-secondary-fixed": "#141f00",
+            "surface-container-highest": "#e2e2e2",
+            "secondary-container": "#c5ee6f",
+            "secondary": "#4b6700",
+            "on-secondary-fixed-variant": "#374e00",
+            "on-secondary-container": "#4e6c00",
+            "outline": "#747781",
+            "on-tertiary": "#ffffff",
+            "primary-fixed-dim": "#b2c5ff",
+            "on-primary-fixed-variant": "#274486",
+            "background": "#f9f9f9",
+            "on-tertiary-fixed": "#390c00",
+            "on-surface": "#1a1c1c",
+            "surface-tint": "#415c9f"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "24px",
+            "margin-desktop": "40px",
+            "container-max": "1280px",
+            "base-unit": "8px",
+            "margin-mobile": "16px"
+          },
+          "fontFamily": {
+            "ribeye": ["'Ribeye Marrow'", "cursive"],
+            "body-sm": ["Hanken Grotesk", "sans-serif"],
+            "headline-md": ["Montserrat", "sans-serif"],
+            "display-lg": ["Montserrat", "sans-serif"],
+            "label-md": ["Hanken Grotesk", "sans-serif"],
+            "headline-lg-mobile": ["Montserrat", "sans-serif"],
+            "body-lg": ["Hanken Grotesk", "sans-serif"],
+            "label-sm": ["Hanken Grotesk", "sans-serif"],
+            "headline-lg": ["Montserrat", "sans-serif"],
+            "display-lg-mobile": ["Montserrat", "sans-serif"],
+            "body-md": ["Hanken Grotesk", "sans-serif"]
+          },
+          "fontSize": {
+            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+            "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "label-sm": ["12px", { "lineHeight": "14px", "fontWeight": "500" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+            "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    p {
+      text-align: justify;
+    }
+    .text-center, .text-center p, p.text-center {
+      text-align: center !important;
+    }
+    .text-left, .text-left p, p.text-left {
+      text-align: left !important;
+    }
+    .text-right, .text-right p, p.text-right {
+      text-align: right !important;
+    }
+    h1, h2, h3, h4, h5, h6, .font-headline-lg, .font-headline-md, .font-display-lg {
+      font-family: 'Montserrat', sans-serif !important;
+    }
+    .font-ribeye {
+      font-family: 'Ribeye Marrow', cursive !important;
+    }
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .vibrant-shadow {
+      box-shadow: 0 4px 20px rgba(0, 39, 105, 0.06);
+    }
+    .bento-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .bento-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 39, 105, 0.12);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* Webflow Scroll Reveal & Micro-Interactions */
+    .reveal-fade-up, .reveal-fade-down, .reveal-fade-left, .reveal-fade-right, .reveal-scale, .scroll-trigger {
+      opacity: 0;
+      will-change: transform, opacity;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-fade-up { transform: translateY(35px); }
+    .reveal-fade-down { transform: translateY(-35px); }
+    .reveal-fade-left { transform: translateX(35px); }
+    .reveal-fade-right { transform: translateX(-35px); }
+    .reveal-scale { transform: scale(0.93); }
+
+    .reveal-fade-up.active, .reveal-fade-down.active, .reveal-fade-left.active, .reveal-fade-right.active, .reveal-scale.active, .scroll-trigger.active {
+      opacity: 1;
+      transform: translateY(0) translateX(0) scale(1);
+    }
+
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+    .delay-400 { transition-delay: 400ms; }
+    .delay-500 { transition-delay: 500ms; }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(1.5deg); }
+    }
+    .splatter-animated {
+      animation: floatSlow 7s ease-in-out infinite;
+    }
+
+    .hover-lift {
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+    }
+    .hover-lift:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 16px 36px -8px rgba(0, 39, 105, 0.15);
+    }
+
+    .hover-glow {
+      transition: all 0.3s ease;
+    }
+    .hover-glow:hover {
+      box-shadow: 0 0 25px rgba(169, 209, 86, 0.55);
+      transform: translateY(-2px);
+    }
+
+    .ripple-effect {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple-effect .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(0);
+      animation: rippleAnim 0.6s linear;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* User Profile Dropdown Bridge & Pinning */
+    #userMenuContainer:hover #userMenuDropdown,
+    #userMenuContainer.is-open #userMenuDropdown {
+      display: block !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      visibility: visible !important;
+    }
+    #userMenuContainer.is-open #userMenuChevron {
+      transform: rotate(180deg);
+    }
+    /* Invisible hover bridge to eliminate gap dropouts */
+    #userMenuDropdown::before {
+      content: "";
+      position: absolute;
+      top: -14px;
+      left: 0;
+      right: 0;
+      height: 14px;
+      background: transparent;
+      pointer-events: auto;
+    }
+  </style>
+
+  <!-- Facebook Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1511252760702495');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1511252760702495&ev=PageView&noscript=1" alt="" />
+  </noscript>
+</head>
+
+<body class="bg-canvas-gray text-on-surface font-body-md min-h-screen flex flex-col overflow-x-hidden">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-deep-navy text-on-primary text-body-sm py-2 px-4 w-full z-50">
+    <div class="max-w-container-max mx-auto flex items-center justify-between">
+      <marquee behavior="scroll" direction="left" scrollamount="6" class="w-full">
+        <span class="font-label-sm tracking-wide">
+          We offer examination preparation classes targeted particularly towards success in specific exams.
+          <a href="{% url 'about' %}" class="text-vibrant-lime underline font-bold ml-2 hover:text-white transition-colors">Read more</a>
+        </span>
+      </marquee>
+    </div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <nav class="sticky top-0 w-full z-50 glass-nav border-b border-surface-variant shadow-sm min-h-[72px] flex items-center transition-all duration-300">
+    <div class="max-w-container-max mx-auto px-3 sm:px-4 xl:px-gutter w-full flex justify-between items-center py-2.5 sm:py-3 gap-2 xl:gap-6">
+      
+      <!-- Brand Logo -->
+      <a href="/" class="flex items-center gap-2.5 shrink-0 group select-none">
+        <img alt="Edukom Logo" class="h-9 w-auto transform group-hover:scale-105 transition-transform" src="{% static 'IMG/logo.png' %}">
+        <span class="font-ribeye text-2xl font-normal text-deep-navy tracking-wide whitespace-nowrap">Edukom</span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <div class="hidden lg:flex items-center gap-2 xl:gap-4 2xl:gap-6 shrink-0">
+        <a class="text-xs xl:text-sm font-medium text-on-surface-variant hover:text-deep-navy hover:border-b-2 hover:border-vibrant-lime transition-all py-1 whitespace-nowrap" href="/">Home</a>
+        <a class="text-xs xl:text-sm font-medium text-on-surface-variant hover:text-deep-navy hover:border-b-2 hover:border-vibrant-lime transition-all py-1 whitespace-nowrap" href="{% url 'courses' %}">Courses</a>
+        <a class="text-xs xl:text-sm font-medium text-on-surface-variant hover:text-deep-navy hover:border-b-2 hover:border-vibrant-lime transition-all py-1 whitespace-nowrap" href="{% url 'videolibrary:catalog' %}">Video Library</a>
+        <a class="text-xs xl:text-sm font-medium text-on-surface-variant hover:text-deep-navy hover:border-b-2 hover:border-vibrant-lime transition-all py-1 whitespace-nowrap" href="{% url 'community' %}">Become a Tutor</a>
+        <a class="text-xs xl:text-sm font-medium text-on-surface-variant hover:text-deep-navy hover:border-b-2 hover:border-vibrant-lime transition-all py-1 whitespace-nowrap" href="{% url 'GetATutor' %}">Get a Tutor</a>
+        <a class="text-xs xl:text-sm font-medium text-on-surface-variant hover:text-deep-navy hover:border-b-2 hover:border-vibrant-lime transition-all py-1 whitespace-nowrap" href="{% url 'about' %}">About Us</a>
+        <a class="text-xs xl:text-sm font-medium text-on-surface-variant hover:text-deep-navy hover:border-b-2 hover:border-vibrant-lime transition-all py-1 whitespace-nowrap" href="{% url 'blog_list' %}">Blog</a>
+        <a class="text-xs xl:text-sm font-medium text-on-surface-variant hover:text-deep-navy hover:border-b-2 hover:border-vibrant-lime transition-all py-1 whitespace-nowrap" href="{% url 'faq' %}">FAQs</a>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        {% if user.is_authenticated %}
+        <a href="{% url 'dashboard_dispatcher' %}" class="hidden sm:inline-flex items-center gap-1.5 px-3 xl:px-4 py-2 bg-vibrant-lime text-deep-navy font-bold text-xs rounded-xl shadow-sm hover:brightness-105 transition whitespace-nowrap">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span>My Dashboard</span>
+        </a>
+
+        <div class="relative shrink-0" id="userMenuContainer">
+          <button id="userMenuButton" type="button" onclick="toggleUserDropdown(event)" class="px-2.5 sm:px-3 py-2 bg-white border border-outline-variant/30 text-deep-navy font-semibold text-xs rounded-xl flex items-center gap-2 hover:bg-surface-bright transition shadow-sm cursor-pointer select-none">
+            <span class="w-6 h-6 rounded-full bg-deep-navy text-vibrant-lime flex items-center justify-center text-xs font-black shrink-0">
+              {{ user.first_name|default:user.username|make_list|first|upper }}
+            </span>
+            <span class="hidden md:inline font-bold truncate max-w-[100px]">{{ user.first_name|default:user.username }}</span>
+            <span class="px-2 py-0.5 text-[10px] font-black rounded uppercase tracking-wider shrink-0 {% if user.profile.is_admin %}bg-purple-100 text-purple-800{% elif user.profile.is_staff_member %}bg-indigo-100 text-indigo-800{% elif user.profile.is_tutor %}bg-blue-100 text-blue-800{% elif user.profile.is_guardian %}bg-amber-100 text-amber-800{% else %}bg-green-100 text-green-800{% endif %}">
+              {{ user.profile.get_role_display|default:"Student" }}
+            </span>
+            <span id="userMenuChevron" class="material-symbols-outlined text-sm transition-transform duration-200 shrink-0">expand_more</span>
+          </button>
+          <div id="userMenuDropdown" class="absolute right-0 top-full pt-1.5 w-56 z-50 hidden text-xs font-semibold">
+            <div class="bg-white rounded-2xl shadow-2xl border border-surface-variant/40 py-2 overflow-hidden animate-fade-in">
+              <div class="px-4 py-2 border-b border-surface-variant/40 bg-surface-bright/60">
+                <p class="font-bold text-deep-navy truncate">{{ user.get_full_name|default:user.username }}</p>
+                <p class="text-[10px] text-outline truncate">{{ user.email }}</p>
+              </div>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'dashboard_dispatcher' %}">
+                <i class="fa-solid fa-gauge text-deep-navy/70"></i>
+                <span>LMS Dashboard</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'videolibrary:catalog' %}">
+                <i class="fa-solid fa-play-circle text-vibrant-lime" style="color: #4b6700;"></i>
+                <span>Video Course Library</span>
+              </a>
+              {% if user.profile.is_student %}
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'classroom:student_portal' %}">
+                <i class="fa-solid fa-door-open text-deep-navy/70"></i>
+                <span>Live Classroom Portal</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'classroom:quiz_list' %}">
+                <i class="fa-solid fa-clipboard-check text-blue-700"></i>
+                <span>Quizzes &amp; Tests</span>
+              </a>
+              {% elif user.profile.is_guardian %}
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'dashboard_guardian' %}">
+                <i class="fa-solid fa-hands-holding-child text-amber-700"></i>
+                <span>Guardian Portal</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'classroom:quiz_list' %}">
+                <i class="fa-solid fa-clipboard-check text-blue-700"></i>
+                <span>Assessments &amp; Quizzes</span>
+              </a>
+              {% elif user.profile.is_tutor %}
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'classroom:tutor_portal' %}">
+                <i class="fa-solid fa-chalkboard-user text-deep-navy/70"></i>
+                <span>Tutor Teaching Portal</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'classroom:quiz_list' %}">
+                <i class="fa-solid fa-clipboard-check text-blue-700"></i>
+                <span>Quiz Manager</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'videolibrary:studio_dashboard' %}">
+                <i class="fa-solid fa-photo-film text-indigo-700"></i>
+                <span>Video Creator Studio</span>
+              </a>
+              {% elif user.profile.is_staff_member and not user.profile.is_admin %}
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'dashboard_staff' %}">
+                <i class="fa-solid fa-headset text-indigo-700"></i>
+                <span>Operations Center</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'videolibrary:studio_dashboard' %}">
+                <i class="fa-solid fa-photo-film text-indigo-700"></i>
+                <span>Video Creator Studio</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'guardians' %}">
+                <i class="fa-solid fa-address-book text-indigo-700"></i>
+                <span>Guardians Directory</span>
+              </a>
+              {% endif %}
+              {% if user.profile.is_admin %}
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'dashboard_admin' %}">
+                <i class="fa-solid fa-crown text-purple-700"></i>
+                <span>Admin Console</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'videolibrary:studio_dashboard' %}">
+                <i class="fa-solid fa-photo-film text-purple-700"></i>
+                <span>Video Creator Studio</span>
+              </a>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="/admin/" target="_blank">
+                <i class="fa-solid fa-sliders text-purple-700"></i>
+                <span>Django Admin</span>
+              </a>
+              {% endif %}
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-on-surface hover:bg-surface-container hover:text-deep-navy transition-colors" href="{% url 'profile_settings' %}">
+                <i class="fa-solid fa-user-gear text-deep-navy/70"></i>
+                <span>Profile Settings</span>
+              </a>
+              <div class="border-t border-surface-variant/40 my-1"></div>
+              <a class="flex items-center gap-2.5 px-4 py-2.5 text-error hover:bg-rose-50 transition-colors" href="{% url 'logout' %}">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="px-3.5 py-2 bg-transparent text-deep-navy border border-deep-navy font-bold text-xs rounded-xl hover:bg-deep-navy hover:text-white transition-all whitespace-nowrap">Sign In</a>
+        <a href="{% url 'register' %}" class="hidden sm:inline-flex px-3.5 py-2 bg-vibrant-lime text-deep-navy font-bold text-xs rounded-xl hover:brightness-105 transition-all shadow-sm whitespace-nowrap">Register</a>
+        {% endif %}
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="mobileMenuBtn" onclick="toggleMobileNav()" class="lg:hidden p-2 text-deep-navy rounded-xl hover:bg-surface-container transition-colors focus:outline-none shrink-0" aria-label="Toggle Mobile Menu">
+          <span id="mobileMenuIcon" class="material-symbols-outlined text-2xl flex items-center justify-center">menu</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobileDrawer" class="hidden lg:hidden fixed inset-x-0 top-[72px] bg-white border-b border-surface-variant shadow-2xl p-5 transition-all duration-300 z-50 max-h-[calc(100vh-80px)] overflow-y-auto rounded-b-3xl">
+      <div class="flex flex-col gap-1.5">
+
+        <a class="flex items-center justify-between text-base font-bold text-deep-navy py-3 px-4 rounded-xl hover:bg-vibrant-lime/10 transition-colors border-b border-surface-variant/40" href="/">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-deep-navy">home</span>
+            <span>Home</span>
+          </div>
+          <span class="material-symbols-outlined text-sm opacity-50">chevron_right</span>
+        </a>
+
+        <a class="flex items-center justify-between text-base font-semibold text-on-surface py-3 px-4 rounded-xl hover:bg-vibrant-lime/10 hover:text-deep-navy transition-colors border-b border-surface-variant/40" href="{% url 'courses' %}">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-deep-navy">school</span>
+            <span>Courses & Programs</span>
+          </div>
+          <span class="material-symbols-outlined text-sm opacity-50">chevron_right</span>
+        </a>
+
+        <a class="flex items-center justify-between text-base font-semibold text-on-surface py-3 px-4 rounded-xl hover:bg-vibrant-lime/10 hover:text-deep-navy transition-colors border-b border-surface-variant/40" href="{% url 'videolibrary:catalog' %}">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-deep-navy">play_circle</span>
+            <span>Video Course Library</span>
+          </div>
+          <span class="material-symbols-outlined text-sm opacity-50">chevron_right</span>
+        </a>
+
+        <a class="flex items-center justify-between text-base font-semibold text-on-surface py-3 px-4 rounded-xl hover:bg-vibrant-lime/10 hover:text-deep-navy transition-colors border-b border-surface-variant/40" href="{% url 'community' %}">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-deep-navy">group</span>
+            <span>Become a Tutor</span>
+          </div>
+          <span class="material-symbols-outlined text-sm opacity-50">chevron_right</span>
+        </a>
+
+        <a class="flex items-center justify-between text-base font-semibold text-on-surface py-3 px-4 rounded-xl hover:bg-vibrant-lime/10 hover:text-deep-navy transition-colors border-b border-surface-variant/40" href="{% url 'GetATutor' %}">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-deep-navy">person_add</span>
+            <span>Get a Private Tutor</span>
+          </div>
+          <span class="material-symbols-outlined text-sm opacity-50">chevron_right</span>
+        </a>
+
+        <a class="flex items-center justify-between text-base font-semibold text-on-surface py-3 px-4 rounded-xl hover:bg-vibrant-lime/10 hover:text-deep-navy transition-colors border-b border-surface-variant/40" href="{% url 'about' %}">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-deep-navy">info</span>
+            <span>About Us</span>
+          </div>
+          <span class="material-symbols-outlined text-sm opacity-50">chevron_right</span>
+        </a>
+
+        <a class="flex items-center justify-between text-base font-semibold text-on-surface py-3 px-4 rounded-xl hover:bg-vibrant-lime/10 hover:text-deep-navy transition-colors border-b border-surface-variant/40" href="{% url 'blog_list' %}">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-deep-navy">article</span>
+            <span>Blog</span>
+          </div>
+          <span class="material-symbols-outlined text-sm opacity-50">chevron_right</span>
+        </a>
+
+        <a class="flex items-center justify-between text-base font-semibold text-on-surface py-3 px-4 rounded-xl hover:bg-vibrant-lime/10 hover:text-deep-navy transition-colors" href="{% url 'faq' %}">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-xl text-deep-navy">help</span>
+            <span>FAQs</span>
+          </div>
+          <span class="material-symbols-outlined text-sm opacity-50">chevron_right</span>
+        </a>
+
+        <!-- Action CTAs -->
+        <div class="pt-4 flex flex-col gap-3 border-t border-surface-variant/60 mt-2">
+          {% if user.is_authenticated %}
+            <a href="{% url 'dashboard_dispatcher' %}" class="w-full text-center py-3 bg-deep-navy text-vibrant-lime font-label-md rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm">
+              <i class="fa-solid fa-gauge-high"></i>
+              <span>My LMS Dashboard</span>
+            </a>
+            <a href="{% url 'profile_settings' %}" class="w-full text-center py-2.5 bg-surface-container text-deep-navy font-label-md rounded-xl font-bold flex items-center justify-center gap-2">
+              <i class="fa-solid fa-user-gear"></i>
+              <span>Profile Settings</span>
+            </a>
+            {% if user.is_staff or user.profile.is_admin %}
+            <a href="{% url 'dashboard_admin' %}" class="w-full text-center py-2.5 bg-purple-50 text-purple-900 border border-purple-200 font-label-md rounded-xl font-bold flex items-center justify-center gap-2">
+              <i class="fa-solid fa-crown"></i>
+              <span>Admin Management</span>
+            </a>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="w-full text-center py-2.5 border border-error text-error font-label-md rounded-xl font-bold">Logout</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="w-full text-center py-3 border border-deep-navy text-deep-navy font-label-md rounded-xl font-bold hover:bg-deep-navy hover:text-white transition-colors">Sign In</a>
+            <a href="{% url 'GetATutor' %}" class="w-full text-center py-3.5 bg-vibrant-lime text-deep-navy font-headline-md rounded-xl font-bold shadow-md hover:brightness-105 transition-all">Get a Private Tutor</a>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- Notification Messages -->
+  {% if messages %}
+  <div class="max-w-container-max mx-auto px-gutter mt-4">
+    {% for message in messages %}
+    <div class="p-4 rounded-xl mb-3 flex items-center justify-between shadow-sm border {% if message.tags == 'error' %}bg-red-50 text-red-800 border-red-200{% else %}bg-green-50 text-green-800 border-green-200{% endif %}">
+      <span class="font-body-md">{{ message }}</span>
+      <button onclick="this.parentElement.remove()" class="text-sm font-bold opacity-60 hover:opacity-100">✕</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Main Content Areas -->
+  <main class="flex-grow">
+    {% block header %} {% endblock header %}
+    {% block main %} {% endblock main %}
+    {% block content %} {% endblock content %}
+  </main>
+
+  <!-- Stitch-Themed Footer -->
+  <footer class="bg-primary text-on-primary mt-auto border-t border-on-primary/10">
+    <div class="max-w-container-max mx-auto px-gutter py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 border-b border-on-primary/10">
+      
+      <!-- Brand & Summary -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="flex items-center gap-3">
+          <img alt="Edukom Logo" class="h-9 w-auto brightness-0 invert" src="{% static 'IMG/logo.png' %}">
+          <span class="font-headline-md text-2xl font-bold text-white tracking-tight">Edukom</span>
+        </div>
+        <p class="text-body-sm text-primary-fixed/70 max-w-sm leading-relaxed">
+          Elevating academic standards through a modern digital learning ecosystem designed for the leaders of tomorrow. Personalized private tutoring from Reception to A-Levels.
+        </p>
+        <div class="flex gap-3 pt-2">
+          <a class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center hover:bg-vibrant-lime hover:text-deep-navy transition-all" href="https://www.linkedin.com/company/edukomplatform/" target="_blank">
+            <i class="fab fa-linkedin-in text-base"></i>
+          </a>
+          <a class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center hover:bg-vibrant-lime hover:text-deep-navy transition-all" href="https://www.facebook.com/share/1Fsu7Znh6d/" target="_blank">
+            <i class="fab fa-facebook-f text-base"></i>
+          </a>
+          <a class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center hover:bg-vibrant-lime hover:text-deep-navy transition-all" href="https://www.instagram.com/edukomlearning?igsh=Y3hiaWlwdHFzamYw" target="_blank">
+            <i class="fab fa-instagram text-base"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Links Column 1 -->
+      <div class="space-y-4">
+        <h4 class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs">Academic Programs</h4>
+        <ul class="space-y-3 text-body-sm text-primary-fixed/70">
+          <li><a class="hover:text-vibrant-lime transition-colors" href="/#ourCourses">Reception & KS 1-2</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="/#ourCourses">KS 3 & KS 4</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="/#ourCourses">A-Levels & Prep</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="/#ourExams">Exam Prep (WASSCE, SAT)</a></li>
+        </ul>
+      </div>
+
+      <!-- Links Column 2 -->
+      <div class="space-y-4">
+        <h4 class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs">Company & Support</h4>
+        <ul class="space-y-3 text-body-sm text-primary-fixed/70">
+          <li><a class="hover:text-vibrant-lime transition-colors" href="/">Edukom Gateway Hub</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="{% url 'about' %}">Edukom Corporate & HR</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="{% url 'about' %}">Who We Are</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="{% url 'community' %}">Become a Tutor</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="{% url 'GetATutor' %}">Get a Tutor</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="{% url 'blog_list' %}">Blog Insights</a></li>
+          <li><a class="hover:text-vibrant-lime transition-colors" href="{% url 'contact' %}">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Links Column 3 (Contact & Address) -->
+      <div class="space-y-4">
+        <h4 class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs">Get In Touch</h4>
+        <div class="space-y-3 text-body-sm text-primary-fixed/70">
+          <p class="flex items-start gap-2">
+            <span class="material-symbols-outlined text-vibrant-lime text-lg mt-0.5">location_on</span>
+            <span>Plot D2, Maazi Fidelis Nwosu Close, Valley Hub Estate, Lugbe, Abuja.</span>
+          </p>
+          <p class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-vibrant-lime text-lg">mail</span>
+            <a href="mailto:info@edukom.ng" class="hover:text-vibrant-lime">info@edukom.ng</a>
+          </p>
+          <p class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-vibrant-lime text-lg">call</span>
+            <a href="tel:+2349042719410" class="hover:text-vibrant-lime">+234 (0) 904 271 9410</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright Bar -->
+    <div class="max-w-container-max mx-auto px-gutter py-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-label-sm text-primary-fixed/50">
+      <p>© 2026 Edukom Academic. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a class="hover:text-vibrant-lime transition-colors" href="{% url 'faq' %}">FAQs</a>
+        <a class="hover:text-vibrant-lime transition-colors" href="{% url 'about' %}">About</a>
+        <a class="hover:text-vibrant-lime transition-colors" href="{% url 'contact' %}">Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{% static 'JS/jquery-3.5.1.min.js' %}"></script>
+  <script>
+    function toggleMobileNav() {
+      const drawer = document.getElementById('mobileDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function toggleMobileNav() {
+      const drawer = document.getElementById('mobileDrawer');
+      const icon = document.getElementById('mobileMenuIcon');
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        drawer.classList.add('flex');
+        if (icon) icon.textContent = 'close';
+      } else {
+        drawer.classList.add('hidden');
+        drawer.classList.remove('flex');
+        if (icon) icon.textContent = 'menu';
+      }
+    }
+
+    /* User Profile Dropdown Interactivity */
+    function toggleUserDropdown(event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      const container = document.getElementById('userMenuContainer');
+      if (container) {
+        container.classList.toggle('is-open');
+      }
+    }
+
+    function closeUserDropdown() {
+      const container = document.getElementById('userMenuContainer');
+      if (container) {
+        container.classList.remove('is-open');
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      const container = document.getElementById('userMenuContainer');
+      if (container && !container.contains(e.target)) {
+        closeUserDropdown();
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeUserDropdown();
+      }
+    });
+  </script>
+  <script src="{% static 'JS/scripts.js' %}" defer></script>
+</body>
+
+</html>

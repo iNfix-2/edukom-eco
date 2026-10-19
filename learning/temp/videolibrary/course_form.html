@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} - Creator Studio - Edukom{% endblock %}
+
+{% block main %}
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto space-y-6">
+    
+    <!-- Breadcrumb & Back -->
+    <div class="flex items-center justify-between">
+      <a href="{% url 'videolibrary:studio_dashboard' %}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-indigo-600 transition">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back to Creator Studio</span>
+      </a>
+      {% if is_edit and course %}
+        <span class="text-xs text-slate-400">Course ID: <strong class="font-mono text-slate-600">{{ course.id|slice:":8" }}</strong></span>
+      {% endif %}
+    </div>
+
+    <!-- Main Form Card -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+      <div class="p-6 sm:p-8 border-b border-slate-100 flex items-center space-x-4">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold">
+          <i class="fa-solid {% if is_edit %}fa-pen-to-square{% else %}fa-plus{% endif %}"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-black text-slate-900 tracking-tight">{{ title }}</h1>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Configure curriculum metadata, class level, subject categorization, and thumbnail.
+          </p>
+        </div>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-6">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        <!-- Course Title -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            Course Title <span class="text-rose-500">*</span>
+          </label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <p class="text-[11px] text-rose-600 font-semibold">{{ form.title.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Subject & Class Level Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              Subject <span class="text-rose-500">*</span>
+            </label>
+            {{ form.subject }}
+            {% if form.subject.errors %}
+              <p class="text-[11px] text-rose-600 font-semibold">{{ form.subject.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+              Class Level / Key Stage <span class="text-rose-500">*</span>
+            </label>
+            {{ form.class_level }}
+            {% if form.class_level.errors %}
+              <p class="text-[11px] text-rose-600 font-semibold">{{ form.class_level.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            Curriculum Description & Objectives
+          </label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <p class="text-[11px] text-rose-600 font-semibold">{{ form.description.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Thumbnail Upload Section -->
+        <div class="space-y-3 p-5 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+          <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+            Course Cover Thumbnail
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+            <div>
+              <p class="text-[11px] text-slate-500 mb-2">Upload image file (JPEG, PNG, WebP):</p>
+              {{ form.thumbnail }}
+              {% if form.thumbnail.errors %}
+                <p class="text-[11px] text-rose-600 font-semibold mt-1">{{ form.thumbnail.errors.0 }}</p>
+              {% endif %}
+            </div>
+            {% if course and course.thumbnail_display %}
+              <div class="flex items-center gap-3">
+                <div class="w-24 h-16 rounded-xl overflow-hidden bg-slate-900 border border-slate-300">
+                  <img src="{{ course.thumbnail_display }}" alt="Current thumbnail" class="w-full h-full object-cover">
+                </div>
+                <span class="text-xs text-slate-500">Current Cover</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="pt-2 border-t border-slate-200/60">
+            <p class="text-[11px] text-slate-500 mb-1.5">Or provide an external Image URL:</p>
+            {{ form.thumbnail_url }}
+            {% if form.thumbnail_url.errors %}
+              <p class="text-[11px] text-rose-600 font-semibold mt-1">{{ form.thumbnail_url.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Pricing & Access Settings -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+              Standalone Price (NGN)
+            </label>
+            {{ form.price }}
+            <p class="text-[10px] text-slate-400">Leave 0 for free or subscription-only access.</p>
+            {% if form.price.errors %}
+              <p class="text-[11px] text-rose-600 font-semibold">{{ form.price.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <label class="flex items-center gap-2 cursor-pointer">
+              {{ form.is_subscription_only }}
+              <span class="text-xs font-bold text-slate-800">Subscription Entitlement Required</span>
+            </label>
+            <p class="text-[11px] text-slate-500 leading-tight">
+              When checked, students must have an active monthly or termly pass to view lessons.
+            </p>
+
+            <label class="flex items-center gap-2 cursor-pointer pt-2 border-t border-slate-200/60">
+              {{ form.is_published }}
+              <span class="text-xs font-bold text-emerald-800">Publish Immediately to Catalog</span>
+            </label>
+            <p class="text-[11px] text-slate-500 leading-tight">
+              Uncheck to keep as a private Draft while uploading lessons and resources.
+            </p>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+          <a href="{% url 'videolibrary:studio_dashboard' %}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+            Cancel
+          </a>
+          <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            <span>{% if is_edit %}Save Changes{% else %}Create Course & Build Curriculum{% endif %}</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock main %}

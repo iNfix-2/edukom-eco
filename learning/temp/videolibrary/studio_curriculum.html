@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ course.title }} - Curriculum & Resource Studio - Edukom{% endblock %}
+
+{% block main %}
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- Header & Navigation -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <a href="{% url 'videolibrary:studio_dashboard' %}" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 flex items-center justify-center transition shadow-xs">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">{{ course.subject.name|default:"General" }} &bull; {{ course.class_level }}</span>
+            {% if course.is_published %}
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider">Published</span>
+            {% else %}
+              <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black uppercase tracking-wider">Draft Mode</span>
+            {% endif %}
+          </div>
+          <h1 class="text-2xl font-black text-slate-900 tracking-tight">{{ course.title }}</h1>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <a href="{% url 'videolibrary:course_detail' course.id %}" target="_blank" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span>Student View</span>
+        </a>
+        <a href="{% url 'videolibrary:studio_course_edit' course.id %}" class="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>Edit Course Settings</span>
+        </a>
+        <form action="{% url 'videolibrary:studio_course_toggle_publish' course.id %}" method="POST" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs {% if course.is_published %}bg-amber-100 text-amber-800 hover:bg-amber-200{% else %}bg-emerald-600 text-white hover:bg-emerald-700{% endif %}">
+            <i class="fa-solid {% if course.is_published %}fa-eye-slash{% else %}fa-globe{% endif %}"></i>
+            <span>{% if course.is_published %}Unpublish{% else %}Publish Course{% endif %}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    {% if messages %}
+      <div class="space-y-2">
+        {% for message in messages %}
+          <div class="p-4 rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-sm {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border border-rose-200{% elif message.tags == 'success' %}bg-emerald-50 text-emerald-800 border border-emerald-200{% else %}bg-indigo-50 text-indigo-800 border border-indigo-200{% endif %}">
+            <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-rose-500{% elif message.tags == 'success' %}fa-circle-check text-emerald-500{% else %}fa-circle-info text-indigo-500{% endif %} text-base"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- 2 Column Studio Layout: Lessons & Upload on Left, Resources & Materials on Right -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- LEFT COLUMN: CURRICULUM VIDEO LESSONS (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Video Lessons List -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-list-ol"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-bold text-slate-900">Curriculum Video Lessons</h2>
+                <p class="text-xs text-slate-400">Total: <strong class="text-slate-700">{{ lessons.count }}</strong> recorded lectures</p>
+              </div>
+            </div>
+            <a href="#uploadLessonBox" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold transition flex items-center gap-1">
+              <i class="fa-solid fa-plus text-[10px]"></i>
+              <span>Add Lesson</span>
+            </a>
+          </div>
+
+          <div class="divide-y divide-slate-100">
+            {% for lesson in lessons %}
+              <div class="p-5 hover:bg-slate-50/60 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-start space-x-3.5">
+                  <span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 font-black text-xs flex items-center justify-center shrink-0">
+                    #{{ lesson.order }}
+                  </span>
+                  <div>
+                    <h3 class="text-sm font-bold text-slate-900">{{ lesson.title }}</h3>
+                    {% if lesson.description %}
+                      <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">{{ lesson.description }}</p>
+                    {% endif %}
+                    
+                    <div class="flex flex-wrap items-center gap-3 text-xs text-slate-400 mt-2">
+                      <span><i class="fa-regular fa-clock"></i> {{ lesson.duration_formatted }}</span>
+                      <span>&bull;</span>
+                      {% if lesson.video_file %}
+                        <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-file-video"></i> Direct Upload</span>
+                      {% elif lesson.video_url %}
+                        <span class="text-blue-600 font-semibold"><i class="fa-solid fa-link"></i> External Stream</span>
+                      {% elif lesson.hls_manifest_path %}
+                        <span class="text-purple-600 font-semibold"><i class="fa-solid fa-bolt"></i> HLS DRM Ready</span>
+                      {% else %}
+                        <span class="text-amber-600 font-semibold"><i class="fa-solid fa-circle-notch"></i> Recording Pending</span>
+                      {% endif %}
+                      {% if lesson.is_drm_protected %}
+                        <span>&bull;</span>
+                        <span class="text-indigo-600 font-semibold"><i class="fa-solid fa-shield-halved"></i> AES-128 DRM</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+                  <a href="{% url 'videolibrary:watch_lesson' lesson.id %}" target="_blank" class="p-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs transition" title="Preview Playback">
+                    <i class="fa-solid fa-play"></i>
+                  </a>
+                  <a href="{% url 'videolibrary:studio_lesson_edit' lesson.id %}" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs transition" title="Edit Lesson">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <form action="{% url 'videolibrary:studio_lesson_delete' lesson.id %}" method="POST" onsubmit="return confirm('Are you sure you want to delete lesson #{{ lesson.order }} ({{ lesson.title }})? This action cannot be undone.');" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs transition" title="Delete Lesson">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            {% empty %}
+              <div class="py-12 text-center text-slate-400">
+                <i class="fa-solid fa-video-slash text-3xl mb-2 text-slate-300"></i>
+                <p class="text-xs font-semibold">No video lessons uploaded yet.</p>
+                <p class="text-[11px] text-slate-400">Use the form below to upload your first lesson video!</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Add / Upload Lesson Card -->
+        <div id="uploadLessonBox" class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-slate-900">Upload New Video Lesson</h2>
+              <p class="text-xs text-slate-400">Add an MP4/WebM video file or external stream link.</p>
+            </div>
+          </div>
+
+          <form action="{% url 'videolibrary:studio_lesson_create' course.id %}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div class="sm:col-span-3 space-y-1">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Lesson Title <span class="text-rose-500">*</span>
+                </label>
+                {{ lesson_form.title }}
+              </div>
+
+              <div class="space-y-1">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Lesson #
+                </label>
+                {{ lesson_form.order }}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Duration (Minutes)
+                </label>
+                {{ lesson_form.duration_minutes }}
+              </div>
+
+              <div class="space-y-1">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  DRM Security Guard
+                </label>
+                <div class="pt-2 flex items-center gap-2">
+                  {{ lesson_form.is_drm_protected }}
+                  <span class="text-xs text-slate-700 font-semibold">Enable AES-128 DRM Protection</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Lesson Objectives / Summary
+              </label>
+              {{ lesson_form.description }}
+            </div>
+
+            <!-- Video File or URL Selection -->
+            <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80 space-y-4">
+              <div class="space-y-1">
+                <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Option A: Upload Video File (Max 500MB)
+                </label>
+                {{ lesson_form.video_file }}
+                <p class="text-[10px] text-slate-400">Supported formats: .mp4, .webm, .mov, .mkv</p>
+              </div>
+
+              <div class="pt-2 border-t border-slate-200/60 space-y-1">
+                <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  Option B: External Video / Stream URL
+                </label>
+                {{ lesson_form.video_url }}
+                <p class="text-[10px] text-slate-400">Vimeo, YouTube, CloudFront, S3 or Daily.co stream URI</p>
+              </div>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+              <button type="submit" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add Lesson to Curriculum</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: LEARNING RESOURCES & WORKSHEETS (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Attached Resources List -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-folder-open"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-bold text-slate-900">Learning Materials & Handouts</h2>
+                <p class="text-xs text-slate-400">Attached: <strong class="text-slate-700">{{ resources.count }}</strong> files</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="divide-y divide-slate-100">
+            {% for res in resources %}
+              <div class="p-4 hover:bg-slate-50/60 transition flex items-start justify-between gap-3">
+                <div class="flex items-start space-x-3">
+                  <div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-lg shrink-0 mt-0.5">
+                    <i class="fa-solid {{ res.icon_class }}"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-slate-900 leading-snug">{{ res.title }}</h4>
+                    <p class="text-[10px] text-slate-500 mt-0.5">
+                      {% if res.lesson %}
+                        <span class="text-indigo-600 font-semibold">Lesson #{{ res.lesson.order }}</span> &bull; 
+                      {% else %}
+                        <span class="text-purple-600 font-semibold">Course-Wide</span> &bull; 
+                      {% endif %}
+                      {{ res.get_resource_type_display }} &bull; {{ res.file_size_formatted }}
+                    </p>
+                    <p class="text-[10px] text-slate-400 mt-1">
+                      <i class="fa-solid fa-download text-[9px]"></i> {{ res.download_count }} downloads
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <a href="{% url 'videolibrary:download_resource' res.id %}" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs transition" title="Download & Verify">
+                    <i class="fa-solid fa-arrow-down"></i>
+                  </a>
+                  <form action="{% url 'videolibrary:studio_resource_delete' res.id %}" method="POST" onsubmit="return confirm('Delete resource {{ res.title }}?');" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs transition" title="Delete">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            {% empty %}
+              <div class="py-10 text-center text-slate-400">
+                <i class="fa-solid fa-folder-closed text-3xl mb-2 text-slate-300"></i>
+                <p class="text-xs font-semibold">No worksheets or notes attached yet.</p>
+                <p class="text-[11px] text-slate-400">Upload worksheets below for students to solve!</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Upload Resource Card -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-file-arrow-up"></i>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-slate-900">Attach Worksheet or Material</h2>
+              <p class="text-xs text-slate-400">PDFs, Word docs, spreadsheets, slides or zips (max 25MB).</p>
+            </div>
+          </div>
+
+          <form action="{% url 'videolibrary:studio_resource_upload' course.id %}" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+            {% csrf_token %}
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Resource Title <span class="text-rose-500">*</span>
+              </label>
+              {{ resource_form.title }}
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Type
+                </label>
+                {{ resource_form.resource_type }}
+              </div>
+
+              <div class="space-y-1">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Attached To
+                </label>
+                {{ resource_form.lesson }}
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Select File <span class="text-rose-500">*</span>
+              </label>
+              {{ resource_form.file }}
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Instructions for Learners
+              </label>
+              {{ resource_form.description }}
+            </div>
+
+            <div class="pt-2 flex justify-end">
+              <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-600/20 transition flex items-center gap-2">
+                <i class="fa-solid fa-upload"></i>
+                <span>Upload & Attach Material</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock main %}

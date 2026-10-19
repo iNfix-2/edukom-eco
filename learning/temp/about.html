@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+
+<style>
+    .navy-gradient {
+        background: linear-gradient(135deg, #00143f 0%, #002769 100%);
+    }
+    .hexagon-mask {
+        clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="relative py-16 md:py-24 navy-gradient text-pure-white overflow-hidden">
+    <!-- Decorative Splatters -->
+    <img src="{% static 'IMG/community/Splatter - 7.png' %}" class="absolute -left-12 top-6 w-44 md:w-64 opacity-40 pointer-events-none z-0 select-none" alt="">
+    <img src="{% static 'IMG/community/Splatter - 18.png' %}" class="absolute -right-12 bottom-6 w-48 md:w-72 opacity-35 pointer-events-none z-0 select-none" alt="">
+
+    <div class="absolute inset-0 opacity-10 pointer-events-none select-none">
+        <div class="absolute top-10 left-10 w-64 h-64 border-2 border-pure-white rounded-full"></div>
+        <div class="absolute bottom-20 right-20 w-96 h-96 border border-vibrant-lime rounded-full"></div>
+    </div>
+    
+    <div class="max-w-container-max mx-auto px-gutter flex flex-col md:flex-row items-center gap-12 lg:gap-16 relative z-10">
+        <div class="w-full md:w-3/5 space-y-6 md:space-y-8">
+            <div class="inline-block border-b-2 border-vibrant-lime pb-1">
+                <span class="text-vibrant-lime font-label-md uppercase tracking-widest text-xs sm:text-sm font-bold">Global Academic Excellence</span>
+            </div>
+            <h1 class="font-display-lg text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight">ABOUT EDUKOM</h1>
+            <p class="font-body-lg text-base sm:text-lg text-primary-fixed leading-relaxed opacity-95">
+                Edukom is an online tutoring platform offering personalized and flexible education for students aged 5–18 years. Led by <span class="text-vibrant-lime font-bold">Ope Komolafe</span>, the platform covers a range of subjects following different curricula. Edukom prepares students for exams, addressing logistical and security concerns through online classes with a team of experienced tutors fully dedicated to empowering students for global excellence and a lasting legacy.
+            </p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-pure-white/10">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-vibrant-lime text-2xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+                    <span class="font-body-md font-semibold text-sm">Personalized Learning</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-vibrant-lime text-2xl" style="font-variation-settings: 'FILL' 1;">security</span>
+                    <span class="font-body-md font-semibold text-sm">Secure Environment</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-vibrant-lime text-2xl" style="font-variation-settings: 'FILL' 1;">public</span>
+                    <span class="font-body-md font-semibold text-sm">Global Standards</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full md:w-2/5 flex gap-4">
+            <div class="flex flex-col gap-4 mt-6 md:mt-12 w-1/2">
+                <img class="w-full h-56 sm:h-64 object-cover rounded-3xl shadow-2xl border-4 border-pure-white/10" alt="Edukom Student Learning" src="{% static 'IMG/community/Frame1.png' %}"/>
+            </div>
+            <div class="flex flex-col gap-4 w-1/2">
+                <img class="w-full h-72 sm:h-80 object-cover rounded-3xl shadow-2xl border-4 border-pure-white/10" alt="Edukom Tutor Session" src="{% static 'IMG/community/Frame2.png' %}"/>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Core Values -->
+<section class="relative py-16 md:py-24 bg-surface-container-low overflow-hidden">
+    <img src="{% static 'IMG/community/Splatter - 20.png' %}" class="absolute -right-16 top-12 w-48 md:w-64 opacity-30 pointer-events-none z-0 select-none" alt="">
+    <div class="max-w-container-max mx-auto px-gutter text-center relative z-10">
+        <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest bg-deep-navy px-3 py-1 rounded-md mb-3 inline-block">Guiding Principles</span>
+        <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-deep-navy mb-12">Our Core Values</h2>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 sm:gap-8">
+            <div class="group p-6 sm:p-8 bg-pure-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-b-4 border-transparent hover:border-vibrant-lime">
+                <span class="material-symbols-outlined text-4xl text-deep-navy mb-4 group-hover:text-vibrant-lime transition-colors" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy group-hover:text-primary transition-colors">Knowledge</h3>
+            </div>
+            <div class="group p-6 sm:p-8 bg-pure-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-b-4 border-transparent hover:border-vibrant-lime">
+                <span class="material-symbols-outlined text-4xl text-deep-navy mb-4 group-hover:text-vibrant-lime transition-colors" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy group-hover:text-primary transition-colors">Resilience</h3>
+            </div>
+            <div class="group p-6 sm:p-8 bg-pure-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-b-4 border-transparent hover:border-vibrant-lime">
+                <span class="material-symbols-outlined text-4xl text-deep-navy mb-4 group-hover:text-vibrant-lime transition-colors" style="font-variation-settings: 'FILL' 1;">handshake</span>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy group-hover:text-primary transition-colors">Integrity</h3>
+            </div>
+            <div class="group p-6 sm:p-8 bg-pure-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-b-4 border-transparent hover:border-vibrant-lime">
+                <span class="material-symbols-outlined text-4xl text-deep-navy mb-4 group-hover:text-vibrant-lime transition-colors" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy group-hover:text-primary transition-colors">Strength</h3>
+            </div>
+            <div class="group p-6 sm:p-8 bg-pure-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-b-4 border-transparent hover:border-vibrant-lime col-span-2 sm:col-span-1">
+                <span class="material-symbols-outlined text-4xl text-deep-navy mb-4 group-hover:text-vibrant-lime transition-colors" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                <h3 class="font-headline-md font-bold text-lg text-deep-navy group-hover:text-primary transition-colors">Dedication</h3>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Vision Section -->
+<section class="py-16 md:py-24 bg-pure-white overflow-hidden">
+    <div class="max-w-container-max mx-auto px-gutter">
+        <div class="text-center mb-12 sm:mb-16">
+            <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest bg-deep-navy px-3 py-1 rounded-md mb-2 inline-block">Looking Forward</span>
+            <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold text-deep-navy mt-2">OUR VISION</h2>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+            <div class="relative group h-full">
+                <div class="absolute -inset-2 bg-vibrant-lime/10 rounded-3xl group-hover:bg-vibrant-lime/20 transition-colors"></div>
+                <div class="relative p-8 sm:p-10 navy-gradient rounded-2xl shadow-xl border-l-8 border-vibrant-lime flex flex-col justify-between h-full min-h-[260px]">
+                    <p class="font-body-lg text-base sm:text-lg text-pure-white leading-relaxed italic">
+                        "To create an opportunity for every student left behind to catch up, compete globally and overtake beyond their borders."
+                    </p>
+                    <div class="mt-6 flex justify-end">
+                        <span class="material-symbols-outlined text-4xl sm:text-5xl text-vibrant-lime opacity-40">lightbulb</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative group h-full">
+                <div class="absolute -inset-2 bg-vibrant-lime/10 rounded-3xl group-hover:bg-vibrant-lime/20 transition-colors"></div>
+                <div class="relative p-8 sm:p-10 navy-gradient rounded-2xl shadow-xl border-l-8 border-vibrant-lime flex flex-col justify-between h-full min-h-[260px]">
+                    <p class="font-body-lg text-base sm:text-lg text-pure-white leading-relaxed italic">
+                        "To equip every learner to get ahead, excel in a global space and create a legacy in a chosen field of endeavor."
+                    </p>
+                    <div class="mt-6 flex justify-end">
+                        <span class="material-symbols-outlined text-4xl sm:text-5xl text-vibrant-lime opacity-40">emoji_events</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="py-16 md:py-24 bg-surface-container-high relative">
+    <div class="max-w-container-max mx-auto px-gutter">
+        <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            <div class="w-full lg:w-1/2">
+                <div class="relative mb-6">
+                    <div class="absolute -top-8 -left-8 w-20 h-20 bg-vibrant-lime rounded-full opacity-20 pointer-events-none"></div>
+                    <h2 class="font-display-lg text-4xl sm:text-5xl font-bold text-deep-navy leading-tight">
+                        OUR<br/><span class="text-vibrant-lime">MISSION</span>
+                    </h2>
+                    <div class="w-20 h-2 bg-deep-navy rounded-full mt-4"></div>
+                </div>
+                <img class="w-full h-72 sm:h-96 object-cover rounded-2xl shadow-lg border border-surface-variant/60" alt="Edukom Learning Mission" src="{% static 'IMG/header/bloghead.jpg' %}"/>
+            </div>
+
+            <div class="w-full lg:w-1/2 space-y-4 sm:space-y-6">
+                <div class="flex items-start gap-4 p-5 sm:p-6 bg-pure-white rounded-xl shadow-sm border-l-4 border-deep-navy hover:shadow-md transition-shadow">
+                    <span class="material-symbols-outlined text-vibrant-lime text-2xl shrink-0" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    <p class="font-body-lg text-deep-navy text-sm sm:text-base font-medium">Ensure that knowledge gaps in selected learning areas are closed.</p>
+                </div>
+                
+                <div class="flex items-start gap-4 p-5 sm:p-6 bg-pure-white rounded-xl shadow-sm border-l-4 border-deep-navy hover:shadow-md transition-shadow">
+                    <span class="material-symbols-outlined text-vibrant-lime text-2xl shrink-0" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    <p class="font-body-lg text-deep-navy text-sm sm:text-base font-medium">Make certain that learners are equipped for cross-border academic opportunities.</p>
+                </div>
+                
+                <div class="flex items-start gap-4 p-5 sm:p-6 bg-pure-white rounded-xl shadow-sm border-l-4 border-deep-navy hover:shadow-md transition-shadow">
+                    <span class="material-symbols-outlined text-vibrant-lime text-2xl shrink-0" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    <p class="font-body-lg text-deep-navy text-sm sm:text-base font-medium">To guarantee that each learner is heard and has a customized learning system specific for them.</p>
+                </div>
+                
+                <div class="flex items-start gap-4 p-5 sm:p-6 bg-pure-white rounded-xl shadow-sm border-l-4 border-deep-navy hover:shadow-md transition-shadow">
+                    <span class="material-symbols-outlined text-vibrant-lime text-2xl shrink-0" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    <p class="font-body-lg text-deep-navy text-sm sm:text-base font-medium">To create learning avenues for those who for some reasons cannot learn within the walls of a classroom.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Service Range & CTA -->
+<section class="py-16 md:py-24 bg-deep-navy text-pure-white relative overflow-hidden">
+    <div class="absolute right-0 top-0 w-1/3 h-full bg-vibrant-lime/5 skew-x-12 transform translate-x-1/2 pointer-events-none"></div>
+    <div class="max-w-container-max mx-auto px-gutter grid lg:grid-cols-2 gap-12 lg:gap-20 relative z-10">
+        <div class="space-y-6 sm:space-y-8">
+            <h2 class="font-headline-lg text-3xl sm:text-4xl font-bold leading-tight">
+                We offer tutoring services to learners from 
+                <span class="text-vibrant-lime">Reception class</span> to 
+                <span class="text-vibrant-lime">A Level</span>
+            </h2>
+            <p class="text-primary-fixed text-base sm:text-lg opacity-90 leading-relaxed">
+                Our online classes are created to provide solutions to complex logistical and educational challenges:
+            </p>
+            
+            <ul class="space-y-4 text-sm sm:text-base">
+                <li class="flex gap-4 items-start">
+                    <span class="material-symbols-outlined text-vibrant-lime shrink-0">task_alt</span>
+                    <span>Logistic problems of getting a tutor to the class location irrespective of the distance.</span>
+                </li>
+                <li class="flex gap-4 items-start">
+                    <span class="material-symbols-outlined text-vibrant-lime shrink-0">task_alt</span>
+                    <span>Limitation of qualified, experienced, and personable Tutors in your city.</span>
+                </li>
+                <li class="flex gap-4 items-start">
+                    <span class="material-symbols-outlined text-vibrant-lime shrink-0">task_alt</span>
+                    <span>Security concerns of having strangers in your home with access to your children.</span>
+                </li>
+                <li class="flex gap-4 items-start">
+                    <span class="material-symbols-outlined text-vibrant-lime shrink-0">task_alt</span>
+                    <span>Restrictions on scheduling classes when you are out of the country on holiday or visiting family across the country.</span>
+                </li>
+            </ul>
+
+            <div class="pt-6">
+                <a href="{% url 'GetATutor' %}" class="inline-flex items-center gap-3 px-8 py-4 bg-vibrant-lime text-deep-navy font-bold rounded-xl text-base hover:brightness-105 transition-all active:scale-95 shadow-xl shadow-vibrant-lime/20">
+                    Get a Private Tutor
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-vibrant-lime to-secondary rounded-2xl blur opacity-25"></div>
+            <img class="relative w-full h-[380px] sm:h-[500px] object-cover rounded-2xl shadow-2xl" alt="Edukom Private Tutoring" src="{% static 'IMG/black-student-wearing-headphone-having-audio-business-course-laptop.jpg' %}"/>
+        </div>
+    </div>
+</section>
+
+<!-- Method of Instruction (Bento Grid) -->
+<section class="py-16 md:py-24 bg-pure-white">
+    <div class="max-w-container-max mx-auto px-gutter">
+        <div class="text-center mb-12 sm:mb-16">
+            <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest bg-deep-navy px-3 py-1 rounded-md mb-2 inline-block">Digital Learning Ecosystem</span>
+            <h2 class="font-display-lg text-3xl sm:text-5xl font-bold text-deep-navy text-center" style="text-align: center !important;">Our Method of <span class="text-vibrant-lime">Instruction</span></h2>
+            <p class="max-w-2xl mx-auto mt-4 text-sm sm:text-base text-on-surface-variant leading-relaxed text-center" style="text-align: center !important;">
+                At Edukom we teach classes online using virtual platforms to ensure limitless teaching can take place. We use technological tools to share videos for learning support and make use of whiteboards for subjects/topics requiring calculations or annotations.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Feature Card 1: Global Accessibility -->
+            <div class="md:col-span-2 lg:col-span-2 bg-surface-container p-8 rounded-3xl border border-outline-variant/60 hover:border-vibrant-lime transition-colors group flex flex-col justify-between">
+                <div>
+                    <span class="material-symbols-outlined text-deep-navy text-4xl mb-4 group-hover:scale-110 transition-transform">public</span>
+                    <h3 class="font-headline-md text-xl font-bold text-deep-navy mb-3">Global Accessibility</h3>
+                    <p class="text-on-surface-variant text-sm sm:text-base leading-relaxed">Location is no longer a barrier; scheduled lessons can be conducted worldwide from any device with an internet connection.</p>
+                </div>
+            </div>
+
+            <!-- Feature Card 2: Expertise Diversity -->
+            <div class="bg-vibrant-lime p-8 rounded-3xl flex flex-col justify-end text-deep-navy shadow-sm">
+                <span class="material-symbols-outlined text-3xl mb-4">school</span>
+                <h3 class="font-headline-md text-xl font-bold mb-2">Expertise Diversity</h3>
+                <p class="text-xs sm:text-sm font-semibold opacity-90">Tutors from diverse backgrounds, ensuring a wealth of competence and experience.</p>
+            </div>
+
+            <!-- Feature Card 3: Security Assurance -->
+            <div class="bg-deep-navy p-8 rounded-3xl flex flex-col justify-end text-pure-white group shadow-md">
+                <span class="material-symbols-outlined text-vibrant-lime text-3xl mb-4">security</span>
+                <h3 class="font-headline-md text-xl font-bold mb-2">Security Assurance</h3>
+                <p class="text-xs sm:text-sm opacity-85 leading-relaxed">Conducting classes online eliminates the need for strangers in your home, prioritizing safety.</p>
+            </div>
+
+            <!-- Feature Card 4: Hexagon Aesthetic Media Card -->
+            <div class="md:col-span-1 lg:col-span-1 flex items-center justify-center">
+                <div class="hexagon-mask w-full h-64 bg-surface-variant relative overflow-hidden">
+                    <img class="w-full h-full object-cover" alt="Student online interaction" src="{% static 'IMG/medium-shot-student-studying-with-laptop.jpg' %}"/>
+                </div>
+            </div>
+
+            <!-- Feature Card 5: Parental Oversight -->
+            <div class="md:col-span-2 lg:col-span-2 bg-surface-container-low border border-outline-variant/60 p-8 rounded-3xl flex flex-col sm:flex-row items-center gap-6">
+                <div class="hidden sm:block hexagon-mask w-28 h-28 shrink-0">
+                    <img class="w-full h-full object-cover" alt="Edukom Tutor Team" src="{% static 'IMG/community/Teacher.png' %}"/>
+                </div>
+                <div>
+                    <h3 class="font-headline-md text-xl font-bold text-deep-navy mb-2">Parental Oversight</h3>
+                    <p class="text-on-surface-variant text-sm leading-relaxed">Parents can actively participate by logging into their child's virtual class, serving as observers and appraisers of tutors.</p>
+                </div>
+            </div>
+
+            <!-- Feature Card 6: Tech Proficiency -->
+            <div class="lg:col-span-1 bg-surface-container p-8 rounded-3xl group border border-outline-variant/60">
+                <span class="material-symbols-outlined text-deep-navy text-3xl mb-3">devices</span>
+                <h3 class="font-headline-md text-lg font-bold text-deep-navy mb-2">Tech Proficiency</h3>
+                <p class="text-on-surface-variant text-xs sm:text-sm leading-relaxed">Use of virtual tools facilitates the enhancement of your child’s technological capabilities, preparing them for success.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CEO Section -->
+<section class="py-16 md:py-24 bg-canvas-gray">
+    <div class="max-w-container-max mx-auto px-gutter">
+        <div class="bg-pure-white rounded-3xl shadow-xl overflow-hidden border border-surface-variant/60 flex flex-col lg:flex-row">
+            <div class="lg:w-5/12 relative min-h-[380px] sm:min-h-[450px] lg:min-h-[500px]">
+                <img class="w-full h-full object-cover object-top grayscale-[10%] hover:grayscale-0 hover:scale-105 transition-all duration-700" alt="Ope Komolafe - CEO Edukom" src="{% static 'IMG/contact/IMG_9618.jpg' %}"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-deep-navy/40 to-transparent lg:hidden"></div>
+            </div>
+            
+            <div class="lg:w-7/12 p-8 sm:p-12 lg:p-16 flex flex-col justify-center space-y-6 sm:space-y-8">
+                <div class="space-y-2">
+                    <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest bg-deep-navy px-3 py-1 rounded-md inline-block mb-1">Leadership Profile</span>
+                    <h2 class="font-display-lg text-3xl sm:text-4xl font-bold text-deep-navy leading-none">MEET OUR CEO</h2>
+                    <h3 class="font-headline-md text-xl sm:text-2xl font-bold text-on-surface-variant">OPE KOMOLAFE <span class="text-sm font-medium opacity-60">(GPHR PHRI MCIPM)</span></h3>
+                </div>
+                
+                <div class="w-16 h-1 bg-vibrant-lime"></div>
+                
+                <div class="space-y-4 text-on-surface-variant text-sm sm:text-base leading-relaxed">
+                    <p>
+                        An internationally certified Human Resource Management Professional, is deeply passionate about teaching, learning, and training. Her extensive career in education administration has led her to identify and address specific needs in the field, making her a mentor to young individuals while still remaining a manager of the employee life cycle, contributing to the achievement of corporate goals.
+                    </p>
+                    <p class="font-semibold italic text-deep-navy border-l-4 border-vibrant-lime pl-6 py-2 bg-canvas-gray/50 rounded-r-xl">
+                        "Every child deserves quality education, and here at Edukom, we are dedicated to bridging knowledge gaps to make it a reality."
+                    </p>
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <a class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-deep-navy hover:bg-deep-navy hover:text-pure-white transition-all shadow-sm" href="mailto:info@edukom.ng">
+                        <span class="material-symbols-outlined">mail</span>
+                    </a>
+                    <a class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-deep-navy hover:bg-deep-navy hover:text-pure-white transition-all shadow-sm" href="{% url 'GetATutor' %}">
+                        <span class="material-symbols-outlined">school</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock main %}

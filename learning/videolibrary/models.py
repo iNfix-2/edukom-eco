@@ -20,12 +20,26 @@ class VideoCourse(models.Model):
     description = models.TextField(blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True, related_name='video_courses')
     class_level = models.CharField(max_length=100, choices=CLASS_CHOICES, default='year 10')
-    thumbnail_url = models.URLField(blank=True, default='')
+    thumbnail = models.ImageField(upload_to='course_thumbnails/%Y/%m/', blank=True, null=True, help_text="Course cover thumbnail image")
+    thumbnail_url = models.URLField(blank=True, default='', help_text="Optional external image URL fallback")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_video_courses')
+    is_published = models.BooleanField(default=True, help_text="If False, course is saved as Draft and visible only to creator & staff")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), help_text="Optional individual course purchase price in NGN")
     is_subscription_only = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['title']
+        ordering = ['-created_at']
+
+    @property
+    def thumbnail_display(self) -> str:
+        if self.thumbnail:
+            try:
+                return self.thumbnail.url
+            except Exception:
+                pass
+        return self.thumbnail_url or ''
 
     def __str__(self):
         return f"{self.title} ({self.class_level})"
@@ -34,7 +48,7 @@ class VideoCourse(models.Model):
 class VideoLesson(models.Model):
     """
     Individual video recording or on-demand lesson.
-    Encrypted with AES-128 HLS DRM.
+    Encrypted with AES-128 HLS DRM or delivered via secure vault.
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     course = models.ForeignKey(VideoCourse, on_delete=models.CASCADE, related_name='lessons')
@@ -44,6 +58,10 @@ class VideoLesson(models.Model):
     order = models.PositiveIntegerField(default=1)
     duration_seconds = models.PositiveIntegerField(default=0)
     
+    # Direct video upload or external streaming link
+    video_file = models.FileField(upload_to='video_vault/%Y/%m/', blank=True, null=True, help_text="Uploaded MP4/WebM video file")
+    video_url = models.URLField(blank=True, default='', max_length=500, help_text="External streaming URL or Vimeo/YouTube video")
+
     # Encrypted HLS delivery references
     hls_manifest_path = models.CharField(max_length=500, blank=True, help_text="Path or CloudFront URL to master.m3u8")
     is_drm_protected = models.BooleanField(default=True)
@@ -54,6 +72,7 @@ class VideoLesson(models.Model):
         default='READY'
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['order', 'created_at']
@@ -66,6 +85,72 @@ class VideoLesson(models.Model):
 
     def __str__(self):
         return f"{self.course.title} - #{self.order} {self.title}"
+
+
+class ResourceType(models.TextChoices):
+    WORKSHEET = 'WORKSHEET', 'Worksheet & Exercises'
+    NOTES = 'NOTES', 'Lecture Notes & Slides'
+    PAST_QUESTION = 'PAST_QUESTION', 'Past Examination Papers'
+    FORMULA_SHEET = 'FORMULA_SHEET', 'Formula Sheet & Summary'
+    OTHER = 'OTHER', 'General Resource'
+
+
+class CourseResource(models.Model):
+    """
+    Downloadable course learning materials, worksheets, slide notes,
+    and formula sheets attached to courses or specific lessons.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    course = models.ForeignKey(VideoCourse, on_delete=models.CASCADE, related_name='resources')
+    lesson = models.ForeignKey(VideoLesson, on_delete=models.SET_NULL, null=True, blank=True, related_name='resources')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    file = models.FileField(upload_to='course_resources/%Y/%m/')
+    resource_type = models.CharField(max_length=20, choices=ResourceType.choices, default=ResourceType.WORKSHEET)
+    file_size = models.PositiveIntegerField(default=0, help_text="File size in bytes")
+    file_extension = models.CharField(max_length=15, blank=True)
+    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='uploaded_resources')
+    download_count = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    @property
+    def file_size_formatted(self) -> str:
+        size = self.file_size
+        if not size:
+            try:
+                if self.file and hasattr(self.file, 'size'):
+                    size = self.file.size
+            except Exception:
+                size = 0
+        if size < 1024:
+            return f"{size} B"
+        elif size < 1024 * 1024:
+            return f"{size / 1024:.1f} KB"
+        else:
+            return f"{size / (1024 * 1024):.1f} MB"
+
+    @property
+    def icon_class(self) -> str:
+        ext = (self.file_extension or '').lower().replace('.', '')
+        if ext == 'pdf':
+            return 'fa-file-pdf text-rose-500'
+        elif ext in ['doc', 'docx']:
+            return 'fa-file-word text-blue-500'
+        elif ext in ['xls', 'xlsx', 'csv']:
+            return 'fa-file-excel text-emerald-500'
+        elif ext in ['ppt', 'pptx']:
+            return 'fa-file-powerpoint text-amber-500'
+        elif ext in ['zip', 'rar', '7z']:
+            return 'fa-file-zipper text-purple-500'
+        elif ext in ['png', 'jpg', 'jpeg']:
+            return 'fa-file-image text-indigo-500'
+        return 'fa-file-lines text-slate-500'
+
+    def __str__(self):
+        return f"{self.title} ({self.course.title})"
 
 
 class DRMKey(models.Model):
