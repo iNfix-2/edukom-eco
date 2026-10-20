@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db import models
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator
 
@@ -427,9 +428,24 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
 
     tutor_profile = getattr(user, 'tutor_profile', None)
     if not tutor_profile:
+        from tutors.models import Tutor as LegacyTutor
+        tutor_rec = None
+        if user.email:
+            tutor_rec = LegacyTutor.objects.filter(email__iexact=user.email).first()
+            if not tutor_rec:
+                tutor_rec = LegacyTutor.objects.create(
+                    first_name=user.first_name or user.username,
+                    last_name=user.last_name or 'Tutor',
+                    email=user.email,
+                    phone=profile.phone_number or '+2340000000000',
+                    hear='Portal',
+                    lesson_type='Online lessons',
+                    curriculum='British'
+                )
         tutor_profile, _ = TutorProfile.objects.get_or_create(
             user=user,
             defaults={
+                'tutor_record': tutor_rec,
                 'display_name': user.get_full_name() or user.username,
                 'phone': profile.phone_number or '+2340000000000',
                 'hourly_base_rate': Decimal('5000.00'),
@@ -437,6 +453,21 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
                 'is_verified': True
             }
         )
+    elif not tutor_profile.tutor_record and user.email:
+        from tutors.models import Tutor as LegacyTutor
+        tutor_rec = LegacyTutor.objects.filter(email__iexact=user.email).first()
+        if not tutor_rec:
+            tutor_rec = LegacyTutor.objects.create(
+                first_name=user.first_name or user.username,
+                last_name=user.last_name or 'Tutor',
+                email=user.email,
+                phone=profile.phone_number or '+2340000000000',
+                hear='Portal',
+                lesson_type='Online lessons',
+                curriculum='British'
+            )
+        tutor_profile.tutor_record = tutor_rec
+        tutor_profile.save(update_fields=['tutor_record'])
 
     # 1. Upcoming & Scheduled Teaching Sessions
     upcoming_sessions = ClassSession.objects.filter(
@@ -474,9 +505,10 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
     avg_rating = round(sum(f.rating for f in feedbacks) / feedbacks.count(), 1) if feedbacks.exists() else 5.0
 
     # 7. Student Homework Submissions & Grading
-    homework_submissions = HomeworkSubmission.objects.filter(
+    homework_submissions_qs = HomeworkSubmission.objects.filter(
         session__booking__tutor=tutor_profile
-    ).select_related('student', 'session', 'session__booking__subject').order_by('-submitted_at')[:15]
+    ).select_related('student', 'session', 'session__booking__subject').order_by('-submitted_at')
+    homework_submissions = homework_submissions_qs[:15]
 
     # 8. Tutor's Historical Payslips & Compensation Records
     tutor_payslips = TutorPayrollItem.objects.filter(
@@ -514,7 +546,7 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
             'title': 'Link Nigerian Bank Account',
             'desc': 'Connect your verified NUBAN bank account for automated bi-weekly payroll disbursements.',
             'is_completed': step_tutor_bank,
-            'action_url': reverse('payroll:link_bank', args=[tutor_profile.id]),
+            'action_url': reverse('payroll:link_bank', args=[tutor_profile.tutor_record.id]) if (tutor_profile and tutor_profile.tutor_record) else reverse('profile_settings'),
             'action_label': 'Link Bank Account',
             'icon': 'fa-solid fa-building-columns',
             'badge': 'Payroll'
@@ -522,7 +554,7 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
         {
             'id': 'rates',
             'title': 'Base Rate & Compensation Tier',
-            'desc': f'Teaching rate confirmed at {tutor_profile.currency} {tutor_profile.hourly_base_rate|floatformat:2}/hr.',
+            'desc': f'Teaching rate confirmed at {tutor_profile.currency} {tutor_profile.hourly_base_rate:.2f}/hr.',
             'is_completed': step_tutor_rates,
             'action_url': reverse('payroll:rate_matrix'),
             'action_label': 'Rate Matrix',
@@ -557,7 +589,7 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
     is_returning_tutor = bool(past_sessions_qs.exists() or monthly_hours > 0 or active_bookings.exists())
 
     unsubmitted_notes_count = past_sessions_qs.filter(lesson_notes='').count()
-    ungraded_homework_count = homework_submissions.filter(status=SubmissionStatus.SUBMITTED).count()
+    ungraded_homework_count = homework_submissions_qs.filter(status=SubmissionStatus.SUBMITTED).count()
     next_tutor_session = upcoming_sessions.first() if upcoming_sessions.exists() else None
 
     context = {

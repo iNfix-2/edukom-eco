@@ -40,6 +40,7 @@ if DEBUG:
         pass
 
 USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Render Cloud & Wildcard Host Support
@@ -47,14 +48,21 @@ RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     if RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-    render_origin = f'https://{RENDER_EXTERNAL_HOSTNAME}'
-    if render_origin not in CSRF_TRUSTED_ORIGINS:
-        CSRF_TRUSTED_ORIGINS.append(render_origin)
+    for scheme in ['https', 'http']:
+        origin = f'{scheme}://{RENDER_EXTERNAL_HOSTNAME}'
+        if origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(origin)
 
-if '.onrender.com' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append('.onrender.com')
-if 'https://*.onrender.com' not in CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS.append('https://*.onrender.com')
+for domain in ['onrender.com', 'edukom-lms.onrender.com']:
+    if domain not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(domain)
+    for scheme in ['https', 'http']:
+        origin = f'{scheme}://{domain}'
+        if origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(origin)
+        wildcard = f'{scheme}://*.{domain}'
+        if wildcard not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(wildcard)
 
 
 # Application definition
@@ -278,8 +286,10 @@ SESSION_COOKIE_AGE = 86400  # 24 hours max session duration
 
 # SSL/TLS Enforcement in Staging/Production
 SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 't')
-SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 't')
-CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 't')
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', str(not DEBUG)).lower() in ('true', '1', 't')
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', str(not DEBUG)).lower() in ('true', '1', 't')
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 if not DEBUG and SECURE_SSL_REDIRECT:
     SECURE_HSTS_SECONDS = 31536000  # 1 year

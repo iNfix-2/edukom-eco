@@ -11,7 +11,7 @@ services:
     plan: free
     region: frankfurt
     buildCommand: "./build.sh"
-    startCommand: "gunicorn edukom.wsgi:application"
+    startCommand: "gunicorn edukom.wsgi:application --forwarded-allow-ips='*'"
     healthCheckPath: "/healthz/"
     envVars:
       - key: PYTHON_VERSION
@@ -22,6 +22,8 @@ services:
         generateValue: true
       - key: WEB_CONCURRENCY
         value: "2"
+      - key: FORWARDED_ALLOW_IPS
+        value: "*"
       # If using Render's free PostgreSQL, connect automatically:
       - key: DATABASE_URL
         fromDatabase:
