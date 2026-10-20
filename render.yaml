@@ -24,6 +24,12 @@ services:
         value: "2"
       - key: FORWARDED_ALLOW_IPS
         value: "*"
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: "admin"
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: "admin@edukom.ng"
+      - key: DJANGO_SUPERUSER_PASSWORD
+        generateValue: true
       # If using Render's free PostgreSQL, connect automatically:
       - key: DATABASE_URL
         fromDatabase:
