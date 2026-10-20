@@ -28,9 +28,38 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-deep-navy mb-1">Phone Number (WhatsApp Reminders)</label>
-          <input type="text" name="phone_number" value="{{ profile.phone_number }}" placeholder="+234..." class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
+          <label class="block text-xs font-bold text-deep-navy mb-1">Phone Number (WhatsApp Reminders & Class Alerts)</label>
+          <input type="text" name="phone_number" value="{{ profile.phone_number }}" placeholder="+234 800 000 0000" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none">
         </div>
+
+        {% if profile.is_student or not profile.is_tutor %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-surface-container rounded-2xl border border-outline-variant/20">
+          <div>
+            <label class="block text-xs font-bold text-deep-navy mb-1">Class / Year Level</label>
+            <select name="student_grade" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none bg-white">
+              <option value="Primary / Grade 1-5" {% if profile.student_grade == 'Primary / Grade 1-5' %}selected{% endif %}>Primary / Grade 1–5</option>
+              <option value="Year 7 / JSS 1" {% if profile.student_grade == 'Year 7 / JSS 1' %}selected{% endif %}>Year 7 / JSS 1 (Checkpoint)</option>
+              <option value="Year 8 / JSS 2" {% if profile.student_grade == 'Year 8 / JSS 2' %}selected{% endif %}>Year 8 / JSS 2</option>
+              <option value="Year 9 / JSS 3" {% if profile.student_grade == 'Year 9 / JSS 3' %}selected{% endif %}>Year 9 / JSS 3 (BECE / Checkpoint)</option>
+              <option value="Year 10 / SS 1" {% if profile.student_grade == 'Year 10 / SS 1' or profile.student_grade == 'year 10' %}selected{% endif %}>Year 10 / SS 1 (Pre-IGCSE)</option>
+              <option value="Year 11 / SS 2" {% if profile.student_grade == 'Year 11 / SS 2' %}selected{% endif %}>Year 11 / SS 2 (IGCSE / WAEC Prep)</option>
+              <option value="Year 12 / SS 3" {% if profile.student_grade == 'Year 12 / SS 3' %}selected{% endif %}>Year 12 / SS 3 (WAEC / NECO / JAMB)</option>
+              <option value="A-Levels / Sixth Form" {% if profile.student_grade == 'A-Levels / Sixth Form' %}selected{% endif %}>A-Levels / Sixth Form</option>
+              <option value="SAT / ACT Candidate" {% if profile.student_grade == 'SAT / ACT Candidate' %}selected{% endif %}>SAT / ACT Candidate</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-deep-navy mb-1">Target Curriculum</label>
+            <select name="curriculum" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/30 text-xs focus:ring-2 focus:ring-deep-navy focus:outline-none bg-white">
+              <option value="British" {% if profile.curriculum == 'British' %}selected{% endif %}>British / Cambridge (CIE)</option>
+              <option value="Nigerian" {% if profile.curriculum == 'Nigerian' %}selected{% endif %}>Nigerian National (WAEC / NECO)</option>
+              <option value="American" {% if profile.curriculum == 'American' %}selected{% endif %}>American / AP / SAT</option>
+              <option value="Blended (British + Nigerian)" {% if profile.curriculum == 'Blended (British + Nigerian)' %}selected{% endif %}>Blended (British + Nigerian)</option>
+              <option value="International Baccalaureate (IB)" {% if profile.curriculum == 'International Baccalaureate (IB)' %}selected{% endif %}>International Baccalaureate (IB)</option>
+            </select>
+          </div>
+        </div>
+        {% endif %}
 
         <div>
           <label class="block text-xs font-bold text-deep-navy mb-1">Academic Headline / Bio Tagline</label>

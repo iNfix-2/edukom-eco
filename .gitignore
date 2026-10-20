@@ -14,6 +14,8 @@ __pycache__/
 # Databases & Local Secrets
 db.sqlite3
 db.sqlite3-journal
+*.backup
+backups/
 .env
 .env.*
 *.env

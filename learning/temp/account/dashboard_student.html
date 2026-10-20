@@ -60,6 +60,194 @@
       </div>
     </div>
 
+    <!-- ═══ RETURNING STUDENT COMMAND HUB (For Active & Continuing Learners) ═══ -->
+    {% if is_returning_student or next_session or latest_graded_homework or resume_lesson %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Next Upcoming Live Session Card -->
+      <div class="bg-white rounded-3xl p-5 border border-outline-variant/30 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/10">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-secondary flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> Next Live Class
+          </span>
+          {% if next_session %}
+            <span class="px-2 py-0.5 bg-surface-container text-deep-navy text-[10px] font-bold rounded-md">
+              {{ next_session.start_time|date:"M d, g:i A" }}
+            </span>
+          {% endif %}
+        </div>
+        <div class="py-3">
+          {% if next_session %}
+            <h4 class="font-bold text-sm text-deep-navy">{{ next_session.booking.subject.name }}</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">Tutor: <strong>{{ next_session.booking.tutor.display_name }}</strong></p>
+            <p class="text-[11px] text-outline mt-1"><i class="fa-solid fa-video mr-1 text-deep-navy"></i> Daily.co WebRTC Virtual Classroom</p>
+          {% else %}
+            <h4 class="font-bold text-sm text-deep-navy">No Class Scheduled Today</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">Ready to schedule your next learning milestone?</p>
+          {% endif %}
+        </div>
+        <div class="pt-2">
+          {% if next_session %}
+            <a href="{% url 'classroom:live_room' next_session.id %}" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-door-open"></i> <span>Enter Classroom &rarr;</span>
+            </a>
+          {% else %}
+            <a href="{% url 'videolibrary:catalog' %}" class="w-full py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-play"></i> <span>Browse Video Library</span>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Pick Up Where You Left Off -->
+      <div class="bg-white rounded-3xl p-5 border border-outline-variant/30 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/10">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-secondary flex items-center gap-1.5">
+            <i class="fa-solid fa-bookmark text-amber-500"></i> Resume Learning
+          </span>
+          <span class="text-[10px] text-outline font-semibold">Self-Paced</span>
+        </div>
+        <div class="py-3">
+          {% if resume_lesson %}
+            <h4 class="font-bold text-sm text-deep-navy truncate">{{ resume_lesson.lesson.title }}</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ resume_lesson.lesson.course.title }}</p>
+            <div class="w-full bg-surface-container rounded-full h-1.5 mt-2.5 overflow-hidden">
+              <div class="bg-vibrant-lime h-1.5 rounded-full" style="width: {% if resume_lesson.completed %}100{% else %}65{% endif %}%; background-color: #A9D156;"></div>
+            </div>
+          {% else %}
+            <h4 class="font-bold text-sm text-deep-navy">Interactive Quizzes</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">Test your comprehension with practice quizzes.</p>
+          {% endif %}
+        </div>
+        <div class="pt-2">
+          {% if resume_lesson %}
+            <a href="{% url 'videolibrary:player' resume_lesson.lesson.id %}" class="w-full py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-play text-xs text-deep-navy"></i> <span>Continue Lesson</span>
+            </a>
+          {% else %}
+            <a href="{% url 'classroom:quiz_list' %}" class="w-full py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-question text-xs text-secondary"></i> <span>Take Practice Quiz</span>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Recent Homework & Feedback Alert -->
+      <div class="bg-white rounded-3xl p-5 border border-outline-variant/30 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/10">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-secondary flex items-center gap-1.5">
+            <i class="fa-solid fa-clipboard-check text-emerald-600"></i> Tutor Assessment
+          </span>
+          {% if latest_graded_homework %}
+            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-md">
+              Grade: {{ latest_graded_homework.grade }}
+            </span>
+          {% endif %}
+        </div>
+        <div class="py-3">
+          {% if latest_graded_homework %}
+            <h4 class="font-bold text-sm text-deep-navy truncate">{{ latest_graded_homework.title }}</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5 line-clamp-2">{{ latest_graded_homework.tutor_feedback|default:"Tutor approved your written solutions." }}</p>
+          {% else %}
+            <h4 class="font-bold text-sm text-deep-navy">Verified Mastery Records</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">All homework and assignments are logged for parent & tutor review.</p>
+          {% endif %}
+        </div>
+        <div class="pt-2">
+          <button onclick="openModal('studentTechCheckModal'); initHardwareTest('student');" class="w-full py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-headset text-xs text-secondary"></i> <span>Test Mic & Webcam</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══ STUDENT ONBOARDING READINESS PROGRESS CHECKLIST ═══ -->
+    <div id="studentOnboardingContainer" class="{% if is_onboarding_dismissed and is_onboarding_finished %}hidden{% endif %} transition-all duration-300">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 relative overflow-hidden">
+        <div class="absolute top-0 left-0 h-1.5 bg-vibrant-lime transition-all duration-500" style="width: {{ student_onboarding_percent }}%; background-color: #A9D156;"></div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/20 gap-4">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-xl bg-vibrant-lime/20 text-deep-navy flex items-center justify-center font-bold text-sm">
+                <i class="fa-solid fa-list-check"></i>
+              </span>
+              <h2 class="text-lg sm:text-xl font-bold text-deep-navy">Student Portal Onboarding &amp; Readiness Checklist</h2>
+              <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full {% if is_onboarding_finished %}bg-emerald-100 text-emerald-800{% else %}bg-amber-100 text-amber-800{% endif %}">
+                {{ student_onboarding_percent }}% Complete
+              </span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-1.5">
+              Complete these 4 foundational steps to unlock seamless live classrooms, milestone tracking, and tutor appointments.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2 self-end sm:self-auto">
+            <button onclick="toggleOnboardingCollapse('student')" class="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-semibold text-xs rounded-xl transition flex items-center gap-1.5">
+              <i id="studentOnboardToggleIcon" class="fa-solid fa-chevron-up text-[10px]"></i>
+              <span id="studentOnboardToggleText">Collapse</span>
+            </button>
+            {% if is_onboarding_finished %}
+            <button onclick="dismissOnboarding('student')" class="px-3 py-1.5 text-outline hover:text-deep-navy text-xs font-semibold transition" title="Dismiss checklist">
+              <i class="fa-solid fa-xmark"></i> Dismiss
+            </button>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- 4 Step Cards Grid -->
+        <div id="studentOnboardingStepsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          {% for step in student_onboarding_steps %}
+          <div class="p-4 rounded-2xl border transition-all flex flex-col justify-between {% if step.is_completed %}bg-surface-container-low border-emerald-300/60{% else %}bg-white border-outline-variant/30 hover:shadow-md{% endif %}">
+            <div>
+              <div class="flex items-center justify-between mb-2.5">
+                <span class="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold {% if step.is_completed %}bg-emerald-600 text-white{% else %}bg-surface-container text-deep-navy{% endif %}">
+                  {% if step.is_completed %}
+                    <i class="fa-solid fa-check"></i>
+                  {% else %}
+                    <i class="{{ step.icon }}"></i>
+                  {% endif %}
+                </span>
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md {% if step.is_completed %}bg-emerald-100 text-emerald-800{% else %}bg-surface-container text-outline{% endif %}">
+                  {% if step.is_completed %}Done{% else %}{{ step.badge }}{% endif %}
+                </span>
+              </div>
+              <h3 class="font-bold text-xs text-deep-navy">{{ step.title }}</h3>
+              <p class="text-[11px] text-on-surface-variant mt-1 leading-relaxed">{{ step.desc }}</p>
+            </div>
+
+            <div class="pt-3 mt-3 border-t border-outline-variant/10">
+              {% if step.is_completed %}
+                <span class="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-circle-check"></i> Ready
+                </span>
+              {% else %}
+                {% if step.action_onclick %}
+                  <button onclick="{{ step.action_onclick }}" class="w-full py-2 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
+                    <span>{{ step.action_label }}</span> &rarr;
+                  </button>
+                {% else %}
+                  <a href="{{ step.action_url }}" class="w-full py-2 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
+                    <span>{{ step.action_label }}</span> &rarr;
+                  </a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Collapsed Minimal Pill (if dismissed or completed) -->
+    <div id="studentOnboardingMinimalPill" class="{% if not is_onboarding_dismissed or not is_onboarding_finished %}hidden{% endif %} flex justify-end">
+      <button onclick="restoreOnboarding('student')" class="px-4 py-2 bg-white border border-outline-variant/40 hover:border-deep-navy rounded-full text-xs font-bold text-deep-navy shadow-sm transition flex items-center gap-2">
+        <i class="fa-solid fa-list-check text-secondary"></i>
+        <span>Show Onboarding Guide ({{ student_onboarding_percent }}%)</span>
+      </button>
+    </div>
+
     <!-- MAIN TWO-COLUMN LMS LAYOUT -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -472,7 +660,338 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL 1: FIRST-TIME STUDENT WELCOME ORIENTATION MODAL                        -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="studentWelcomeModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-deep-navy/70 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-outline-variant/30 animate-fade-in relative">
+    <div class="h-2 w-full bg-vibrant-lime"></div>
+    <div class="p-6 sm:p-8">
+      
+      <div class="w-14 h-14 rounded-2xl bg-vibrant-lime/20 text-deep-navy flex items-center justify-center text-2xl font-bold mb-4">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+
+      <span class="text-xs font-bold uppercase tracking-wider text-secondary">Welcome to Edukom Live Academy</span>
+      <h2 class="text-2xl font-black text-deep-navy mt-1">Hello, {{ user.first_name|default:user.username }}!</h2>
+      <p class="text-xs text-on-surface-variant mt-2 leading-relaxed">
+        Your academic portal is configured for the <strong>{{ student.curriculum|default:"British" }} Curriculum</strong> ({{ student.class_level|default:"Year 10" }}). Here are 3 quick things you can do on your portal:
+      </p>
+
+      <div class="space-y-3.5 my-6">
+        <div class="flex items-start gap-3 p-3 bg-surface-container rounded-2xl">
+          <div class="w-7 h-7 rounded-xl bg-deep-navy text-white flex items-center justify-center text-xs shrink-0 font-bold">1</div>
+          <div>
+            <h4 class="text-xs font-bold text-deep-navy">1-Click Live WebRTC Classrooms</h4>
+            <p class="text-[11px] text-on-surface-variant mt-0.5">Meet your assigned tutors with interactive video, whiteboard, and screen sharing.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-3 bg-surface-container rounded-2xl">
+          <div class="w-7 h-7 rounded-xl bg-deep-navy text-white flex items-center justify-center text-xs shrink-0 font-bold">2</div>
+          <div>
+            <h4 class="text-xs font-bold text-deep-navy">Curriculum Mastery Records</h4>
+            <p class="text-[11px] text-on-surface-variant mt-0.5">Track your module progress, homework feedback, and exam readiness scores.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-3 bg-surface-container rounded-2xl">
+          <div class="w-7 h-7 rounded-xl bg-deep-navy text-white flex items-center justify-center text-xs shrink-0 font-bold">3</div>
+          <div>
+            <h4 class="text-xs font-bold text-deep-navy">Timetable &amp; WhatsApp Reminders</h4>
+            <p class="text-[11px] text-on-surface-variant mt-0.5">Sync lessons to your phone's calendar so you never miss an upcoming class.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="startStudentGuidedSetup()" class="w-full py-3 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <span>Start 30s Hardware Check</span> &rarr;
+        </button>
+        <button onclick="closeModal('studentWelcomeModal'); markStudentWelcomed();" class="w-full sm:w-auto px-5 py-3 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition">
+          Skip Tour
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL 2: INTERACTIVE CLASSROOM HARDWARE CHECK (MIC & WEBCAM DIAGNOSTIC)    -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="studentTechCheckModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-deep-navy/70 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-outline-variant/30 animate-fade-in relative">
+    <div class="flex items-center justify-between p-5 border-b border-outline-variant/20">
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-xl bg-vibrant-lime/20 text-deep-navy flex items-center justify-center font-bold text-sm">
+          <i class="fa-solid fa-headset"></i>
+        </span>
+        <div>
+          <h3 class="font-bold text-sm text-deep-navy">Classroom Hardware &amp; Audio Diagnostic</h3>
+          <p class="text-[11px] text-on-surface-variant">Live Daily.co WebRTC readiness test</p>
+        </div>
+      </div>
+      <button onclick="stopHardwareTest(); closeModal('studentTechCheckModal');" class="text-outline hover:text-deep-navy p-1 text-base">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <!-- Video Preview Box -->
+      <div class="relative bg-slate-900 rounded-2xl aspect-video overflow-hidden border border-outline-variant/30 flex items-center justify-center">
+        <video id="studentVideoPreview" class="w-full h-full object-cover" autoplay playsinline muted></video>
+        <div id="studentVideoPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-white/60 pointer-events-none">
+          <i class="fa-solid fa-camera text-3xl mb-2"></i>
+          <span class="text-xs">Camera Feed Loading...</span>
+        </div>
+      </div>
+
+      <!-- Real-Time Microphone Level Indicator -->
+      <div class="p-4 bg-surface-container rounded-2xl space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold text-deep-navy">
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-microphone text-rose-600"></i> Microphone Input Level</span>
+          <span id="studentMicStatus" class="text-[11px] text-outline">Speak to test</span>
+        </div>
+        <div class="w-full bg-outline-variant/30 rounded-full h-2.5 overflow-hidden">
+          <div id="studentMicLevelBar" class="bg-vibrant-lime h-2.5 rounded-full transition-all duration-75" style="width: 8%; background-color: #A9D156;"></div>
+        </div>
+      </div>
+
+      <!-- Hardware Telemetry Status Message -->
+      <div id="studentHardwareStatus" class="text-xs text-on-surface-variant bg-surface-bright p-3 rounded-xl border border-outline-variant/20">
+        Click below to allow browser camera and microphone permissions.
+      </div>
+
+      <!-- Modal Action Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="stopHardwareTest(); closeModal('studentTechCheckModal');" class="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition">
+          Cancel
+        </button>
+        <button id="studentConfirmHardwareBtn" onclick="confirmHardwareTest('student')" class="px-5 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+          <i class="fa-solid fa-check"></i>
+          <span>Sounds &amp; Looks Great! Complete Step</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+// ─── Cookie Helper ────────────────────────────────────────────────────────
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+// ─── Modal Controls ───────────────────────────────────────────────────────
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.remove('hidden');
+}
+
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.add('hidden');
+}
+
+// ─── Onboarding Collapse & Dismiss ────────────────────────────────────────
+function toggleOnboardingCollapse(role) {
+  const grid = document.getElementById(role + 'OnboardingStepsGrid');
+  const icon = document.getElementById(role + 'OnboardToggleIcon');
+  const text = document.getElementById(role + 'OnboardToggleText');
+  if (grid) {
+    grid.classList.toggle('hidden');
+    if (grid.classList.contains('hidden')) {
+      if (icon) icon.className = 'fa-solid fa-chevron-down text-[10px]';
+      if (text) text.textContent = 'Expand';
+    } else {
+      if (icon) icon.className = 'fa-solid fa-chevron-up text-[10px]';
+      if (text) text.textContent = 'Collapse';
+    }
+  }
+}
+
+async function dismissOnboarding(role) {
+  const container = document.getElementById(role + 'OnboardingContainer');
+  const pill = document.getElementById(role + 'OnboardingMinimalPill');
+  if (container) container.classList.add('hidden');
+  if (pill) pill.classList.remove('hidden');
+  try {
+    await fetch('/onboarding/step/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify({ dismiss: true, role: role })
+    });
+  } catch (e) {
+    console.warn('Dismiss error', e);
+  }
+}
+
+async function restoreOnboarding(role) {
+  const container = document.getElementById(role + 'OnboardingContainer');
+  const pill = document.getElementById(role + 'OnboardingMinimalPill');
+  if (container) container.classList.remove('hidden');
+  if (pill) pill.classList.add('hidden');
+  try {
+    await fetch('/onboarding/step/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify({ step: 'undismiss', role: role })
+    });
+  } catch (e) {
+    console.warn('Restore error', e);
+  }
+}
+
+// ─── First-Time Welcome Modal Logic ───────────────────────────────────────
+function markStudentWelcomed() {
+  localStorage.setItem('edukom_student_welcomed_v1', 'true');
+}
+
+function startStudentGuidedSetup() {
+  markStudentWelcomed();
+  closeModal('studentWelcomeModal');
+  openModal('studentTechCheckModal');
+  initHardwareTest('student');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const isWelcomed = localStorage.getItem('edukom_student_welcomed_v1');
+  const isCompleted = {{ student_onboarding_percent }} === 100;
+  if (!isWelcomed && !isCompleted) {
+    setTimeout(() => {
+      openModal('studentWelcomeModal');
+    }, 800);
+  }
+});
+
+// ─── Live WebRTC Camera & Mic Hardware Diagnostic ─────────────────────────
+let mediaStream = null;
+let audioContext = null;
+let analyser = null;
+let micAnimId = null;
+
+async function initHardwareTest(role) {
+  const videoElem = document.getElementById(role + 'VideoPreview');
+  const placeholder = document.getElementById(role + 'VideoPlaceholder');
+  const micBar = document.getElementById(role + 'MicLevelBar');
+  const statusElem = document.getElementById(role + 'HardwareStatus');
+  const micStatus = document.getElementById(role + 'MicStatus');
+  const confirmBtn = document.getElementById(role + 'ConfirmHardwareBtn');
+
+  if (statusElem) {
+    statusElem.innerHTML = '<span class="text-amber-600 font-semibold"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Requesting camera & microphone access...</span>';
+  }
+
+  try {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(t => t.stop());
+    }
+    mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    
+    if (videoElem) {
+      videoElem.srcObject = mediaStream;
+      videoElem.play();
+      if (placeholder) placeholder.classList.add('hidden');
+    }
+
+    // Audio Analysis
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioContext.createMediaStreamSource(mediaStream);
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256;
+    source.connect(analyser);
+
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    function updateMicMeter() {
+      analyser.getByteFrequencyData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        sum += dataArray[i];
+      }
+      const avg = sum / dataArray.length;
+      const percent = Math.min(100, Math.round((avg / 64) * 100));
+      if (micBar) micBar.style.width = Math.max(8, percent) + '%';
+      if (micStatus) {
+        if (percent > 20) {
+          micStatus.innerHTML = '<span class="text-emerald-700 font-bold">Voice Detected!</span>';
+        } else {
+          micStatus.textContent = 'Listening...';
+        }
+      }
+      micAnimId = requestAnimationFrame(updateMicMeter);
+    }
+    updateMicMeter();
+
+    if (statusElem) {
+      statusElem.innerHTML = '<span class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Camera & Microphone Connected and Active!</span>';
+    }
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.classList.remove('opacity-50');
+    }
+  } catch (err) {
+    console.warn('Hardware access error:', err);
+    if (statusElem) {
+      statusElem.innerHTML = '<span class="text-rose-600 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Camera/Mic access denied or unavailable. Please ensure permissions are granted in your browser address bar.</span>';
+    }
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i> <span>Acknowledge & Continue</span>';
+    }
+  }
+}
+
+function stopHardwareTest() {
+  if (micAnimId) cancelAnimationFrame(micAnimId);
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream = null;
+  }
+  if (audioContext && audioContext.state !== 'closed') {
+    audioContext.close();
+  }
+}
+
+async function confirmHardwareTest(role) {
+  stopHardwareTest();
+  closeModal(role + 'TechCheckModal');
+  try {
+    const res = await fetch('/onboarding/step/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify({ step: 'tech_check', role: role })
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      window.location.reload();
+    }
+  } catch (e) {
+    window.location.reload();
+  }
+}
+
+// ─── Legacy Homework Box Toggle ───────────────────────────────────────────
 function toggleHomeworkModal(sessionId) {
   const box = document.getElementById('hw-box-' + sessionId);
   if (box) {

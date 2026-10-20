@@ -16,6 +16,7 @@ urlpatterns = [
     # User Role Management & Profile Settings
     path('users/<int:user_id>/update-role/', views.update_user_role_view, name="update_user_role"),
     path('profile/edit/', views.profile_settings_view, name="profile_settings"),
+    path('onboarding/step/', views.complete_onboarding_step_api, name="complete_onboarding_step"),
 
     # Authentication & Registration (Canonical Lowercase)
     path('login/', auth_views.LoginView.as_view(template_name="account/login.html"), name="login"),

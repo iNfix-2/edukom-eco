@@ -1,23 +1,85 @@
 {% extends 'base.html' %}
-{% block title %}Login — Educom HR{% endblock %}
-{% block meta_description %}<meta name="description" content="Login to manage and publish blog posts." />{% endblock %}
+{% load static %}
+
+{% block title %}Sign In — Educom Corporate Portal{% endblock %}
+{% block meta_description %}<meta name="description" content="Sign in to access Educom HR administration and portal features." />{% endblock %}
+
 {% block content %}
-<div class="container py-5" style="max-width:640px">
-  <h1 class="h3 mb-4">Login</h1>
-  {% if form.errors %}
-    <div class="alert alert-danger">Please correct the error(s) below.</div>
-  {% endif %}
-  <form method="post" class="bg-white p-4 rounded-4 shadow-sm">
-    {% csrf_token %}
-    <div class="mb-3">
-      <label class="form-label" for="id_username">Username</label>
-      {{ form.username }}
+<section class="py-5" style="background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%); min-height: 80vh; display: flex; align-items: center;">
+  <div class="container" style="max-width: 480px;">
+    
+    <div class="text-center mb-4">
+      <a href="{% url 'gateway_home' %}" class="d-inline-flex align-items-center gap-2 text-decoration-none">
+        <img src="{% static 'img/logo2.png' %}" alt="Educom HR" style="height: 48px; width: auto;" />
+      </a>
     </div>
-    <div class="mb-3">
-      <label class="form-label" for="id_password">Password</label>
-      {{ form.password }}
+
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden auth-card">
+      <div style="height: 6px; background: linear-gradient(90deg, #002769, #a9d156, #002769);"></div>
+      <div class="card-body p-4 p-sm-5">
+        <div class="mb-4">
+          <span class="badge bg-light text-primary fw-semibold px-2 py-1 mb-2 text-uppercase" style="letter-spacing: 0.05em; font-size: 0.75rem;">Staff & Admin</span>
+          <h1 class="h4 fw-bold text-navy mb-1" style="color: #002769;">Portal Sign In</h1>
+          <p class="text-muted small mb-0">Enter your administrative credentials below.</p>
+        </div>
+
+        {% if form.errors %}
+          <div class="alert alert-danger d-flex align-items-center gap-2 rounded-3 small py-2 px-3 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+            <div>Invalid username or password. Please try again.</div>
+          </div>
+        {% endif %}
+
+        <form method="post" class="needs-validation">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-uppercase" style="color: #002769; letter-spacing: 0.04em;" for="id_username">Username</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 rounded-start-3"><i class="bi bi-person text-muted"></i></span>
+              <input type="text" name="username" id="id_username" class="form-control border-start-0 rounded-end-3 py-2 bg-light" placeholder="Username" required autofocus>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label small fw-bold text-uppercase mb-0" style="color: #002769; letter-spacing: 0.04em;" for="id_password">Password</label>
+            </div>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 rounded-start-3"><i class="bi bi-lock text-muted"></i></span>
+              <input type="password" name="password" id="id_password" class="form-control border-start-0 border-end-0 py-2 bg-light" placeholder="Password" required>
+              <button class="btn btn-outline-light border border-start-0 bg-light rounded-end-3 text-muted" type="button" onclick="toggleHrPassword()">
+                <i class="bi bi-eye" id="hrPwdIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn w-full py-2.5 rounded-3 fw-bold text-white shadow-sm" style="background-color: #002769; width: 100%;">
+            Sign In <i class="bi bi-arrow-right ms-1"></i>
+          </button>
+        </form>
+
+        <div class="mt-4 pt-3 border-top text-center">
+          <a href="{% url 'home' %}" class="small text-muted text-decoration-none hover-underline">
+            <i class="bi bi-arrow-left me-1"></i> Back to Educom HR Home
+          </a>
+        </div>
+      </div>
     </div>
-    <button type="submit" class="btn btn-primary">Login</button>
-  </form>
-</div>
+  </div>
+</section>
+
+<script>
+  function toggleHrPassword() {
+    const pwd = document.getElementById('id_password');
+    const icon = document.getElementById('hrPwdIcon');
+    if (!pwd || !icon) return;
+    if (pwd.type === 'password') {
+      pwd.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      pwd.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  }
+</script>
 {% endblock %}

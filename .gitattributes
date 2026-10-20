@@ -1,0 +1,2 @@
+# Ensure bash scripts maintain LF line endings on Linux runners and cloud containers
+*.sh text eol=lf

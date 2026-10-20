@@ -74,6 +74,187 @@
       </div>
     </div>
 
+    <!-- ═══ RETURNING TUTOR PRIORITY ALERTS TRAY (Action-Required Notices) ═══ -->
+    {% if unsubmitted_notes_count > 0 or ungraded_homework_count > 0 or next_tutor_session %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Next Upcoming Class Countdown & Instant Entry -->
+      <div class="bg-white rounded-3xl p-5 border border-outline-variant/30 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/10">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-secondary flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Live Teaching Schedule
+          </span>
+          {% if next_tutor_session %}
+            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-md">
+              {{ next_tutor_session.start_time|date:"M d, g:i A" }}
+            </span>
+          {% endif %}
+        </div>
+        <div class="py-3">
+          {% if next_tutor_session %}
+            <h4 class="font-bold text-sm text-deep-navy">{{ next_tutor_session.title|default:next_tutor_session.booking.subject.name }}</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">Learner: <strong>{{ next_tutor_session.booking.student.first_name }} {{ next_tutor_session.booking.student.last_name }}</strong></p>
+            <p class="text-[11px] text-outline mt-1"><i class="fa-solid fa-graduation-cap mr-1 text-deep-navy"></i> {{ next_tutor_session.booking.student.class_level }} &bull; {{ next_tutor_session.booking.student.curriculum }}</p>
+          {% else %}
+            <h4 class="font-bold text-sm text-deep-navy">No Class Scheduled For Today</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">Use the instant launcher or schedule ahead with enrolled students.</p>
+          {% endif %}
+        </div>
+        <div class="pt-2">
+          {% if next_tutor_session %}
+            <a href="{% url 'classroom:live_room' next_tutor_session.id %}" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-door-open"></i> <span>Enter Classroom &rarr;</span>
+            </a>
+          {% else %}
+            <button onclick="openModal('scheduleModal')" class="w-full py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+              <i class="fa-regular fa-calendar-plus"></i> <span>Schedule New Class</span>
+            </button>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Pending Lesson Notes Alert (Payroll Trigger) -->
+      <div class="bg-white rounded-3xl p-5 border {% if unsubmitted_notes_count > 0 %}border-amber-400/80 bg-amber-50/20{% else %}border-outline-variant/30{% endif %} shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/10">
+          <span class="text-[11px] font-bold uppercase tracking-wider {% if unsubmitted_notes_count > 0 %}text-amber-700 font-black{% else %}text-secondary{% endif %} flex items-center gap-1.5">
+            <i class="fa-solid fa-clipboard-question {% if unsubmitted_notes_count > 0 %}text-amber-600{% endif %}"></i> Lesson Notes Status
+          </span>
+          <span class="px-2 py-0.5 {% if unsubmitted_notes_count > 0 %}bg-amber-100 text-amber-900{% else %}bg-emerald-100 text-emerald-800{% endif %} text-[10px] font-extrabold rounded-md">
+            {% if unsubmitted_notes_count > 0 %}{{ unsubmitted_notes_count }} Pending{% else %}All Submitted{% endif %}
+          </span>
+        </div>
+        <div class="py-3">
+          {% if unsubmitted_notes_count > 0 %}
+            <h4 class="font-bold text-sm text-deep-navy">{{ unsubmitted_notes_count }} Lesson{{ unsubmitted_notes_count|pluralize }} Awaiting Notes</h4>
+            <p class="text-xs text-amber-900/80 mt-0.5 leading-relaxed">
+              Submitting educational remarks verifies student attendance and triggers your automated bi-weekly payroll disbursement.
+            </p>
+          {% else %}
+            <h4 class="font-bold text-sm text-deep-navy">Payroll Verification Up-to-Date</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">All completed lessons have verified attendance and coverage notes logged.</p>
+          {% endif %}
+        </div>
+        <div class="pt-2">
+          <a href="#past-sessions-table" class="w-full py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-xs"></i> <span>Review Past Sessions</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Pending Homework Grading Alert -->
+      <div class="bg-white rounded-3xl p-5 border {% if ungraded_homework_count > 0 %}border-indigo-300 bg-indigo-50/20{% else %}border-outline-variant/30{% endif %} shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between pb-3 border-b border-outline-variant/10">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-secondary flex items-center gap-1.5">
+            <i class="fa-solid fa-file-signature text-indigo-600"></i> Homework Queue
+          </span>
+          <span class="px-2 py-0.5 {% if ungraded_homework_count > 0 %}bg-indigo-100 text-indigo-900 font-extrabold{% else %}bg-surface-container text-outline{% endif %} text-[10px] rounded-md">
+            {{ ungraded_homework_count }} Submitted
+          </span>
+        </div>
+        <div class="py-3">
+          {% if ungraded_homework_count > 0 %}
+            <h4 class="font-bold text-sm text-deep-navy">{{ ungraded_homework_count }} Submission{{ ungraded_homework_count|pluralize }} Awaiting Grading</h4>
+            <p class="text-xs text-indigo-900/80 mt-0.5 leading-relaxed">Students and parents are waiting for your constructive feedback and marks.</p>
+          {% else %}
+            <h4 class="font-bold text-sm text-deep-navy">Grading Queue Clear</h4>
+            <p class="text-xs text-on-surface-variant mt-0.5">All received assignments have been evaluated with pedagogical feedback.</p>
+          {% endif %}
+        </div>
+        <div class="pt-2">
+          <a href="#homework-section" class="w-full py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-marker text-xs text-indigo-600"></i> <span>Open Grading Tray</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ═══ TUTOR FACULTY ONBOARDING & READINESS CHECKLIST ═══ -->
+    <div id="tutorOnboardingContainer" class="{% if is_tutor_onboarding_dismissed and is_tutor_onboarding_finished %}hidden{% endif %} transition-all duration-300">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 relative overflow-hidden">
+        <div class="absolute top-0 left-0 h-1.5 bg-deep-navy transition-all duration-500" style="width: {{ tutor_onboarding_percent }}%;"></div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/20 gap-4">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-xl bg-deep-navy/10 text-deep-navy flex items-center justify-center font-bold text-sm">
+                <i class="fa-solid fa-user-check"></i>
+              </span>
+              <h2 class="text-lg sm:text-xl font-bold text-deep-navy">Educator Faculty Onboarding &amp; Compliance Checklist</h2>
+              <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full {% if is_tutor_onboarding_finished %}bg-emerald-100 text-emerald-800{% else %}bg-indigo-100 text-indigo-800{% endif %}">
+                {{ tutor_onboarding_percent }}% Complete
+              </span>
+            </div>
+            <p class="text-xs text-on-surface-variant mt-1.5">
+              Ensure all 5 faculty requirements are satisfied to enable automated student matching and bi-weekly Paystack direct deposits.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2 self-end sm:self-auto">
+            <button onclick="toggleOnboardingCollapse('tutor')" class="px-3 py-1.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-semibold text-xs rounded-xl transition flex items-center gap-1.5">
+              <i id="tutorOnboardToggleIcon" class="fa-solid fa-chevron-up text-[10px]"></i>
+              <span id="tutorOnboardToggleText">Collapse</span>
+            </button>
+            {% if is_tutor_onboarding_finished %}
+            <button onclick="dismissOnboarding('tutor')" class="px-3 py-1.5 text-outline hover:text-deep-navy text-xs font-semibold transition" title="Dismiss checklist">
+              <i class="fa-solid fa-xmark"></i> Dismiss
+            </button>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- 5 Step Cards Grid -->
+        <div id="tutorOnboardingStepsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 mt-6">
+          {% for step in tutor_onboarding_steps %}
+          <div class="p-4 rounded-2xl border transition-all flex flex-col justify-between {% if step.is_completed %}bg-surface-container-low border-emerald-300/60{% else %}bg-white border-outline-variant/30 hover:shadow-md{% endif %}">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold {% if step.is_completed %}bg-emerald-600 text-white{% else %}bg-surface-container text-deep-navy{% endif %}">
+                  {% if step.is_completed %}
+                    <i class="fa-solid fa-check"></i>
+                  {% else %}
+                    <i class="{{ step.icon }}"></i>
+                  {% endif %}
+                </span>
+                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md {% if step.is_completed %}bg-emerald-100 text-emerald-800{% else %}bg-surface-container text-outline{% endif %}">
+                  {% if step.is_completed %}Verified{% else %}{{ step.badge }}{% endif %}
+                </span>
+              </div>
+              <h3 class="font-bold text-xs text-deep-navy">{{ step.title }}</h3>
+              <p class="text-[11px] text-on-surface-variant mt-1 leading-relaxed">{{ step.desc }}</p>
+            </div>
+
+            <div class="pt-3 mt-3 border-t border-outline-variant/10">
+              {% if step.is_completed %}
+                <span class="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-circle-check"></i> Complete
+                </span>
+              {% else %}
+                {% if step.action_onclick %}
+                  <button onclick="{{ step.action_onclick }}" class="w-full py-2 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-1">
+                    <span>{{ step.action_label }}</span> &rarr;
+                  </button>
+                {% else %}
+                  <a href="{{ step.action_url }}" class="w-full py-2 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-1">
+                    <span>{{ step.action_label }}</span> &rarr;
+                  </a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Collapsed Minimal Pill for Tutor (if dismissed or completed) -->
+    <div id="tutorOnboardingMinimalPill" class="{% if not is_tutor_onboarding_dismissed or not is_tutor_onboarding_finished %}hidden{% endif %} flex justify-end">
+      <button onclick="restoreOnboarding('tutor')" class="px-4 py-2 bg-white border border-outline-variant/40 hover:border-deep-navy rounded-full text-xs font-bold text-deep-navy shadow-sm transition flex items-center gap-2">
+        <i class="fa-solid fa-user-check text-indigo-600"></i>
+        <span>Show Faculty Onboarding Checklist ({{ tutor_onboarding_percent }}%)</span>
+      </button>
+    </div>
+
     <!-- METRICS TELEMETRY CARDS -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
       <div class="bg-white p-5 rounded-2xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
@@ -1063,5 +1244,336 @@
       }
     }
   }
+
+  // 5. Onboarding Collapse, Dismiss, and Restore
+  function toggleOnboardingCollapse(role) {
+    const grid = document.getElementById(role + 'OnboardingStepsGrid');
+    const icon = document.getElementById(role + 'OnboardToggleIcon');
+    const text = document.getElementById(role + 'OnboardToggleText');
+    if (grid) {
+      grid.classList.toggle('hidden');
+      if (grid.classList.contains('hidden')) {
+        if (icon) icon.className = 'fa-solid fa-chevron-down text-[10px]';
+        if (text) text.textContent = 'Expand';
+      } else {
+        if (icon) icon.className = 'fa-solid fa-chevron-up text-[10px]';
+        if (text) text.textContent = 'Collapse';
+      }
+    }
+  }
+
+  async function dismissOnboarding(role) {
+    const container = document.getElementById(role + 'OnboardingContainer');
+    const pill = document.getElementById(role + 'OnboardingMinimalPill');
+    if (container) container.classList.add('hidden');
+    if (pill) pill.classList.remove('hidden');
+    try {
+      await fetch('/onboarding/step/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ dismiss: true, role: role })
+      });
+    } catch (e) {
+      console.warn('Dismiss error', e);
+    }
+  }
+
+  async function restoreOnboarding(role) {
+    const container = document.getElementById(role + 'OnboardingContainer');
+    const pill = document.getElementById(role + 'OnboardingMinimalPill');
+    if (container) container.classList.remove('hidden');
+    if (pill) pill.classList.add('hidden');
+    try {
+      await fetch('/onboarding/step/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ step: 'undismiss', role: role })
+      });
+    } catch (e) {
+      console.warn('Restore error', e);
+    }
+  }
+
+  function markTutorWelcomed() {
+    localStorage.setItem('edukom_tutor_welcomed_v1', 'true');
+  }
+
+  function startTutorGuidedSetup() {
+    markTutorWelcomed();
+    closeModal('tutorWelcomeModal');
+    openModal('tutorTechCheckModal');
+    initHardwareTest('tutor');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const isWelcomed = localStorage.getItem('edukom_tutor_welcomed_v1');
+    const isCompleted = {{ tutor_onboarding_percent }} === 100;
+    if (!isWelcomed && !isCompleted) {
+      setTimeout(() => {
+        openModal('tutorWelcomeModal');
+      }, 800);
+    }
+  });
+
+  // 6. WebRTC Hardware & Screen Share Diagnostic
+  let tutorStream = null;
+  let tutorAudioCtx = null;
+  let tutorAnalyser = null;
+  let tutorAnimId = null;
+
+  async function initHardwareTest(role) {
+    const videoElem = document.getElementById(role + 'VideoPreview');
+    const placeholder = document.getElementById(role + 'VideoPlaceholder');
+    const micBar = document.getElementById(role + 'MicLevelBar');
+    const statusElem = document.getElementById(role + 'HardwareStatus');
+    const micStatus = document.getElementById(role + 'MicStatus');
+    const confirmBtn = document.getElementById(role + 'ConfirmHardwareBtn');
+
+    if (statusElem) {
+      statusElem.innerHTML = '<span class="text-amber-600 font-semibold"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Requesting educator webcam & microphone access...</span>';
+    }
+
+    try {
+      if (tutorStream) {
+        tutorStream.getTracks().forEach(t => t.stop());
+      }
+      tutorStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      
+      if (videoElem) {
+        videoElem.srcObject = tutorStream;
+        videoElem.play();
+        if (placeholder) placeholder.classList.add('hidden');
+      }
+
+      tutorAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = tutorAudioCtx.createMediaStreamSource(tutorStream);
+      tutorAnalyser = tutorAudioCtx.createAnalyser();
+      tutorAnalyser.fftSize = 256;
+      source.connect(tutorAnalyser);
+
+      const dataArray = new Uint8Array(tutorAnalyser.frequencyBinCount);
+      function updateMicMeter() {
+        tutorAnalyser.getByteFrequencyData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+          sum += dataArray[i];
+        }
+        const avg = sum / dataArray.length;
+        const percent = Math.min(100, Math.round((avg / 64) * 100));
+        if (micBar) micBar.style.width = Math.max(8, percent) + '%';
+        if (micStatus) {
+          if (percent > 20) {
+            micStatus.innerHTML = '<span class="text-emerald-700 font-bold">Educator Voice Detected!</span>';
+          } else {
+            micStatus.textContent = 'Listening...';
+          }
+        }
+        tutorAnimId = requestAnimationFrame(updateMicMeter);
+      }
+      updateMicMeter();
+
+      if (statusElem) {
+        statusElem.innerHTML = '<span class="text-emerald-700 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Educator Camera & Microphone Verified and Broadcasting Cleanly!</span>';
+      }
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.classList.remove('opacity-50');
+      }
+    } catch (err) {
+      console.warn('Hardware error:', err);
+      if (statusElem) {
+        statusElem.innerHTML = '<span class="text-rose-600 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Device permission denied or unavailable. Please ensure webcam permissions are enabled in your browser.</span>';
+      }
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fa-solid fa-arrow-right"></i> <span>Acknowledge & Continue</span>';
+      }
+    }
+  }
+
+  function stopHardwareTest() {
+    if (tutorAnimId) cancelAnimationFrame(tutorAnimId);
+    if (tutorStream) {
+      tutorStream.getTracks().forEach(t => t.stop());
+      tutorStream = null;
+    }
+    if (tutorAudioCtx && tutorAudioCtx.state !== 'closed') {
+      tutorAudioCtx.close();
+    }
+  }
+
+  async function testScreenShare() {
+    try {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const videoElem = document.getElementById('tutorVideoPreview');
+      if (videoElem) {
+        videoElem.srcObject = screenStream;
+        videoElem.play();
+      }
+      const statusElem = document.getElementById('tutorHardwareStatus');
+      if (statusElem) {
+        statusElem.innerHTML = '<span class="text-emerald-700 font-bold"><i class="fa-solid fa-desktop mr-1"></i> Screen Share Verified! Students can see your digital whiteboard.</span>';
+      }
+    } catch (e) {
+      console.warn('Screen share canceled or denied', e);
+    }
+  }
+
+  async function confirmHardwareTest(role) {
+    stopHardwareTest();
+    closeModal(role + 'TechCheckModal');
+    try {
+      const res = await fetch('/onboarding/step/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ step: 'tech_check', role: role })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        window.location.reload();
+      }
+    } catch (e) {
+      window.location.reload();
+    }
+  }
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL 1: FIRST-TIME TUTOR FACULTY WELCOME MODAL                             -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="tutorWelcomeModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-deep-navy/70 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-outline-variant/30 animate-fade-in relative">
+    <div class="h-2 w-full bg-deep-navy"></div>
+    <div class="p-6 sm:p-8">
+      
+      <div class="w-14 h-14 rounded-2xl bg-deep-navy/10 text-deep-navy flex items-center justify-center text-2xl font-bold mb-4">
+        <i class="fa-solid fa-chalkboard-user"></i>
+      </div>
+
+      <span class="text-xs font-bold uppercase tracking-wider text-secondary">Welcome to Edukom Educator Faculty</span>
+      <h2 class="text-2xl font-black text-deep-navy mt-1">Welcome, {{ tutor.display_name }}!</h2>
+      <p class="text-xs text-on-surface-variant mt-2 leading-relaxed">
+        Thank you for joining Nigeria's premier academic network. Your teaching profile has been initialized with automated bi-weekly payroll and live WebRTC classrooms.
+      </p>
+
+      <div class="space-y-3.5 my-6">
+        <div class="flex items-start gap-3 p-3 bg-surface-container rounded-2xl">
+          <div class="w-7 h-7 rounded-xl bg-deep-navy text-white flex items-center justify-center text-xs shrink-0 font-bold">1</div>
+          <div>
+            <h4 class="text-xs font-bold text-deep-navy">Link Your NUBAN Bank Account</h4>
+            <p class="text-[11px] text-on-surface-variant mt-0.5">Ensure your Nigerian bank account is connected for prompt Paystack payroll disbursements.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-3 bg-surface-container rounded-2xl">
+          <div class="w-7 h-7 rounded-xl bg-deep-navy text-white flex items-center justify-center text-xs shrink-0 font-bold">2</div>
+          <div>
+            <h4 class="text-xs font-bold text-deep-navy">Log Lesson Notes Post-Session</h4>
+            <p class="text-[11px] text-on-surface-variant mt-0.5">Submitting session remarks validates attendance and automatically queues your teaching compensation.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 p-3 bg-surface-container rounded-2xl">
+          <div class="w-7 h-7 rounded-xl bg-deep-navy text-white flex items-center justify-center text-xs shrink-0 font-bold">3</div>
+          <div>
+            <h4 class="text-xs font-bold text-deep-navy">Browser Virtual Classroom (Daily.co)</h4>
+            <p class="text-[11px] text-on-surface-variant mt-0.5">No downloads needed. Launch instant or scheduled sessions directly from your console.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="startTutorGuidedSetup()" class="w-full py-3 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <span>Run 30s Hardware &amp; Screen Test</span> &rarr;
+        </button>
+        <button onclick="closeModal('tutorWelcomeModal'); markTutorWelcomed();" class="w-full sm:w-auto px-5 py-3 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition">
+          Skip Tour
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL 2: TUTOR HARDWARE & SCREEN SHARE READINESS TEST                       -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="tutorTechCheckModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-deep-navy/70 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-outline-variant/30 animate-fade-in relative">
+    <div class="flex items-center justify-between p-5 border-b border-outline-variant/20">
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-xl bg-deep-navy/10 text-deep-navy flex items-center justify-center font-bold text-sm">
+          <i class="fa-solid fa-video"></i>
+        </span>
+        <div>
+          <h3 class="font-bold text-sm text-deep-navy">Educator Virtual Classroom Readiness Diagnostic</h3>
+          <p class="text-[11px] text-on-surface-variant">Daily.co WebRTC audio, video &amp; screen sharing test</p>
+        </div>
+      </div>
+      <button onclick="stopHardwareTest(); closeModal('tutorTechCheckModal');" class="text-outline hover:text-deep-navy p-1 text-base">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <!-- Video Preview Box -->
+      <div class="relative bg-slate-900 rounded-2xl aspect-video overflow-hidden border border-outline-variant/30 flex items-center justify-center">
+        <video id="tutorVideoPreview" class="w-full h-full object-cover" autoplay playsinline muted></video>
+        <div id="tutorVideoPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-white/60 pointer-events-none">
+          <i class="fa-solid fa-camera text-3xl mb-2"></i>
+          <span class="text-xs">Connecting educator camera feed...</span>
+        </div>
+      </div>
+
+      <!-- Real-Time Microphone Level Indicator -->
+      <div class="p-4 bg-surface-container rounded-2xl space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold text-deep-navy">
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-microphone text-rose-600"></i> Microphone Input Level</span>
+          <span id="tutorMicStatus" class="text-[11px] text-outline">Speak into your mic</span>
+        </div>
+        <div class="w-full bg-outline-variant/30 rounded-full h-2.5 overflow-hidden">
+          <div id="tutorMicLevelBar" class="bg-vibrant-lime h-2.5 rounded-full transition-all duration-75" style="width: 8%; background-color: #A9D156;"></div>
+        </div>
+      </div>
+
+      <!-- Test Screen Share Button -->
+      <div class="flex items-center justify-between p-3 bg-surface-bright rounded-xl border border-outline-variant/20">
+        <div>
+          <span class="text-xs font-bold text-deep-navy block">Screen Sharing Capability</span>
+          <span class="text-[11px] text-on-surface-variant">Verify students can view your digital whiteboard or slide deck.</span>
+        </div>
+        <button type="button" onclick="testScreenShare()" class="px-3 py-1.5 bg-white border border-outline-variant/40 hover:border-deep-navy text-deep-navy font-bold text-xs rounded-xl shadow-sm transition shrink-0">
+          <i class="fa-solid fa-desktop mr-1"></i> Test Share
+        </button>
+      </div>
+
+      <!-- Status Message -->
+      <div id="tutorHardwareStatus" class="text-xs text-on-surface-variant bg-surface-bright p-3 rounded-xl border border-outline-variant/20">
+        Click below to allow browser camera and microphone permissions.
+      </div>
+
+      <!-- Modal Action Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="stopHardwareTest(); closeModal('tutorTechCheckModal');" class="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl transition">
+          Cancel
+        </button>
+        <button id="tutorConfirmHardwareBtn" onclick="confirmHardwareTest('tutor')" class="px-5 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+          <i class="fa-solid fa-check"></i>
+          <span>Verified! Complete Step</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </script>
 {% endblock %}

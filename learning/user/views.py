@@ -189,6 +189,69 @@ def student_dashboard_view(request: HttpRequest) -> HttpResponse:
         is_revoked=False
     ).select_related('subject')
 
+    # 10. Student Onboarding Telemetry & Guided Experience
+    has_phone = bool(profile.phone_number and profile.phone_number.strip() and profile.phone_number != '+2340000000000')
+    has_grade = bool(primary_student and primary_student.class_level and primary_student.class_level.strip())
+    step_profile = has_phone and has_grade
+    step_tech_check = bool(request.session.get('student_tech_check_passed') or past_sessions.exists())
+    step_diagnostic = bool(milestones.filter(status__in=[LearningMilestoneStatus.COMPLETED, LearningMilestoneStatus.IN_PROGRESS]).exists() or upcoming_sessions.exists() or request.session.get('student_diagnostic_done'))
+    step_calendar = bool(request.session.get('student_calendar_synced') or upcoming_sessions.exists())
+
+    student_onboarding_steps = [
+        {
+            'id': 'profile',
+            'title': 'Academic Profile & Target',
+            'desc': 'Configure your class grade, curriculum (British/WAEC/IGCSE), and phone contact.',
+            'is_completed': step_profile,
+            'action_url': reverse('profile_settings'),
+            'action_label': 'Edit Profile',
+            'icon': 'fa-solid fa-user-pen',
+            'badge': 'Essential'
+        },
+        {
+            'id': 'tech_check',
+            'title': 'Classroom Hardware Check',
+            'desc': 'Verify your webcam, microphone, and browser audio for live interactive WebRTC classes.',
+            'is_completed': step_tech_check,
+            'action_onclick': "openModal('studentTechCheckModal'); initHardwareTest('student');",
+            'action_label': 'Run Test',
+            'icon': 'fa-solid fa-headset',
+            'badge': 'Quick 30s'
+        },
+        {
+            'id': 'goals',
+            'title': 'Curriculum Milestone & Diagnostic',
+            'desc': 'Review your assigned subject modules, learning targets, and diagnostic progress.',
+            'is_completed': step_diagnostic,
+            'action_url': '#curriculum-path',
+            'action_label': 'View Roadmap',
+            'icon': 'fa-solid fa-graduation-cap',
+            'badge': 'Academic'
+        },
+        {
+            'id': 'calendar',
+            'title': 'Timetable & Calendar Sync',
+            'desc': 'Download your personalized .ics calendar file for Google / Apple Calendar lesson reminders.',
+            'is_completed': step_calendar,
+            'action_url': reverse('classroom:calendar_sync'),
+            'action_label': 'Sync .ics',
+            'icon': 'fa-regular fa-calendar-check',
+            'badge': 'Schedule'
+        }
+    ]
+    completed_steps_count = sum(1 for s in student_onboarding_steps if s['is_completed'])
+    student_onboarding_percent = int((completed_steps_count / len(student_onboarding_steps)) * 100)
+    is_onboarding_finished = (student_onboarding_percent == 100)
+    is_onboarding_dismissed = request.session.get('student_onboarding_dismissed', False)
+    is_returning_student = bool(past_sessions.exists() or total_study_hours > 0 or (total_milestones > 3 and completed_milestones > 0))
+
+    next_session = upcoming_sessions.first() if upcoming_sessions.exists() else None
+    latest_graded_homework = HomeworkSubmission.objects.filter(
+        student__in=students, 
+        status=SubmissionStatus.GRADED
+    ).order_by('-reviewed_at').first()
+    resume_lesson = watch_history.first() if watch_history.exists() else None
+
     context = {
         'profile': profile,
         'student': primary_student,
@@ -204,6 +267,15 @@ def student_dashboard_view(request: HttpRequest) -> HttpResponse:
         'invoices': invoices,
         'quiz_attempts': quiz_attempts,
         'certificates': certificates,
+        'student_onboarding_steps': student_onboarding_steps,
+        'student_completed_count': completed_steps_count,
+        'student_onboarding_percent': student_onboarding_percent,
+        'is_onboarding_finished': is_onboarding_finished,
+        'is_onboarding_dismissed': is_onboarding_dismissed,
+        'is_returning_student': is_returning_student,
+        'next_session': next_session,
+        'latest_graded_homework': latest_graded_homework,
+        'resume_lesson': resume_lesson,
         'now': now,
     }
     return render(request, 'account/dashboard_student.html', context)
@@ -418,6 +490,76 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
         models.Q(uploaded_by=user)
     ).select_related('booking', 'session', 'booking__student', 'booking__subject').distinct().order_by('-created_at')
 
+    # 10. Tutor Onboarding Telemetry & Guided Experience
+    has_tutor_phone = bool(profile.phone_number and profile.phone_number.strip() and profile.phone_number != '+2340000000000')
+    step_tutor_profile = bool(has_tutor_phone and profile.headline and (profile.bio or profile.avatar))
+    step_tutor_bank = bool(payroll_account is not None)
+    step_tutor_rates = bool(tutor_profile.hourly_base_rate and tutor_profile.hourly_base_rate > Decimal('0.00'))
+    step_tutor_tech = bool(request.session.get('tutor_tech_check_passed') or past_sessions_qs.exists())
+    step_tutor_verified = bool(tutor_profile.is_verified)
+
+    tutor_onboarding_steps = [
+        {
+            'id': 'profile',
+            'title': 'Educator Dossier & Headline',
+            'desc': 'Add your teaching qualifications, headline, and bio for parents and students.',
+            'is_completed': step_tutor_profile,
+            'action_url': reverse('profile_settings'),
+            'action_label': 'Update Dossier',
+            'icon': 'fa-solid fa-chalkboard-user',
+            'badge': 'Required'
+        },
+        {
+            'id': 'bank',
+            'title': 'Link Nigerian Bank Account',
+            'desc': 'Connect your verified NUBAN bank account for automated bi-weekly payroll disbursements.',
+            'is_completed': step_tutor_bank,
+            'action_url': reverse('payroll:link_bank', args=[tutor_profile.id]),
+            'action_label': 'Link Bank Account',
+            'icon': 'fa-solid fa-building-columns',
+            'badge': 'Payroll'
+        },
+        {
+            'id': 'rates',
+            'title': 'Base Rate & Compensation Tier',
+            'desc': f'Teaching rate confirmed at {tutor_profile.currency} {tutor_profile.hourly_base_rate|floatformat:2}/hr.',
+            'is_completed': step_tutor_rates,
+            'action_url': reverse('payroll:rate_matrix'),
+            'action_label': 'Rate Matrix',
+            'icon': 'fa-solid fa-coins',
+            'badge': 'Earnings'
+        },
+        {
+            'id': 'tech_check',
+            'title': 'Virtual Classroom Hardware Test',
+            'desc': 'Verify your microphone, webcam, and browser permissions before meeting students.',
+            'is_completed': step_tutor_tech,
+            'action_onclick': "openModal('tutorTechCheckModal'); initHardwareTest('tutor');",
+            'action_label': 'Run Test',
+            'icon': 'fa-solid fa-video',
+            'badge': 'Teaching'
+        },
+        {
+            'id': 'verified',
+            'title': 'Faculty Background Verification',
+            'desc': 'Verified Educator in good standing with the Edukom Academic Advisory Board.' if step_tutor_verified else 'Credential vetting & background check in progress by Edukom Coordinators.',
+            'is_completed': step_tutor_verified,
+            'action_url': '#',
+            'action_label': 'Verified' if step_tutor_verified else 'In Review',
+            'icon': 'fa-solid fa-shield-halved',
+            'badge': 'Faculty'
+        }
+    ]
+    tutor_completed_count = sum(1 for s in tutor_onboarding_steps if s['is_completed'])
+    tutor_onboarding_percent = int((tutor_completed_count / len(tutor_onboarding_steps)) * 100)
+    is_tutor_onboarding_finished = (tutor_onboarding_percent == 100)
+    is_tutor_onboarding_dismissed = request.session.get('tutor_onboarding_dismissed', False)
+    is_returning_tutor = bool(past_sessions_qs.exists() or monthly_hours > 0 or active_bookings.exists())
+
+    unsubmitted_notes_count = past_sessions_qs.filter(lesson_notes='').count()
+    ungraded_homework_count = homework_submissions.filter(status=SubmissionStatus.SUBMITTED).count()
+    next_tutor_session = upcoming_sessions.first() if upcoming_sessions.exists() else None
+
     context = {
         'profile': profile,
         'tutor': tutor_profile,
@@ -433,6 +575,15 @@ def tutor_dashboard_view(request: HttpRequest) -> HttpResponse:
         'tutor_payslips': tutor_payslips,
         'resources': resources,
         'resource_types': ResourceType.choices,
+        'tutor_onboarding_steps': tutor_onboarding_steps,
+        'tutor_completed_count': tutor_completed_count,
+        'tutor_onboarding_percent': tutor_onboarding_percent,
+        'is_tutor_onboarding_finished': is_tutor_onboarding_finished,
+        'is_tutor_onboarding_dismissed': is_tutor_onboarding_dismissed,
+        'is_returning_tutor': is_returning_tutor,
+        'unsubmitted_notes_count': unsubmitted_notes_count,
+        'ungraded_homework_count': ungraded_homework_count,
+        'next_tutor_session': next_tutor_session,
         'now': now,
     }
     return render(request, 'account/dashboard_tutor.html', context)
@@ -609,7 +760,8 @@ def update_user_role_view(request: HttpRequest, user_id: int) -> HttpResponse:
 @login_required
 def profile_settings_view(request: HttpRequest) -> HttpResponse:
     """
-    Allows any user to update their phone number, timezone, avatar, headline, and bio.
+    Allows any user to update their phone number, timezone, avatar, headline, bio,
+    and role-specific academic grade and curriculum preferences.
     """
     profile = request.user.profile
     if request.method == 'POST':
@@ -619,6 +771,8 @@ def profile_settings_view(request: HttpRequest) -> HttpResponse:
         headline = request.POST.get('headline', '').strip()
         bio = request.POST.get('bio', '').strip()
         user_timezone = request.POST.get('timezone', 'Africa/Lagos').strip()
+        student_grade = request.POST.get('student_grade', '').strip()
+        curriculum = request.POST.get('curriculum', '').strip()
 
         request.user.first_name = first_name
         request.user.last_name = last_name
@@ -628,14 +782,83 @@ def profile_settings_view(request: HttpRequest) -> HttpResponse:
         profile.headline = headline
         profile.bio = bio
         profile.timezone = user_timezone
+        if student_grade:
+            profile.student_grade = student_grade
+        if curriculum:
+            profile.curriculum = curriculum
+
         if 'avatar' in request.FILES:
             profile.avatar = request.FILES['avatar']
         profile.save()
+
+        # Sync Student model records if user has student associations
+        student_records = Student.objects.filter(models.Q(user=request.user) | models.Q(guardian__email__iexact=request.user.email))
+        for sr in student_records:
+            if student_grade:
+                sr.class_level = student_grade
+            if curriculum:
+                sr.curriculum = curriculum
+            sr.save()
 
         messages.success(request, "Profile information updated successfully.")
         return redirect(profile.get_dashboard_url())
 
     return render(request, 'account/profile_settings.html', {'profile': profile})
+
+
+@login_required
+@require_POST
+def complete_onboarding_step_api(request: HttpRequest) -> HttpResponse:
+    """
+    AJAX endpoint to record onboarding progress, dismiss cards, or record tech-checks.
+    """
+    try:
+        data = json.loads(request.body) if request.body else request.POST
+    except Exception:
+        data = request.POST
+
+    step = data.get('step')
+    role = data.get('role', 'student')
+    dismiss = data.get('dismiss', False)
+
+    if dismiss:
+        if role == 'tutor':
+            request.session['tutor_onboarding_dismissed'] = True
+        else:
+            request.session['student_onboarding_dismissed'] = True
+        request.session.modified = True
+        return JsonResponse({'status': 'dismissed'})
+
+    if step == 'undismiss':
+        if role == 'tutor':
+            request.session['tutor_onboarding_dismissed'] = False
+        else:
+            request.session['student_onboarding_dismissed'] = False
+        request.session.modified = True
+        return JsonResponse({'status': 'restored'})
+
+    if step == 'tech_check':
+        if role == 'tutor':
+            request.session['tutor_tech_check_passed'] = True
+        else:
+            request.session['student_tech_check_passed'] = True
+        request.session.modified = True
+        return JsonResponse({'status': 'success', 'step': 'tech_check'})
+
+    if step == 'calendar':
+        if role == 'tutor':
+            request.session['tutor_calendar_synced'] = True
+        else:
+            request.session['student_calendar_synced'] = True
+        request.session.modified = True
+        return JsonResponse({'status': 'success', 'step': 'calendar'})
+
+    if step == 'goals' or step == 'diagnostic':
+        request.session['student_diagnostic_done'] = True
+        request.session.modified = True
+        return JsonResponse({'status': 'success', 'step': 'diagnostic'})
+
+    return JsonResponse({'status': 'acknowledged'})
 
 
 def register_view(request: HttpRequest) -> HttpResponse:

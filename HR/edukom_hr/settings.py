@@ -201,4 +201,4 @@ if USE_S3:
         pass
 
 # Edukom Learning Platform URL
-LEARNING_PLATFORM_URL = os.environ.get('LEARNING_PLATFORM_URL', 'https://walnut-collectible-captured-silent.trycloudflare.com/')
+LEARNING_PLATFORM_URL = os.environ.get('LEARNING_PLATFORM_URL', 'https://tension-detail-officers-insider.trycloudflare.com/')
