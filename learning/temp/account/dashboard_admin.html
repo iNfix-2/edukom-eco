@@ -28,6 +28,9 @@
 
       <!-- Quick Action Buttons -->
       <div class="flex flex-wrap items-center gap-2.5 z-10">
+        <a href="{% url 'automations:dashboard' %}" class="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-900 font-bold text-xs rounded-xl border border-purple-200 transition flex items-center gap-2">
+          <i class="fa-solid fa-bell-concierge"></i> Reminders & Messaging
+        </a>
         <a href="/admin/" target="_blank" class="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-deep-navy font-bold text-xs rounded-xl border border-outline-variant/30 transition flex items-center gap-2">
           <i class="fa-solid fa-gear"></i> Django Admin
         </a>

@@ -68,8 +68,20 @@
     <!-- PRIMARY STAGE (Video Tiles, Screen-Share, or Full Whiteboard) -->
     <main class="flex-1 flex flex-col relative bg-slate-950 overflow-hidden">
 
-      <!-- Dedicated Remote Audio Receiver (Unmuted for clean bidirectional voice) -->
-      <audio id="remoteAudio" autoplay playsinline class="hidden"></audio>
+      <!-- Dedicated Remote Audio Receiver (Offscreen so browser never suspends playback) -->
+      <audio id="remoteAudio" autoplay playsinline style="position: fixed; top: -5000px; left: -5000px; width: 1px; height: 1px; opacity: 0.001; pointer-events: none; z-index: -999;"></audio>
+
+      <!-- Browser Insecure Origin Security Notice Banner -->
+      <div id="insecureContextBanner" class="hidden absolute top-3 left-1/2 -translate-x-1/2 z-40 bg-amber-600/95 backdrop-blur text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-3 text-xs font-bold border border-amber-400 max-w-lg text-center animate-in fade-in slide-in-from-top-2">
+        <i class="fa-solid fa-triangle-exclamation text-base text-amber-200 shrink-0"></i>
+        <div class="text-left text-[11px] leading-tight flex-1">
+          <p class="font-bold">HTTPS Required for Camera &amp; Mic</p>
+          <p class="text-amber-100 font-normal mt-0.5">Mobile and remote browsers block camera/mic hardware on plain HTTP. Please access via the secure HTTPS link.</p>
+        </div>
+        <button onclick="document.getElementById('insecureContextBanner').classList.add('hidden')" class="text-amber-200 hover:text-white p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
 
       <!-- Autoplay Policy Audio Unblock Pill -->
       <div id="audioAutoplayBanner" class="hidden absolute top-3 left-1/2 -translate-x-1/2 z-40 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold animate-bounce cursor-pointer border border-indigo-400" onclick="unlockAudioPlayback()">
@@ -273,48 +285,48 @@
       </div>
 
       <!-- FLOATING ZOOM-LIKE BOTTOM CONTROLS BAR -->
-      <div class="h-20 bg-slate-900/90 backdrop-blur border-t border-slate-800/80 px-4 sm:px-8 flex items-center justify-between z-20 shrink-0">
+      <div class="h-16 sm:h-20 bg-slate-900/95 backdrop-blur border-t border-slate-800/80 px-2 sm:px-8 flex items-center justify-between z-20 shrink-0">
 
         <!-- Left Controls: Audio / Video Devices -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-1.5 sm:space-x-3">
           <!-- Mic Toggle -->
-          <div class="flex items-center bg-slate-800 rounded-2xl p-1 border border-slate-700/60 shadow">
-            <button id="btnMic" onclick="toggleMicrophone()" class="px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-white bg-slate-700 hover:bg-slate-600 transition" title="Mute/Unmute Mic">
-              <i id="micIcon" class="fa-solid fa-microphone text-emerald-400"></i>
+          <div class="flex items-center bg-slate-800 rounded-2xl p-0.5 sm:p-1 border border-slate-700/60 shadow">
+            <button id="btnMic" onclick="toggleMicrophone()" class="px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 sm:gap-2 text-white bg-slate-700 hover:bg-slate-600 transition" title="Mute/Unmute Mic">
+              <i id="micIcon" class="fa-solid fa-microphone text-emerald-400 text-sm"></i>
               <span id="micLabel" class="hidden sm:inline">Mute</span>
             </button>
           </div>
 
           <!-- Camera Toggle -->
-          <div class="flex items-center bg-slate-800 rounded-2xl p-1 border border-slate-700/60 shadow">
-            <button id="btnCam" onclick="toggleCamera()" class="px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-white bg-slate-700 hover:bg-slate-600 transition" title="Start/Stop Webcam">
-              <i id="camIcon" class="fa-solid fa-video text-emerald-400"></i>
+          <div class="flex items-center bg-slate-800 rounded-2xl p-0.5 sm:p-1 border border-slate-700/60 shadow">
+            <button id="btnCam" onclick="toggleCamera()" class="px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 sm:gap-2 text-white bg-slate-700 hover:bg-slate-600 transition" title="Start/Stop Webcam">
+              <i id="camIcon" class="fa-solid fa-video text-emerald-400 text-sm"></i>
               <span id="camLabel" class="hidden sm:inline">Camera</span>
             </button>
           </div>
         </div>
 
         <!-- Center Controls: Screen Share, Whiteboard, Layout -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
+        <div class="flex items-center space-x-1.5 sm:space-x-3">
           <!-- Screen Share Button -->
-          <button id="btnScreenShare" onclick="toggleScreenShare()" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Share Screen / Presentation">
-            <i class="fa-solid fa-desktop text-base"></i>
+          <button id="btnScreenShare" onclick="toggleScreenShare()" class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Share Screen / Presentation">
+            <i class="fa-solid fa-desktop text-sm sm:text-base"></i>
           </button>
 
           <!-- Whiteboard Button -->
-          <button id="btnWhiteboard" onclick="toggleWhiteboard()" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center text-white transition shadow-lg shadow-indigo-600/30" title="Open Interactive Collaborative Whiteboard">
-            <i class="fa-solid fa-pen-ruler text-base"></i>
+          <button id="btnWhiteboard" onclick="toggleWhiteboard()" class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center text-white transition shadow-lg shadow-indigo-600/30" title="Open Interactive Collaborative Whiteboard">
+            <i class="fa-solid fa-pen-ruler text-sm sm:text-base"></i>
           </button>
 
           <!-- Live Chat Toggle -->
-          <button id="btnChatToggle" onclick="toggleDrawer('chat')" class="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="In-Class Chat">
-            <i class="fa-solid fa-comment-dots text-base"></i>
-            <span id="chatUnreadDot" class="hidden absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></span>
+          <button id="btnChatToggle" onclick="toggleDrawer('chat')" class="relative w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="In-Class Chat">
+            <i class="fa-solid fa-comment-dots text-sm sm:text-base"></i>
+            <span id="chatUnreadDot" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></span>
           </button>
 
           <!-- Shared Resources Vault Toggle -->
-          <button id="btnVaultToggle" onclick="toggleDrawer('resources')" class="relative w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Shared Worksheets & Files">
-            <i class="fa-solid fa-folder-open text-base"></i>
+          <button id="btnVaultToggle" onclick="toggleDrawer('resources')" class="relative w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Shared Worksheets & Files">
+            <i class="fa-solid fa-folder-open text-sm sm:text-base"></i>
             <span id="bottomVaultBadge" class="absolute -top-1 -right-1 px-1.5 py-0.5 rounded-full text-[9px] font-black bg-indigo-600 text-white shadow">
               {{ session.resources.all|length }}
             </span>
@@ -322,20 +334,20 @@
           </button>
 
           <!-- Class Info Toggle -->
-          <button onclick="toggleDrawer('info')" class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Lesson Info">
-            <i class="fa-solid fa-circle-info text-base"></i>
+          <button onclick="toggleDrawer('info')" class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 flex items-center justify-center text-slate-200 transition shadow" title="Lesson Info">
+            <i class="fa-solid fa-circle-info text-sm sm:text-base"></i>
           </button>
         </div>
 
         <!-- Right Controls: Leave / End Call -->
         <div>
           {% if is_tutor %}
-            <button onclick="openNotesModal()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl text-xs shadow-lg shadow-rose-600/30 transition flex items-center gap-2">
+            <button onclick="openNotesModal()" class="px-3 sm:px-4 py-2 sm:py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl sm:rounded-2xl text-xs shadow-lg shadow-rose-600/30 transition flex items-center gap-1.5">
               <i class="fa-solid fa-phone-slash"></i>
               <span class="hidden sm:inline">Conclude Class</span>
             </button>
           {% else %}
-            <a href="{% url 'classroom:student_portal' %}" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-2xl text-xs shadow-lg shadow-rose-600/30 transition flex items-center gap-2">
+            <a href="{% url 'classroom:student_portal' %}" class="px-3 sm:px-4 py-2 sm:py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl sm:rounded-2xl text-xs shadow-lg shadow-rose-600/30 transition flex items-center gap-1.5">
               <i class="fa-solid fa-phone-slash"></i>
               <span class="hidden sm:inline">Leave Room</span>
             </a>
@@ -347,7 +359,7 @@
     </main>
 
     <!-- RIGHT SLIDE-OUT COLLAPSIBLE DRAWER (Chat / Worksheets / Details) -->
-    <aside id="sideDrawer" class="w-80 sm:w-96 bg-slate-900 border-l border-slate-800 flex flex-col z-20 transition-all duration-300 shrink-0">
+    <aside id="sideDrawer" class="fixed md:static inset-y-0 right-0 w-full sm:w-80 md:w-96 bg-slate-900 border-l border-slate-800 flex flex-col z-50 transition-all duration-300 shrink-0 shadow-2xl">
 
       <!-- Drawer Tabs Header -->
       <div class="h-14 border-b border-slate-800 flex items-center justify-between px-4 bg-slate-950/60">
@@ -637,7 +649,8 @@
   const CSRF_TOKEN = "{{ csrf_token }}";
 
   // Telemetry & State
-  let lastSignalId = 0;
+  let lastSignalId = {{ latest_signal_id|default:0 }};
+  const IS_SECURE_ORIGIN = window.isSecureContext || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
   let peerConnection = null;
   let dataChannel = null;
   let localMediaStream = null;
@@ -921,11 +934,31 @@
         updatePeerStatusBadge(false);
       }
     };
+  }
 
-    // If Tutor (Initiator), initiate offer when room is ready
-    if (IS_TUTOR) {
-      setTimeout(createAndSendOffer, 1500);
+  function resetPeerConnection() {
+    console.log("Resetting WebRTC Peer Connection...");
+    if (peerConnection) {
+      try {
+        peerConnection.close();
+      } catch (e) {}
+      peerConnection = null;
     }
+    iceCandidatesQueue = [];
+    initWebRTC();
+  }
+
+  function initiateCall() {
+    if (!IS_TUTOR) return;
+    if (!peerConnection) {
+      initWebRTC();
+      return;
+    }
+    if (peerConnection.signalingState !== 'stable') {
+      console.log("Peer connection not stable (" + peerConnection.signalingState + ") prior to call initiation. Resetting...");
+      resetPeerConnection();
+    }
+    createAndSendOffer();
   }
 
   function attachAudioTrackToPeer(track) {
@@ -962,6 +995,10 @@
   async function createAndSendOffer() {
     if (!peerConnection) return;
     try {
+      if (peerConnection.signalingState !== 'stable') {
+        console.warn("Skipping createAndSendOffer: signalingState is " + peerConnection.signalingState);
+        return;
+      }
       const offer = await peerConnection.createOffer({
         offerToReceiveAudio: true,
         offerToReceiveVideo: true
@@ -982,8 +1019,13 @@
     if (type === 'presence') {
       // Peer arrived in the classroom
       updatePeerStatusBadge(true);
-      if (IS_TUTOR && peerConnection && peerConnection.signalingState === 'stable') {
-        createAndSendOffer();
+      if (IS_TUTOR) {
+        // Acknowledge presence and initiate offer
+        sendSignal('presence_ack', { user: USER_NAME, role: 'TUTOR' });
+        initiateCall();
+      } else {
+        // Acknowledge presence so tutor knows student is ready
+        sendSignal('presence_ack', { user: USER_NAME, role: 'STUDENT' });
       }
       // If Tutor has active whiteboard drawings, synchronize state with the newly joined student
       if (IS_TUTOR && whiteboardHistory && whiteboardHistory.length > 0) {
@@ -993,20 +1035,33 @@
           isWbActive: isWbActive
         });
       }
+    } else if (type === 'presence_ack') {
+      updatePeerStatusBadge(true);
+      if (IS_TUTOR) {
+        initiateCall();
+      }
     } else if (type === 'renegotiate') {
       // Peer added tracks and requested renegotiation
-      if (IS_TUTOR && peerConnection && peerConnection.signalingState === 'stable') {
-        createAndSendOffer();
+      if (IS_TUTOR) {
+        initiateCall();
       }
     } else if (type === 'offer') {
       // Received SDP Offer (on student or peer device)
       if (!peerConnection) initWebRTC();
       try {
+        if (peerConnection.signalingState !== 'stable') {
+          console.log("Signaling state is " + peerConnection.signalingState + " on offer. Resetting peer connection...");
+          resetPeerConnection();
+        }
         await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
         // Flush any queued candidates
         while (iceCandidatesQueue.length > 0) {
           const cand = iceCandidatesQueue.shift();
-          await peerConnection.addIceCandidate(cand);
+          try {
+            await peerConnection.addIceCandidate(cand);
+          } catch (e) {
+            console.warn("Error adding queued candidate:", e);
+          }
         }
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
@@ -1019,12 +1074,20 @@
       // Received SDP Answer (on tutor device)
       if (peerConnection) {
         try {
-          await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
-          while (iceCandidatesQueue.length > 0) {
-            const cand = iceCandidatesQueue.shift();
-            await peerConnection.addIceCandidate(cand);
+          if (peerConnection.signalingState === 'have-local-offer') {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(payload));
+            while (iceCandidatesQueue.length > 0) {
+              const cand = iceCandidatesQueue.shift();
+              try {
+                await peerConnection.addIceCandidate(cand);
+              } catch (e) {
+                console.warn("Error adding queued candidate:", e);
+              }
+            }
+            console.log("WebRTC Peer connection established successfully!");
+          } else {
+            console.warn("Received answer while signalingState is: " + peerConnection.signalingState);
           }
-          console.log("WebRTC Peer connection established successfully!");
         } catch (err) {
           console.warn("Error handling answer:", err);
         }
@@ -1033,8 +1096,12 @@
       // ICE candidate exchange
       if (payload && payload.candidate) {
         const iceCandidate = new RTCIceCandidate(payload);
-        if (peerConnection && peerConnection.remoteDescription) {
-          await peerConnection.addIceCandidate(iceCandidate);
+        if (peerConnection && peerConnection.remoteDescription && peerConnection.remoteDescription.type) {
+          try {
+            await peerConnection.addIceCandidate(iceCandidate);
+          } catch (e) {
+            console.warn("Error adding ICE candidate:", e);
+          }
         } else {
           iceCandidatesQueue.push(iceCandidate);
         }
@@ -1102,6 +1169,12 @@
     if (localAudioTrack && localAudioTrack.readyState === 'live') {
       return localAudioStream;
     }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.warn("navigator.mediaDevices is not available on this origin (HTTPS required).");
+      const insecureBanner = document.getElementById('insecureContextBanner');
+      if (insecureBanner) insecureBanner.classList.remove('hidden');
+      return null;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -1138,6 +1211,13 @@
   }
 
   async function toggleMicrophone() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("Microphone is not accessible over insecure HTTP. Please use the secure HTTPS link.");
+      const insecureBanner = document.getElementById('insecureContextBanner');
+      if (insecureBanner) insecureBanner.classList.remove('hidden');
+      return;
+    }
+
     // If mic hasn't been initialized yet, initialize it
     if (!localAudioTrack || localAudioTrack.readyState === 'ended') {
       const stream = await initLocalAudio();
@@ -1195,8 +1275,21 @@
     const btnCam = document.getElementById('btnCam');
 
     if (!isCameraOn) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera is not accessible over insecure HTTP. Please use the secure HTTPS link.");
+        const insecureBanner = document.getElementById('insecureContextBanner');
+        if (insecureBanner) insecureBanner.classList.remove('hidden');
+        return;
+      }
       try {
-        const vStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        const vStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: 'user'
+          },
+          audio: false
+        });
         localCameraTrack = vStream.getVideoTracks()[0];
 
         // Combine tracks for local preview
@@ -1208,6 +1301,7 @@
         myVid.muted = true; // Local preview must always be muted to prevent local echo
         myVid.classList.remove('hidden');
         myAvatar.classList.add('hidden');
+        myVid.play().catch(e => console.log("Local video play notice:", e));
         isCameraOn = true;
 
         // Add or replace video track in WebRTC
@@ -1228,6 +1322,13 @@
               peerConnection.addTrack(localCameraTrack, localMediaStream);
             }
           }
+
+          // Trigger renegotiation so peer receives the new video stream immediately
+          if (IS_TUTOR) {
+            initiateCall();
+          } else {
+            sendSignal('renegotiate', { sender: USER_NAME });
+          }
         }
 
         camIcon.className = "fa-solid fa-video text-emerald-400";
@@ -1238,7 +1339,7 @@
         broadcastRealtime({ type: 'media_state', cam: true, mic: !isMicMuted });
       } catch (err) {
         console.warn("Camera permission denied or camera not found:", err);
-        alert("Camera permission denied or camera hardware unavailable.");
+        alert("Camera could not be accessed. Please ensure camera permissions are allowed in your browser settings.");
       }
     } else {
       if (localCameraTrack) {
@@ -1283,6 +1384,7 @@
       if (state.cam) {
         remoteVid.classList.remove('hidden');
         remoteAvatar.classList.add('hidden');
+        remoteVid.play().catch(e => console.log("Remote video play notice:", e));
       } else {
         remoteVid.classList.add('hidden');
         remoteAvatar.classList.remove('hidden');
@@ -2253,6 +2355,12 @@
 
   // 9. Startup & Presence Heartbeat
   document.addEventListener('DOMContentLoaded', () => {
+    // Show security banner if accessing over insecure HTTP context where camera/mic are blocked by browsers
+    if (!IS_SECURE_ORIGIN) {
+      const insecureBanner = document.getElementById('insecureContextBanner');
+      if (insecureBanner) insecureBanner.classList.remove('hidden');
+    }
+
     initWhiteboard();
     initWebRTC();
 

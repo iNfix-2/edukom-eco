@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You're Offline — Educom</title>
+  <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #FFF7EF;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #1E1B2E;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 52px 36px;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 48px rgba(122, 62, 157, 0.12);
+      border: 1px solid #F3E8DB;
+    }
+    .icon-wrap {
+      width: 96px;
+      height: 96px;
+      background: rgba(122, 62, 157, 0.08);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+    }
+    .icon-wrap svg { width: 48px; height: 48px; }
+    .logo { height: 44px; margin-bottom: 32px; }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #7A3E9D;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    p {
+      color: #6B6A74;
+      line-height: 1.65;
+      margin-bottom: 32px;
+      font-size: 0.97rem;
+    }
+    .btn-retry {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #7A3E9D;
+      color: #ffffff;
+      padding: 14px 32px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .btn-retry:hover {
+      background: #642f83;
+      transform: translateY(-2px);
+    }
+    .tip {
+      margin-top: 24px;
+      font-size: 0.8rem;
+      color: #a0a0a8;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="{% static 'img/logo.png' %}" alt="Educom Logo" class="logo">
+    <div class="icon-wrap">
+      <!-- Signal / WiFi off icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#7A3E9D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"/>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+        <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+        <line x1="12" y1="20" x2="12.01" y2="20"/>
+      </svg>
+    </div>
+    <h1>You're Offline</h1>
+    <p>
+      It looks like you've lost your internet connection.
+      Please check your data or Wi-Fi and try again.
+      Some pages you've visited before may still be available.
+    </p>
+    <button class="btn-retry" onclick="window.location.reload()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1 4 1 10 7 10"/>
+        <path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
+      </svg>
+      Try Again
+    </button>
+    <p class="tip">Educom Group Nigeria · edukom.ng</p>
+  </div>
+</body>
+</html>

@@ -25,9 +25,19 @@ if 'testserver' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append('testserver')
 if '.trycloudflare.com' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append('.trycloudflare.com')
+if DEBUG and '*' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('*')
 
-raw_csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.trycloudflare.com,http://127.0.0.1,http://localhost,http://127.0.0.1:8005,http://localhost:8005')
+raw_csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.trycloudflare.com,http://127.0.0.1,http://localhost,http://127.0.0.1:8000,http://localhost:8000,http://127.0.0.1:8005,http://localhost:8005')
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in raw_csrf_origins.split(',') if o.strip()]
+if DEBUG:
+    import socket
+    try:
+        for _local_ip in socket.gethostbyname_ex(socket.gethostname())[2]:
+            CSRF_TRUSTED_ORIGINS.append(f'http://{_local_ip}:8000')
+            CSRF_TRUSTED_ORIGINS.append(f'http://{_local_ip}:8005')
+    except Exception:
+        pass
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -219,6 +229,7 @@ TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
 TWILIO_WHATSAPP_NUMBER = os.getenv('TWILIO_WHATSAPP_NUMBER', '+14155238886')
 TERMII_API_KEY = os.getenv('TERMII_API_KEY', '')
 TERMII_SENDER_ID = os.getenv('TERMII_SENDER_ID', 'Edukom')
+AUTOMATIONS_CRON_SECRET = os.getenv('AUTOMATIONS_CRON_SECRET', 'edukom-auto-cron-secret-change-me')
 
 # ==============================================================================
 # CYBERSECURITY & HARDENING CONFIGURATION

@@ -21,7 +21,7 @@
     color: #002769 !important;
   }
   
-  /* Input Customizations for Crispy Forms */
+  /* Input Customizations for Crispy Forms - 16px to prevent iOS auto-zoom */
   .tutor-form-container input[type="text"],
   .tutor-form-container input[type="email"],
   .tutor-form-container input[type="tel"],
@@ -33,7 +33,7 @@
     border-radius: 0.85rem;
     border: 1px solid #e2e8f0;
     background-color: #f8fafc;
-    font-size: 0.95rem;
+    font-size: 16px;
     color: #002769;
     transition: all 0.2s ease;
   }
@@ -52,6 +52,87 @@
     display: block;
     font-size: 0.9rem;
   }
+
+  /* Crisp Checkbox & Radio Alignment Fix with Fluid Mobile Scaling */
+  .tutor-form-container #div_id_subject > div,
+  .tutor-form-container #div_id_curriculum > div,
+  .tutor-form-container #div_id_days > div,
+  .tutor-form-container #div_id_lesson_type > div,
+  .tutor-form-container .controls > div,
+  .tutor-form-container ul {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.6rem !important;
+    padding: 0 !important;
+    margin-top: 0.5rem !important;
+    list-style: none !important;
+  }
+
+  @media (min-width: 640px) {
+    .tutor-form-container #div_id_subject > div,
+    .tutor-form-container #div_id_curriculum > div,
+    .tutor-form-container #div_id_days > div,
+    .tutor-form-container #div_id_lesson_type > div,
+    .tutor-form-container .controls > div,
+    .tutor-form-container ul {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+      gap: 0.75rem !important;
+    }
+  }
+
+  .tutor-form-container .form-check,
+  .tutor-form-container .checkbox,
+  .tutor-form-container .radio,
+  .tutor-form-container ul li {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    background-color: #f9f9f9;
+    border: 1px solid #e2e2e2;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin: 0 !important;
+    min-height: 44px;
+    word-break: break-word;
+  }
+
+  .tutor-form-container .form-check:hover,
+  .tutor-form-container .checkbox:hover,
+  .tutor-form-container .radio:hover,
+  .tutor-form-container ul li:hover {
+    border-color: #002769;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 39, 105, 0.06);
+  }
+
+  .tutor-form-container input[type="checkbox"],
+  .tutor-form-container input[type="radio"] {
+    width: 1.15rem !important;
+    height: 1.15rem !important;
+    accent-color: #002769 !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .tutor-form-container .form-check-label,
+  .tutor-form-container #div_id_subject label:not(#id_subject),
+  .tutor-form-container #div_id_curriculum label:not(#id_curriculum),
+  .tutor-form-container #div_id_days label:not(#id_days),
+  .tutor-form-container #div_id_lesson_type label:not(#id_lesson_type),
+  .tutor-form-container ul li label {
+    display: inline-block !important;
+    margin-bottom: 0 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    color: #1a1c1c !important;
+    cursor: pointer !important;
+    user-select: none;
+    line-height: 1.25 !important;
+  }
 </style>
 
 <section class="relative py-12 md:py-20 bg-canvas-gray overflow-hidden">
@@ -68,23 +149,23 @@
         </div>
 
         <!-- Main Card Container -->
-        <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-surface-variant/60 tutor-form-container">
+        <div class="bg-white rounded-3xl p-4 sm:p-8 md:p-10 shadow-xl border border-surface-variant/60 tutor-form-container">
             
             <!-- Step Navigation Tabs -->
-            <div id="tab-nav" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-                <button type="button" onclick="openform(1)" id="Tab1" class="tutor-step-tab active flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all">
+            <div id="tab-nav" class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 mb-8">
+                <button type="button" onclick="openform(1)" id="Tab1" class="tutor-step-tab active flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all min-h-[48px]">
                     <span id="Span1" class="step-num w-7 h-7 rounded-xl bg-deep-navy text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
                     <span class="text-xs sm:text-sm font-bold truncate">Specialization</span>
                 </button>
-                <button type="button" onclick="openform(2)" id="Tab2" class="tutor-step-tab flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all">
+                <button type="button" onclick="openform(2)" id="Tab2" class="tutor-step-tab flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all min-h-[48px]">
                     <span id="Span2" class="step-num w-7 h-7 rounded-xl bg-surface-variant text-on-surface text-xs font-bold flex items-center justify-center shrink-0">2</span>
                     <span class="text-xs sm:text-sm font-bold truncate">Contact Info</span>
                 </button>
-                <button type="button" onclick="openform(3)" id="Tab3" class="tutor-step-tab flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all">
+                <button type="button" onclick="openform(3)" id="Tab3" class="tutor-step-tab flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all min-h-[48px]">
                     <span id="Span3" class="step-num w-7 h-7 rounded-xl bg-surface-variant text-on-surface text-xs font-bold flex items-center justify-center shrink-0">3</span>
                     <span class="text-xs sm:text-sm font-bold truncate">Location</span>
                 </button>
-                <button type="button" onclick="openform(4)" id="Tab4" class="tutor-step-tab flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all">
+                <button type="button" onclick="openform(4)" id="Tab4" class="tutor-step-tab flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-2xl border border-surface-variant/80 text-left bg-surface-container text-on-surface-variant transition-all min-h-[48px]">
                     <span id="Span4" class="step-num w-7 h-7 rounded-xl bg-surface-variant text-on-surface text-xs font-bold flex items-center justify-center shrink-0">4</span>
                     <span class="text-xs sm:text-sm font-bold truncate">Schedule</span>
                 </button>
@@ -104,7 +185,7 @@
                         {{ Abform | crispy }}
                     </div>
                     <div class="flex justify-end pt-4">
-                        <button type="button" class="px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center gap-2" onclick="fnext(1)">
+                        <button type="button" class="w-full sm:w-auto px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center justify-center gap-2 min-h-[48px]" onclick="fnext(1)">
                             <span>Next Step</span>
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
@@ -120,12 +201,12 @@
                     <div class="space-y-4">
                         {{ Guform | crispy }}
                     </div>
-                    <div class="flex justify-between items-center pt-4">
-                        <button type="button" class="px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center gap-2" onclick="openform(1)">
+                    <div class="flex items-center justify-between gap-3 pt-4">
+                        <button type="button" class="flex-1 sm:flex-initial px-5 sm:px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="openform(1)">
                             <span class="material-symbols-outlined">arrow_back</span>
                             <span>Previous</span>
                         </button>
-                        <button type="button" class="px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center gap-2" onclick="fnext(2)">
+                        <button type="button" class="flex-1 sm:flex-initial px-6 sm:px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center justify-center gap-2 min-h-[48px]" onclick="fnext(2)">
                             <span>Next Step</span>
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
@@ -141,12 +222,12 @@
                     <div class="space-y-4">
                         {{ Loform | crispy }}
                     </div>
-                    <div class="flex justify-between items-center pt-4">
-                        <button type="button" class="px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center gap-2" onclick="openform(2)">
+                    <div class="flex items-center justify-between gap-3 pt-4">
+                        <button type="button" class="flex-1 sm:flex-initial px-5 sm:px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="openform(2)">
                             <span class="material-symbols-outlined">arrow_back</span>
                             <span>Previous</span>
                         </button>
-                        <button type="button" class="px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center gap-2" onclick="fnext(3)">
+                        <button type="button" class="flex-1 sm:flex-initial px-6 sm:px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold rounded-xl text-sm sm:text-base hover:bg-primary-container hover:text-white transition-all shadow-md flex items-center justify-center gap-2 min-h-[48px]" onclick="fnext(3)">
                             <span>Next Step</span>
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
@@ -162,12 +243,12 @@
                     <div class="space-y-4">
                         {{ Leform | crispy }}
                     </div>
-                    <div class="flex justify-between items-center pt-4">
-                        <button type="button" class="px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center gap-2" onclick="openform(3)">
+                    <div class="flex items-center justify-between gap-3 pt-4">
+                        <button type="button" class="flex-1 sm:flex-initial px-5 sm:px-6 py-3 bg-surface-container text-deep-navy font-bold rounded-xl text-sm hover:bg-surface-variant transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="openform(3)">
                             <span class="material-symbols-outlined">arrow_back</span>
                             <span>Previous</span>
                         </button>
-                        <button type="submit" class="px-10 py-3.5 bg-vibrant-lime text-deep-navy font-bold rounded-xl text-base hover:brightness-105 transition-all shadow-lg flex items-center gap-2">
+                        <button type="submit" class="flex-1 sm:flex-initial px-6 sm:px-10 py-3.5 bg-vibrant-lime text-deep-navy font-bold rounded-xl text-sm sm:text-base hover:brightness-105 transition-all shadow-lg flex items-center justify-center gap-2 min-h-[48px]">
                             <span>Submit Application</span>
                             <span class="material-symbols-outlined">check_circle</span>
                         </button>

@@ -12,12 +12,12 @@
       <div class="absolute -right-16 -top-16 w-56 h-56 bg-deep-navy/5 rounded-full blur-3xl pointer-events-none"></div>
 
       <!-- Tutor Info -->
-      <div class="flex items-center space-x-5 z-10">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 z-10">
         <div class="relative shrink-0">
           {% if profile.avatar %}
-            <img src="{{ profile.avatar.url }}" alt="{{ tutor.display_name }}" class="w-20 h-20 rounded-2xl object-cover border-2 border-deep-navy shadow-md">
+            <img src="{{ profile.avatar.url }}" alt="{{ tutor.display_name }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-deep-navy shadow-md">
           {% else %}
-            <div class="w-20 h-20 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center text-3xl font-black shadow-md border-2 border-deep-navy">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-deep-navy text-vibrant-lime flex items-center justify-center text-2xl sm:text-3xl font-black shadow-md border-2 border-deep-navy">
               {{ tutor.display_name|slice:":1"|upper }}
             </div>
           {% endif %}
@@ -28,17 +28,17 @@
 
         <div>
           <div class="flex flex-wrap items-center gap-2">
-            <h1 class="text-2xl sm:text-3xl font-bold text-deep-navy">{{ tutor.display_name }}</h1>
+            <h1 class="text-xl sm:text-3xl font-bold text-deep-navy">{{ tutor.display_name }}</h1>
             {% if tutor.is_verified %}
               <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full flex items-center gap-1">
                 <i class="fa-solid fa-certificate text-[11px]"></i> Verified Educator
               </span>
             {% endif %}
           </div>
-          <p class="text-sm text-on-surface-variant mt-1">
+          <p class="text-xs sm:text-sm text-on-surface-variant mt-1">
             {{ profile.headline|default:"Academic Tutor & Educational Consultant" }}
           </p>
-          <div class="flex flex-wrap items-center gap-3 text-xs text-outline mt-1.5">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-outline mt-1.5">
             <span>Base Rate: <strong>{{ tutor.currency }} {{ tutor.hourly_base_rate|floatformat:2 }}/hr</strong></span>
             <span>&bull;</span>
             <span>Timezone: <strong>{{ profile.timezone|default:"Africa/Lagos (WAT)" }}</strong></span>
@@ -51,23 +51,23 @@
       </div>
 
       <!-- Quick Actions Bar -->
-      <div class="flex flex-wrap items-center gap-3 z-10">
-        <button onclick="openModal('instantClassModal')" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+      <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3 z-10 w-full lg:w-auto">
+        <button onclick="openModal('instantClassModal')" class="px-3 sm:px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5 sm:gap-2 min-h-[44px]">
           <i class="fa-solid fa-bolt"></i>
-          <span>Start Instant Class</span>
+          <span>Instant Class</span>
         </button>
 
-        <button onclick="openModal('scheduleModal')" class="px-4 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+        <button onclick="openModal('scheduleModal')" class="px-3 sm:px-4 py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-1.5 sm:gap-2 min-h-[44px]">
           <i class="fa-regular fa-calendar-plus"></i>
-          <span>Schedule Class</span>
+          <span>Schedule</span>
         </button>
 
-        <button onclick="openModal('uploadModal')" class="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold text-xs rounded-xl shadow-sm transition flex items-center gap-2">
+        <button onclick="openModal('uploadModal')" class="px-3 sm:px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-1.5 sm:gap-2 min-h-[44px]">
           <i class="fa-solid fa-cloud-arrow-up"></i>
-          <span>Upload Material / Video</span>
+          <span>Upload File</span>
         </button>
 
-        <a href="{% url 'classroom:calendar_sync' %}" class="px-3.5 py-2.5 bg-white border border-outline-variant/40 text-deep-navy font-bold text-xs rounded-xl hover:bg-surface-container transition shadow-sm flex items-center gap-1.5" title="Download tutor schedule (.ics)">
+        <a href="{% url 'classroom:calendar_sync' %}" class="px-3 sm:px-3.5 py-2.5 bg-white border border-outline-variant/40 text-deep-navy font-bold text-xs rounded-xl hover:bg-surface-container transition shadow-sm flex items-center justify-center gap-1.5 min-h-[44px]" title="Download tutor schedule (.ics)">
           <i class="fa-regular fa-calendar-days text-amber-600"></i>
           <span>Sync .ics</span>
         </a>
@@ -317,7 +317,57 @@
           <span class="text-xs font-bold text-outline uppercase">{{ active_bookings.count }} Active Enrollments</span>
         </div>
 
-        <div class="mt-6 overflow-x-auto">
+        <!-- Mobile Card List for Active Bookings (md:hidden) -->
+        <div class="mt-6 md:hidden space-y-3">
+          {% for b in active_bookings %}
+          <div class="p-4 rounded-2xl border border-outline-variant/20 bg-white space-y-3 shadow-xs">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 font-black flex items-center justify-center text-sm shrink-0">
+                  {{ b.student.first_name|slice:":1" }}
+                </div>
+                <div>
+                  <p class="text-sm font-bold text-deep-navy">{{ b.student.first_name }} {{ b.student.last_name }}</p>
+                  <p class="text-[11px] text-outline">{{ b.class_level }} &bull; {{ b.delivery_mode }}</p>
+                </div>
+              </div>
+              <span class="font-mono font-bold text-xs text-deep-navy bg-surface-container px-2 py-1 rounded-lg">
+                {{ b.currency }} {{ b.agreed_hourly_rate|floatformat:2 }}/hr
+              </span>
+            </div>
+
+            <div class="p-2.5 bg-surface-container-low rounded-xl text-xs flex justify-between items-center">
+              <div>
+                <p class="font-bold text-deep-navy">{{ b.subject.name }}</p>
+                <p class="text-[10px] text-outline">{{ b.curriculum }}</p>
+              </div>
+              {% if b.student.guardian.phone %}
+              <a href="tel:{{ b.student.guardian.phone }}" class="text-[11px] text-deep-navy font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-phone text-emerald-600"></i> {{ b.student.guardian.phone }}
+              </a>
+              {% endif %}
+            </div>
+
+            <!-- 1-tap Actions -->
+            <div class="grid grid-cols-3 gap-2 pt-1">
+              <button onclick="prefillInstantClass('{{ b.id }}', '{{ b.student.first_name }} - {{ b.subject.name }}')" class="py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1 min-h-[40px]" title="Start immediate class">
+                <i class="fa-solid fa-bolt"></i> <span>Class</span>
+              </button>
+              <button onclick="prefillSchedule('{{ b.id }}', '{{ b.student.first_name }} - {{ b.subject.name }}')" class="py-2.5 bg-deep-navy hover:bg-primary-container text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1 min-h-[40px]" title="Schedule upcoming class">
+                <i class="fa-solid fa-calendar-plus"></i> <span>Schedule</span>
+              </button>
+              <button onclick="prefillUpload('{{ b.id }}')" class="py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1 min-h-[40px]" title="Share worksheet or video">
+                <i class="fa-solid fa-paperclip"></i> <span>Share</span>
+              </button>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center py-8 text-outline text-xs">No active students assigned yet.</div>
+          {% endfor %}
+        </div>
+
+        <!-- Desktop Table (hidden on mobile, block on md+) -->
+        <div class="mt-6 hidden md:block overflow-x-auto">
           <table class="min-w-full divide-y divide-outline-variant/20 text-xs">
             <thead class="bg-surface-container text-deep-navy">
               <tr>

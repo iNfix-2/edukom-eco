@@ -36,7 +36,7 @@
         <div class="absolute -top-10 -left-10 w-32 h-32 bg-vibrant-lime/20 rounded-full blur-3xl"></div>
         <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/10 rounded-full blur-3xl"></div>
         <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white transform md:rotate-2 hover:rotate-0 transition-transform duration-500">
-          <img class="w-full aspect-[4/5] object-cover" alt="Professional Tutor using laptop" src="{% static 'IMG/black-student-wearing-headphone-having-audio-business-course-laptop.jpg' %}">
+          <img class="w-full max-h-[340px] sm:max-h-[460px] md:max-h-none md:aspect-[4/5] object-cover" alt="Professional Tutor using laptop" src="{% static 'IMG/black-student-wearing-headphone-having-audio-business-course-laptop.jpg' %}">
         </div>
       </div>
     </div>
@@ -102,46 +102,46 @@
         </div>
         <div class="space-y-8">
           <!-- Step 1 -->
-          <div class="flex gap-6 group">
-            <div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-lg">1</div>
+          <div class="flex gap-4 sm:gap-6 group">
+            <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-base sm:text-lg">1</div>
             <div>
-              <div class="flex items-center gap-3 mb-2">
+              <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
                 <h4 class="font-headline-md text-label-md text-pure-white uppercase tracking-wide">Submit An Application</h4>
                 <span class="text-vibrant-lime text-xs font-bold px-2.5 py-0.5 border border-vibrant-lime/60 rounded-full">10 MINS</span>
               </div>
-              <p class="font-body-md text-body-md text-pure-white/70">
+              <p class="font-body-md text-sm sm:text-base text-pure-white/70">
                 Completing our hassle-free application is a straightforward process that requires less than 10 minutes of your time, ensuring a quick entry into our network.
               </p>
             </div>
           </div>
           <!-- Step 2 -->
-          <div class="flex gap-6 group">
-            <div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-lg">2</div>
+          <div class="flex gap-4 sm:gap-6 group">
+            <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-base sm:text-lg">2</div>
             <div>
-              <div class="flex items-center gap-3 mb-2">
+              <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
                 <h4 class="font-headline-md text-label-md text-pure-white uppercase tracking-wide">Schedule A Mock Session</h4>
                 <span class="text-vibrant-lime text-xs font-bold px-2.5 py-0.5 border border-vibrant-lime/60 rounded-full">20 MINS</span>
               </div>
-              <p class="font-body-md text-body-md text-pure-white/70">
+              <p class="font-body-md text-sm sm:text-base text-pure-white/70">
                 Demonstrate and showcase your tutoring prowess by engaging in a comprehensive 20-minute virtual session with our pedagogical team.
               </p>
             </div>
           </div>
           <!-- Step 3 -->
-          <div class="flex gap-6 group">
-            <div class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-lg">3</div>
+          <div class="flex gap-4 sm:gap-6 group">
+            <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-vibrant-lime flex items-center justify-center text-vibrant-lime font-bold text-base sm:text-lg">3</div>
             <div>
-              <div class="flex items-center gap-3 mb-2">
+              <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
                 <h4 class="font-headline-md text-label-md text-pure-white uppercase tracking-wide">Complete Orientation</h4>
                 <span class="text-vibrant-lime text-xs font-bold px-2.5 py-0.5 border border-vibrant-lime/60 rounded-full">5 MINS</span>
               </div>
-              <p class="font-body-md text-body-md text-pure-white/70">
+              <p class="font-body-md text-sm sm:text-base text-pure-white/70">
                 After an orientation meeting introducing Edukom's ecosystem, site navigation, and lesson instruction, onboarding into the Edukom community takes place.
               </p>
             </div>
           </div>
         </div>
-        <a href="{% url 'become_a_tutor' %}" class="inline-flex bg-vibrant-lime text-primary px-10 py-4 rounded-xl font-headline-md text-label-md items-center justify-center gap-2 hover:bg-secondary-container transition-all transform active:scale-95 shadow-xl font-bold">
+        <a href="{% url 'become_a_tutor' %}" class="w-full sm:w-auto inline-flex bg-vibrant-lime text-primary px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl font-headline-md text-label-md items-center justify-center gap-2 hover:bg-secondary-container transition-all transform active:scale-95 shadow-xl font-bold min-h-[48px]">
           Get Started Now
           <span class="material-symbols-outlined">rocket_launch</span>
         </a>
@@ -159,72 +159,72 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- FAQ 1 -->
         <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
-          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
-            <span class="font-headline-md text-body-lg text-primary font-semibold">How do I apply as a tutor with Edukom?</span>
-            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          <button class="w-full px-5 sm:px-8 py-4 sm:py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors gap-3" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-sm sm:text-base md:text-body-lg text-primary font-semibold">How do I apply as a tutor with Edukom?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300 shrink-0">expand_more</span>
           </button>
           <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
-            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+            <div class="px-5 sm:px-8 pb-5 sm:pb-6 text-on-surface-variant font-body-md text-xs sm:text-sm md:text-base border-t border-outline-variant/10 pt-4">
               Simply click the "Get Started Now" button, fill out your profile details and upload your credentials. Our recruitment team will review your application and schedule a virtual interview.
             </div>
           </div>
         </div>
         <!-- FAQ 2 -->
         <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
-          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
-            <span class="font-headline-md text-body-lg text-primary font-semibold">How are classes conducted?</span>
-            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          <button class="w-full px-5 sm:px-8 py-4 sm:py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors gap-3" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-sm sm:text-base md:text-body-lg text-primary font-semibold">How are classes conducted?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300 shrink-0">expand_more</span>
           </button>
           <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
-            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+            <div class="px-5 sm:px-8 pb-5 sm:pb-6 text-on-surface-variant font-body-md text-xs sm:text-sm md:text-base border-t border-outline-variant/10 pt-4">
               Classes are conducted via integrated virtual learning platforms (Zoom, Google Classroom, and Edukom's portal) with interactive whiteboards and screen sharing.
             </div>
           </div>
         </div>
         <!-- FAQ 3 -->
         <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
-          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
-            <span class="font-headline-md text-body-lg text-primary font-semibold">Who pays for the internet data used for teaching?</span>
-            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          <button class="w-full px-5 sm:px-8 py-4 sm:py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors gap-3" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-sm sm:text-base md:text-body-lg text-primary font-semibold">Who pays for the internet data used for teaching?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300 shrink-0">expand_more</span>
           </button>
           <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
-            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+            <div class="px-5 sm:px-8 pb-5 sm:pb-6 text-on-surface-variant font-body-md text-xs sm:text-sm md:text-base border-t border-outline-variant/10 pt-4">
               Both sides cover their internet costs. Every class-related data expense is factored directly into the competitive hourly compensation paid to tutors.
             </div>
           </div>
         </div>
         <!-- FAQ 4 -->
         <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
-          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
-            <span class="font-headline-md text-body-lg text-primary font-semibold">How do Tutors get paid?</span>
-            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          <button class="w-full px-5 sm:px-8 py-4 sm:py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors gap-3" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-sm sm:text-base md:text-body-lg text-primary font-semibold">How do Tutors get paid?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300 shrink-0">expand_more</span>
           </button>
           <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
-            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+            <div class="px-5 sm:px-8 pb-5 sm:pb-6 text-on-surface-variant font-body-md text-xs sm:text-sm md:text-base border-t border-outline-variant/10 pt-4">
               Tutors are paid per hour for tutoring. At the end of each payment cycle, your total earnings are verified and transferred directly to your bank account.
             </div>
           </div>
         </div>
         <!-- FAQ 5 -->
         <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
-          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
-            <span class="font-headline-md text-body-lg text-primary font-semibold">What if I cannot make it to a scheduled class?</span>
-            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          <button class="w-full px-5 sm:px-8 py-4 sm:py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors gap-3" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-sm sm:text-base md:text-body-lg text-primary font-semibold">What if I cannot make it to a scheduled class?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300 shrink-0">expand_more</span>
           </button>
           <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
-            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+            <div class="px-5 sm:px-8 pb-5 sm:pb-6 text-on-surface-variant font-body-md text-xs sm:text-sm md:text-base border-t border-outline-variant/10 pt-4">
               Notify Edukom Admin immediately so we can help arrange an alternate rescheduled time with the parent within the same payment cycle.
             </div>
           </div>
         </div>
         <!-- FAQ 6 -->
         <div class="accordion-item bg-pure-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden transition-all duration-200">
-          <button class="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors" onclick="toggleTutorAccordion(this)">
-            <span class="font-headline-md text-body-lg text-primary font-semibold">How many students are in a tutoring session?</span>
-            <span class="material-symbols-outlined text-primary transition-transform duration-300">expand_more</span>
+          <button class="w-full px-5 sm:px-8 py-4 sm:py-6 flex justify-between items-center text-left hover:bg-surface-container-low transition-colors gap-3" onclick="toggleTutorAccordion(this)">
+            <span class="font-headline-md text-sm sm:text-base md:text-body-lg text-primary font-semibold">How many students are in a tutoring session?</span>
+            <span class="material-symbols-outlined text-primary transition-transform duration-300 shrink-0">expand_more</span>
           </button>
           <div class="accordion-content max-h-0 overflow-hidden transition-all duration-300 ease-out">
-            <div class="px-8 pb-6 text-on-surface-variant font-body-md border-t border-outline-variant/10 pt-4">
+            <div class="px-5 sm:px-8 pb-5 sm:pb-6 text-on-surface-variant font-body-md text-xs sm:text-sm md:text-base border-t border-outline-variant/10 pt-4">
               One tutor, one student per class. Edukom focuses on 1-on-1 personalized learning tailored to the specific learning pace of each child.
             </div>
           </div>

@@ -81,6 +81,11 @@ def robots_txt(request: HttpRequest) -> HttpResponse:
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
+def offline(request: HttpRequest) -> HttpResponse:
+    """PWA offline fallback page — served by the service worker when offline."""
+    return render(request, 'core/offline.html')
+
+
 def sitemap_xml(request: HttpRequest) -> HttpResponse:
     content = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

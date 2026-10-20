@@ -33,7 +33,7 @@
         border: 1px solid transparent;
         border-radius: 0.75rem;
         padding: 0.875rem 1.25rem;
-        font-size: 0.95rem;
+        font-size: 16px;
         color: #1a1c1c;
         transition: all 0.2s ease;
     }
@@ -161,7 +161,7 @@
 
             <!-- Right Column: Consultation Form -->
             <div class="lg:col-span-7">
-                <div class="bg-pure-white p-6 sm:p-10 md:p-12 rounded-2xl sm:rounded-3xl shadow-xl border border-surface-variant/60">
+                <div class="bg-pure-white p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl shadow-xl border border-surface-variant/60">
                     <div class="mb-8">
                         <h2 class="font-headline-lg text-2xl sm:text-3xl font-bold text-deep-navy mb-2">
                             Consultation <span class="text-vibrant-lime">Form</span>
@@ -181,20 +181,20 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div class="space-y-1.5">
                                     <label class="font-label-md text-xs font-semibold text-on-surface-variant">Full Name*</label>
-                                    <input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm" placeholder="John Doe" type="text" required/>
+                                    <input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-base sm:text-sm" placeholder="John Doe" type="text" required/>
                                 </div>
                                 <div class="space-y-1.5">
                                     <label class="font-label-md text-xs font-semibold text-on-surface-variant">Email Address*</label>
-                                    <input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm" placeholder="john@example.com" type="email" required/>
+                                    <input class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-base sm:text-sm" placeholder="john@example.com" type="email" required/>
                                 </div>
                             </div>
                             <div class="space-y-1.5">
                                 <label class="font-label-md text-xs font-semibold text-on-surface-variant">Phone Number (with country code)*</label>
-                                <input id="id_phone_number" class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm" placeholder="803 000 0000" type="tel" required/>
+                                <input id="id_phone_number" class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-base sm:text-sm" placeholder="803 000 0000" type="tel" required/>
                             </div>
                             <div class="space-y-1.5">
                                 <label class="font-label-md text-xs font-semibold text-on-surface-variant">Preferred Consultation Topic</label>
-                                <select class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm">
+                                <select class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-base sm:text-sm">
                                     <option>General Academic Advice</option>
                                     <option>A-Level & Prep Programs</option>
                                     <option>Tutor Placement</option>
@@ -203,12 +203,12 @@
                             </div>
                             <div class="space-y-1.5">
                                 <label class="font-label-md text-xs font-semibold text-on-surface-variant">Your Message</label>
-                                <textarea class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-sm resize-none" placeholder="Tell us about your academic goals..." rows="4"></textarea>
+                                <textarea class="w-full bg-surface-container-low border border-transparent rounded-xl px-4 py-3 focus:bg-white focus:border-deep-navy transition-all text-base sm:text-sm resize-none" placeholder="Tell us about your academic goals..." rows="4"></textarea>
                             </div>
                         {% endif %}
 
                         <div class="pt-4">
-                            <button type="submit" class="w-full sm:w-auto px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold text-sm rounded-xl hover:bg-primary-container hover:text-white transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2">
+                            <button type="submit" class="w-full sm:w-auto px-8 py-3.5 bg-deep-navy text-vibrant-lime font-bold text-sm rounded-xl hover:bg-primary-container hover:text-white transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]">
                                 <span>Submit Consultation Request</span>
                                 <span class="material-symbols-outlined text-base">send</span>
                             </button>
@@ -222,7 +222,7 @@
 
 <!-- Map Section -->
 <section class="w-full py-12 px-4 sm:px-6 md:px-8 bg-surface-container-low border-t border-surface-variant/60">
-    <div class="max-w-container-max mx-auto overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl h-[380px] sm:h-[450px] relative border border-surface-variant/60">
+    <div class="max-w-container-max mx-auto overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl h-[300px] sm:h-[420px] relative border border-surface-variant/60">
         <!-- Interactive Location Visual Container -->
         <div class="w-full h-full bg-surface-container-highest relative flex items-center justify-center">
             <!-- Abuja Map Image -->
@@ -230,7 +230,7 @@
             <div class="absolute inset-0 bg-deep-navy/15 pointer-events-none"></div>
 
             <!-- Location Badge Overlay -->
-            <div class="absolute top-6 left-6 z-10 glass-card p-4 sm:p-6 rounded-2xl custom-shadow max-w-xs">
+            <div class="absolute top-4 left-4 right-4 sm:right-auto sm:top-6 sm:left-6 z-10 glass-card p-3.5 sm:p-6 rounded-2xl custom-shadow max-w-xs">
                 <div class="flex items-center gap-3 mb-1.5">
                     <div class="w-3 h-3 bg-vibrant-lime rounded-full animate-pulse"></div>
                     <h4 class="font-headline-md text-deep-navy font-bold text-base sm:text-lg">Abuja Headquarters</h4>

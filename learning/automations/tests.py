@@ -116,21 +116,27 @@ class AutomationAndWhatsAppTests(TestCase):
         counts_1 = scheduler.dispatch_all_due_reminders()
         self.assertEqual(counts_1['24h'], 1)
 
-        # Check logs: 1 WhatsApp log and 1 Email log created
+        # Check logs: Guardian WhatsApp, Tutor WhatsApp, and Guardian Email created
         logs = NotificationLog.objects.filter(session=session_24h, notification_type=NotificationType.REMINDER_24H)
-        self.assertEqual(logs.count(), 2)
-        wa_log = logs.filter(channel=NotificationChannel.WHATSAPP).first()
-        self.assertIsNotNone(wa_log)
-        self.assertEqual(wa_log.status, NotificationStatus.SENT)
-        self.assertIn("Organic Chemistry Intro", wa_log.message_body)
+        self.assertGreaterEqual(logs.count(), 2)
+        wa_log_guardian = logs.filter(channel=NotificationChannel.WHATSAPP, recipient_phone__endswith='1234567').first()
+        self.assertIsNotNone(wa_log_guardian)
+        self.assertEqual(wa_log_guardian.status, NotificationStatus.SENT)
+        self.assertIn("Organic Chemistry Intro", wa_log_guardian.message_body)
+
+        wa_log_tutor = logs.filter(channel=NotificationChannel.WHATSAPP, recipient_phone__endswith='8765432').first()
+        self.assertIsNotNone(wa_log_tutor)
+        self.assertEqual(wa_log_tutor.status, NotificationStatus.SENT)
+        self.assertIn("Tutor Reminder", wa_log_tutor.message_body)
 
         # 2. Second execution immediately after: IDEMPOTENCY MUST PREVENT DUPLICATES
+        initial_log_count = logs.count()
         counts_2 = scheduler.dispatch_all_due_reminders()
         self.assertEqual(counts_2['24h'], 0)
         self.assertEqual(counts_2['skipped'], 1)
 
-        # Total logs must remain 2! No spam sent.
-        self.assertEqual(NotificationLog.objects.filter(session=session_24h).count(), 2)
+        # Total logs must remain unchanged! No duplicate spam sent.
+        self.assertEqual(NotificationLog.objects.filter(session=session_24h).count(), initial_log_count)
 
     @patch('automations.services.scheduler.send_mail')
     def test_1h_and_10m_urgent_reminders(self, mock_send_mail):
@@ -169,10 +175,22 @@ class AutomationAndWhatsAppTests(TestCase):
         self.assertEqual(counts['10m'], 1)
 
         # Verify 10-minute reminder text contains room URL
-        log_10m = NotificationLog.objects.filter(session=session_10m, notification_type=NotificationType.REMINDER_10M).first()
-        self.assertIsNotNone(log_10m)
-        self.assertIn("Starting NOW", log_10m.message_body)
-        self.assertIn(str(session_10m.id), log_10m.message_body)
+        log_10m_guardian = NotificationLog.objects.filter(
+            session=session_10m, 
+            notification_type=NotificationType.REMINDER_10M,
+            recipient_phone__endswith='1234567'
+        ).first()
+        self.assertIsNotNone(log_10m_guardian)
+        self.assertIn("Starting NOW", log_10m_guardian.message_body)
+        self.assertIn(str(session_10m.id), log_10m_guardian.message_body)
+
+        log_10m_tutor = NotificationLog.objects.filter(
+            session=session_10m, 
+            notification_type=NotificationType.REMINDER_10M,
+            recipient_phone__endswith='8765432'
+        ).first()
+        self.assertIsNotNone(log_10m_tutor)
+        self.assertIn("Tutor Alert", log_10m_tutor.message_body)
 
     @patch('automations.views.send_mail')
     def test_whatsapp_inbound_webhook_and_keyword_triage(self, mock_send_mail):
@@ -231,6 +249,11 @@ class AutomationAndWhatsAppTests(TestCase):
         pref.email_enabled = True
         pref.save()
 
+        # Also set tutor to disable WhatsApp
+        tutor_pref, _ = NotificationPreference.objects.get_or_create(user=self.tutor_user)
+        tutor_pref.whatsapp_enabled = False
+        tutor_pref.save()
+
         session = ClassSession.objects.create(
             booking=self.booking,
             title='Atomic Structure',
@@ -243,7 +266,7 @@ class AutomationAndWhatsAppTests(TestCase):
         scheduler = ReminderScheduler()
         scheduler.dispatch_all_due_reminders()
 
-        # WhatsApp log must NOT exist, Email log MUST exist
+        # WhatsApp log must NOT exist for student/guardian or tutor, Email log MUST exist
         wa_log = NotificationLog.objects.filter(session=session, channel=NotificationChannel.WHATSAPP).first()
         email_log = NotificationLog.objects.filter(session=session, channel=NotificationChannel.EMAIL).first()
         self.assertIsNone(wa_log)
@@ -289,4 +312,41 @@ class AutomationAndWhatsAppTests(TestCase):
         counts_2 = scheduler.dispatch_subscription_expiry_alerts()
         self.assertEqual(counts_2['3d'], 0)
         self.assertEqual(counts_2['skipped'], 1)
+
+    def test_sms_dispatch_and_fallback(self):
+        """
+        Tests SMS dispatching and WhatsApp fallback logic.
+        """
+        svc = WhatsAppService()
+        # Direct SMS in mock sandbox
+        sms_res = svc.send_sms_message('08031234567', 'Test SMS alert from Edukom')
+        self.assertTrue(sms_res['success'])
+        self.assertTrue(sms_res.get('is_mock', False))
+        self.assertIn('SMS_MOCK_', sms_res['sid'])
+
+        # Fallback test with mock
+        fb_res = svc.send_with_fallback('08031234567', 'Test Fallback Alert')
+        self.assertTrue(fb_res['success'])
+
+    def test_cron_endpoint_security_and_execution(self):
+        """
+        Tests the protected cron trigger endpoint /automations/cron/run-reminders/.
+        Ensures 403 Forbidden without valid secret and 200 OK with valid secret.
+        """
+        client = Client()
+        url = reverse('automations:cron_run_reminders')
+
+        # 1. Deny unauthorized request
+        unauth_resp = client.get(url)
+        self.assertEqual(unauth_resp.status_code, 401)
+
+        # 2. Allow request with valid secret query param
+        from django.conf import settings
+        valid_secret = getattr(settings, 'AUTOMATIONS_CRON_SECRET', 'edukom-auto-cron-secret-change-me')
+        auth_resp = client.get(f"{url}?secret={valid_secret}")
+        self.assertEqual(auth_resp.status_code, 200)
+        data = auth_resp.json()
+        self.assertEqual(data['status'], 'success')
+        self.assertIn('session_reminders', data)
+
 

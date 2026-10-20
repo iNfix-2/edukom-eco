@@ -6,24 +6,24 @@
 {% block main %}
 <div class="min-h-screen bg-slate-950 text-white flex flex-col select-none">
   <!-- Top Bar -->
-  <header class="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-20">
-    <div class="flex items-center space-x-3">
-      <a href="{% url 'videolibrary:course_detail' course.id %}" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition">
+  <header class="h-16 bg-slate-900 border-b border-slate-800 px-3 sm:px-6 flex items-center justify-between z-20 gap-2">
+    <div class="flex items-center space-x-2 sm:space-x-3 overflow-hidden">
+      <a href="{% url 'videolibrary:course_detail' course.id %}" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition shrink-0">
         <i class="fa-solid fa-arrow-left text-sm"></i>
       </a>
-      <div>
-        <h1 class="text-sm font-bold text-slate-100 truncate max-w-lg">{{ lesson.title }}</h1>
-        <p class="text-xs text-slate-400">{{ course.title }} &bull; Lesson #{{ lesson.order }}</p>
+      <div class="truncate">
+        <h1 class="text-xs sm:text-sm font-bold text-slate-100 truncate max-w-[130px] sm:max-w-xs md:max-w-lg">{{ lesson.title }}</h1>
+        <p class="text-[10px] sm:text-xs text-slate-400 truncate">{{ course.title }} &bull; Lesson #{{ lesson.order }}</p>
       </div>
     </div>
 
-    <div class="flex items-center space-x-3">
+    <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
       <!-- Resolution & Data Saver Selector (Safeguard 7) -->
-      <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2.5 py-1 rounded-xl border border-slate-700/60 text-xs">
-        <i class="fa-solid fa-gauge-high text-indigo-400"></i>
+      <div class="flex items-center space-x-1.5 bg-slate-800/80 px-2 sm:px-2.5 py-1 rounded-xl border border-slate-700/60 text-xs">
+        <i class="fa-solid fa-gauge-high text-indigo-400 text-xs"></i>
         <select id="qualitySelector" class="bg-transparent text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer">
-          <option value="-1" class="bg-slate-900 text-white">Auto (Adaptive)</option>
-          <option value="data-saver" class="bg-slate-900 text-amber-300">360p (Data Saver)</option>
+          <option value="-1" class="bg-slate-900 text-white">Auto</option>
+          <option value="data-saver" class="bg-slate-900 text-amber-300">360p Data Saver</option>
           <option value="480" class="bg-slate-900 text-white">480p SD</option>
           <option value="720" class="bg-slate-900 text-white">720p HD</option>
           <option value="1080" class="bg-slate-900 text-white">1080p FHD</option>
@@ -33,21 +33,21 @@
       <!-- Offline Cache Button (Safeguard 9) -->
       <button id="offlineCacheBtn" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 text-xs transition">
         <i class="fa-solid fa-cloud-arrow-down text-indigo-400"></i>
-        <span id="offlineCacheLabel">Cache for Offline</span>
+        <span id="offlineCacheLabel">Cache</span>
       </button>
 
-      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-        <i class="fa-solid fa-shield-halved"></i>
-        <span>DRM AES-128</span>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+        <i class="fa-solid fa-shield-halved text-xs"></i>
+        <span class="hidden sm:inline">DRM AES-128</span>
       </span>
-      <span class="text-xs text-slate-400 hidden sm:inline">
+      <span class="text-xs text-slate-400 hidden lg:inline">
         Session: <strong class="text-slate-200">{{ viewer_email }}</strong>
       </span>
     </div>
   </header>
 
   <!-- Player Stage -->
-  <div class="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative">
+  <div class="flex-1 flex flex-col items-center justify-center p-2 sm:p-6 md:p-8 relative">
     
     <!-- Safeguard 4: Resume Playback Alert Banner -->
     <div id="resumePrompt" class="{% if resume_seconds <= 10 %}hidden{% endif %} w-full max-w-5xl mb-4 bg-indigo-900/40 border border-indigo-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xl backdrop-blur-md">

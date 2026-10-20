@@ -11,12 +11,12 @@
     <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-outline-variant/30 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
       <div class="absolute -right-12 -top-12 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
-      <div class="flex items-center space-x-5 z-10">
-        <div class="relative">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 z-10">
+        <div class="relative shrink-0">
           {% if profile.avatar %}
-            <img src="{{ profile.avatar.url }}" alt="{{ user.username }}" class="w-20 h-20 rounded-2xl object-cover border-2 border-amber-500 shadow-md">
+            <img src="{{ profile.avatar.url }}" alt="{{ user.username }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-amber-500 shadow-md">
           {% else %}
-            <div class="w-20 h-20 rounded-2xl bg-deep-navy text-amber-400 flex items-center justify-center text-3xl font-black shadow-md border-2 border-amber-500">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-deep-navy text-amber-400 flex items-center justify-center text-2xl sm:text-3xl font-black shadow-md border-2 border-amber-500">
               {{ user.first_name|default:user.username|make_list|first|upper }}
             </div>
           {% endif %}
@@ -27,53 +27,53 @@
 
         <div>
           <div class="flex flex-wrap items-center gap-2">
-            <h1 class="text-2xl sm:text-3xl font-bold text-deep-navy">{{ user.get_full_name|default:user.username }}</h1>
+            <h1 class="text-xl sm:text-3xl font-bold text-deep-navy">{{ user.get_full_name|default:user.username }}</h1>
             <span class="px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-800 flex items-center gap-1.5">
               <i class="fa-solid fa-hands-holding-child"></i> Parent &amp; Guardian Portal
             </span>
           </div>
-          <p class="text-sm text-on-surface-variant mt-1">
+          <p class="text-xs sm:text-sm text-on-surface-variant mt-1">
             {{ guardian_record.email }} &bull; {{ guardian_record.phone|default:profile.phone_number }}
           </p>
-          <p class="text-xs text-outline mt-0.5 flex items-center gap-2">
+          <p class="text-xs text-outline mt-0.5 flex flex-wrap items-center gap-2">
             <span><i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> NDPR Safeguarded Family Account</span>
-            <span>&bull;</span>
+            <span class="hidden sm:inline">&bull;</span>
             <span><i class="fa-solid fa-earth-africa text-deep-navy mr-1"></i> {{ profile.timezone|default:"Africa/Lagos" }}</span>
           </p>
         </div>
       </div>
 
       <!-- Quick KPI Badges -->
-      <div class="flex flex-wrap items-center gap-3 z-10">
-        <div class="bg-surface-container px-4 py-3 rounded-2xl border border-outline-variant/20 text-center min-w-[95px]">
-          <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider block">Children</span>
-          <span class="text-xl font-black text-deep-navy">{{ students.count }}</span>
+      <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3 z-10 w-full lg:w-auto">
+        <div class="bg-surface-container px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border border-outline-variant/20 text-center">
+          <span class="text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Children</span>
+          <span class="text-lg sm:text-xl font-black text-deep-navy">{{ students.count }}</span>
         </div>
-        <div class="bg-surface-container px-4 py-3 rounded-2xl border border-outline-variant/20 text-center min-w-[95px]">
-          <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider block">Attendance</span>
-          <span class="text-xl font-black text-emerald-700">{{ attendance_rate }}%</span>
+        <div class="bg-surface-container px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border border-outline-variant/20 text-center">
+          <span class="text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Attendance</span>
+          <span class="text-lg sm:text-xl font-black text-emerald-700">{{ attendance_rate }}%</span>
         </div>
-        <div class="bg-surface-container px-4 py-3 rounded-2xl border border-outline-variant/20 text-center min-w-[95px]">
-          <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider block">Total Hours</span>
-          <span class="text-xl font-black text-deep-navy">{{ total_study_hours }}h</span>
+        <div class="bg-surface-container px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl border border-outline-variant/20 text-center">
+          <span class="text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Total Hours</span>
+          <span class="text-lg sm:text-xl font-black text-deep-navy">{{ total_study_hours }}h</span>
         </div>
         
         <!-- Calendar Timetable Sync Button -->
-        <a href="{% url 'classroom:calendar_sync' %}" class="px-4 py-3 bg-white border border-outline-variant/40 text-deep-navy font-bold text-xs rounded-2xl hover:bg-surface-container transition shadow-sm flex items-center gap-2" title="Download iCalendar file (.ics) to sync with phone calendar">
-          <i class="fa-regular fa-calendar-days text-amber-600"></i> Calendar Sync
+        <a href="{% url 'classroom:calendar_sync' %}" class="px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-outline-variant/40 text-deep-navy font-bold text-xs rounded-2xl hover:bg-surface-container transition shadow-sm flex items-center justify-center gap-1.5 min-h-[44px]" title="Download iCalendar file (.ics) to sync with phone calendar">
+          <i class="fa-regular fa-calendar-days text-amber-600"></i> <span>Sync .ics</span>
         </a>
 
-        <a href="{% url 'profile_settings' %}" class="px-4 py-3 bg-deep-navy text-on-primary font-semibold text-xs rounded-2xl hover:bg-primary-container transition shadow-sm flex items-center gap-2">
-          <i class="fa-solid fa-user-gear"></i> Settings
+        <a href="{% url 'profile_settings' %}" class="col-span-2 sm:col-span-1 px-3 sm:px-4 py-2.5 sm:py-3 bg-deep-navy text-on-primary font-semibold text-xs rounded-2xl hover:bg-primary-container transition shadow-sm flex items-center justify-center gap-2 min-h-[44px]">
+          <i class="fa-solid fa-user-gear"></i> <span>Settings</span>
         </a>
       </div>
     </div>
 
     <!-- MULTI-CHILD SWITCHER TABS -->
     {% if students %}
-    <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-outline-variant/30 flex flex-wrap items-center justify-between gap-4">
+    <div class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div class="flex items-center gap-2">
-        <span class="p-2 bg-amber-100 text-amber-900 rounded-xl text-xs">
+        <span class="p-2 bg-amber-100 text-amber-900 rounded-xl text-xs shrink-0">
           <i class="fa-solid fa-children text-base"></i>
         </span>
         <div>
@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 w-full sm:w-auto">
         {% for child in students %}
           <a href="?child_id={{ child.id }}" class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 {% if active_child and active_child.id == child.id %}bg-deep-navy text-white shadow-md{% else %}bg-surface-container text-deep-navy hover:bg-surface-bright border border-outline-variant/30{% endif %}">
             <i class="fa-solid fa-user-graduate {% if active_child and active_child.id == child.id %}text-amber-400{% else %}text-outline{% endif %}"></i>

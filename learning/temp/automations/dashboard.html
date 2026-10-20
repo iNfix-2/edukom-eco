@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Automated Reminders & Messaging Center - Edukom{% endblock %}
+
+{% block main %}
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto space-y-8">
+    
+    <!-- Top Header -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div class="flex items-center space-x-4">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-emerald-700 text-white flex items-center justify-center text-2xl font-bold shadow-lg shadow-emerald-600/25">
+          <i class="fa-solid fa-paper-plane"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight">Automated Reminders & Messaging Center</h1>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800">
+              Live Operations
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">
+            Real-time WhatsApp, SMS & Email automated class reminder alerts for Guardians, Students, and Tutors.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="{% url 'dashboard_admin' %}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-2">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Admin Console</span>
+        </a>
+        <form action="{% url 'automations:trigger_now' %}" method="POST" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center gap-2">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Scan & Trigger Reminders Now</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    {% if messages %}
+      <div class="space-y-2">
+        {% for message in messages %}
+          <div class="p-4 rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-sm {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border border-rose-200{% elif message.tags == 'success' %}bg-emerald-50 text-emerald-800 border border-emerald-200{% else %}bg-indigo-50 text-indigo-800 border border-indigo-200{% endif %}">
+            <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-rose-500{% elif message.tags == 'success' %}fa-circle-check text-emerald-500{% else %}fa-circle-info text-indigo-500{% endif %} text-base"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- KPI Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Messages (Past 24h)</p>
+          <p class="text-2xl font-black text-slate-900 mt-1">{{ total_logs }}</p>
+          <p class="text-[11px] text-slate-500 mt-1">
+            <span class="text-emerald-600 font-bold">{{ total_sent }}</span> Sent &bull; <span class="text-rose-600 font-bold">{{ total_failed }}</span> Failed
+          </p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-envelopes-bulk"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Delivery Success</p>
+          <p class="text-2xl font-black text-emerald-600 mt-1">{{ delivery_rate }}%</p>
+          <p class="text-[11px] text-slate-500 mt-1">Zero Spam Idempotency Guard</p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">WhatsApp Dispatches</p>
+          <p class="text-2xl font-black text-slate-900 mt-1">{{ wa_count }}</p>
+          <p class="text-[11px] text-slate-500 mt-1">Twilio &amp; Termii Channels</p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl">
+          <i class="fa-brands fa-whatsapp"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">SMS Dispatches</p>
+          <p class="text-2xl font-black text-slate-900 mt-1">{{ sms_count }}</p>
+          <p class="text-[11px] text-slate-500 mt-1">Nigerian &amp; Global Telcos</p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-comment-sms"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 Column Layout: Upcoming Classes on Left, Live Test Dispatcher on Right -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- LEFT: Upcoming Sessions in Next 24 Hours (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                <i class="fa-solid fa-calendar-day"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-bold text-slate-900">Upcoming Sessions (Next 24 Hours)</h2>
+                <p class="text-xs text-slate-400">Scheduled lessons queued for automated reminders</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg">
+              {{ upcoming_sessions.count }} Classes
+            </span>
+          </div>
+
+          <div class="divide-y divide-slate-100">
+            {% for sess in upcoming_sessions %}
+              <div class="p-5 hover:bg-slate-50/60 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-indigo-600 uppercase">{{ sess.booking.subject.name }} &bull; {{ sess.booking.class_level }}</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">Scheduled</span>
+                  </div>
+                  <h3 class="text-sm font-bold text-slate-900 mt-0.5">{{ sess.title }}</h3>
+                  
+                  <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-2">
+                    <span><i class="fa-solid fa-user-graduate text-slate-400 mr-1"></i> <strong>{{ sess.booking.student.first_name }} {{ sess.booking.student.last_name }}</strong></span>
+                    <span>&bull;</span>
+                    <span><i class="fa-solid fa-chalkboard-user text-slate-400 mr-1"></i> {{ sess.booking.tutor.display_name }}</span>
+                    <span>&bull;</span>
+                    <span class="text-slate-700 font-semibold"><i class="fa-regular fa-clock mr-1"></i> {{ sess.dual_time_display }}</span>
+                  </div>
+                </div>
+
+                <div class="shrink-0 flex items-center gap-2">
+                  <a href="/classroom/session/{{ sess.id }}/" target="_blank" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5" title="Preview Classroom">
+                    <i class="fa-solid fa-door-open"></i>
+                    <span>Room</span>
+                  </a>
+                </div>
+              </div>
+            {% empty %}
+              <div class="py-12 text-center text-slate-400">
+                <i class="fa-regular fa-calendar-check text-3xl mb-2 text-slate-300"></i>
+                <p class="text-xs font-semibold">No scheduled sessions in the next 24 hours.</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Live Gateway Test Tool & Hands-Free Setup (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Live Test Tool -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <div class="p-6 border-b border-slate-100 flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-vial"></i>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-slate-900">Send Live Test Message</h2>
+              <p class="text-xs text-slate-400">Verify your Twilio or Termii credentials instantly</p>
+            </div>
+          </div>
+
+          <form action="{% url 'automations:test_send' %}" method="POST" class="p-6 space-y-4">
+            {% csrf_token %}
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Recipient Phone Number <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" name="phone" placeholder="e.g. 08031234567 or +2348031234567" required class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-slate-800">
+              <p class="text-[10px] text-slate-400">Automatically normalized to international E.164 format (+234, +44, +1).</p>
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Delivery Channel
+              </label>
+              <select name="channel" class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-slate-800">
+                <option value="WHATSAPP">WhatsApp Message</option>
+                <option value="SMS">Direct SMS</option>
+              </select>
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Message Body
+              </label>
+              <textarea name="body" rows="3" class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-slate-800" placeholder="Hello from Edukom Learning Management System!"></textarea>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+              <button type="submit" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl shadow-md shadow-purple-600/20 transition flex items-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Send Test Message</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Automated Cron Info Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-3xl p-6 text-white shadow-xl space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg text-amber-400">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-white">Hands-Free Automated Setup</h3>
+              <p class="text-[11px] text-slate-300">Run reminders automatically every 5 minutes</p>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Configure any external cron monitor (e.g. <strong>cron-job.org</strong>, <strong>Cloudflare Worker</strong>, or <strong>Linux crontab</strong>) to ping this secure URL:
+          </p>
+
+          <div class="p-3 bg-black/40 border border-white/10 rounded-xl font-mono text-[11px] text-emerald-400 break-all select-all">
+            GET https://edukom.ng/automations/cron/run-reminders/?key=YOUR_CRON_SECRET
+          </div>
+
+          <p class="text-[11px] text-slate-400">
+            Due to our database idempotency keys, duplicate messages are mathematically prevented even if pinged repeatedly!
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Live Delivery Audit Logs (Recent 30) -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+      <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Live Delivery &amp; Audit Logs</h2>
+            <p class="text-xs text-slate-400">Comprehensive delivery trail across WhatsApp, SMS, and Email</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50/80 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
+            <tr>
+              <th class="py-3 px-6">Recipient &amp; Phone</th>
+              <th class="py-3 px-4">Channel</th>
+              <th class="py-3 px-4">Type</th>
+              <th class="py-3 px-4">Delivery Status</th>
+              <th class="py-3 px-4">SID / Reference</th>
+              <th class="py-3 px-6">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-700">
+            {% for log in recent_logs %}
+              <tr class="hover:bg-slate-50/60 transition">
+                <td class="py-3.5 px-6">
+                  <p class="font-bold text-slate-900">{{ log.recipient_name }}</p>
+                  <p class="text-[10px] text-slate-400 font-mono">{{ log.recipient_phone|default:log.recipient_email }}</p>
+                </td>
+                <td class="py-3.5 px-4">
+                  {% if log.channel == 'WHATSAPP' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800">
+                      <i class="fa-brands fa-whatsapp text-green-600"></i> WhatsApp
+                    </span>
+                  {% elif log.channel == 'SMS' %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                      <i class="fa-solid fa-comment-sms text-blue-600"></i> SMS
+                    </span>
+                  {% else %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">
+                      <i class="fa-solid fa-envelope text-purple-600"></i> Email
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="py-3.5 px-4 font-semibold text-slate-800">
+                  {{ log.get_notification_type_display }}
+                </td>
+                <td class="py-3.5 px-4">
+                  {% if log.status == 'SENT' %}
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">
+                      <i class="fa-solid fa-circle-check text-emerald-600"></i> Delivered
+                    </span>
+                  {% elif log.status == 'FAILED' %}
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-rose-100 text-rose-800" title="{{ log.error_message }}">
+                      <i class="fa-solid fa-circle-xmark text-rose-600"></i> Failed
+                    </span>
+                  {% else %}
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-800">
+                      <i class="fa-solid fa-clock"></i> {{ log.status }}
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="py-3.5 px-4 font-mono text-[11px] text-slate-500">
+                  {{ log.message_sid|truncatechars:18|default:"—" }}
+                </td>
+                <td class="py-3.5 px-6 text-slate-400">
+                  {{ log.created_at|date:"M d, H:i" }}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6" class="py-10 text-center text-slate-400">
+                  No automated reminder logs recorded yet.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock main %}

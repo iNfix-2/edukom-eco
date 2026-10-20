@@ -37,21 +37,21 @@
 
     <!-- Search Input -->
     <div class="max-w-2xl mx-auto relative group">
-      <span class="material-symbols-outlined absolute left-6 top-1/2 -translate-y-1/2 text-on-surface-variant text-2xl group-focus-within:text-deep-navy transition-colors">search</span>
-      <input id="faqSearchInput" type="text" placeholder="Search for questions (e.g. 'matching', 'cost', 'subjects')..." class="w-full bg-white border-none rounded-2xl py-4.5 pl-16 pr-6 shadow-xl focus:ring-4 focus:ring-vibrant-lime/40 font-body-md text-deep-navy transition-all text-base sm:text-lg">
+      <span class="material-symbols-outlined absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl sm:text-2xl group-focus-within:text-deep-navy transition-colors">search</span>
+      <input id="faqSearchInput" type="text" placeholder="Search for questions (e.g. 'matching', 'cost', 'subjects')..." class="w-full bg-white border-none rounded-2xl py-3.5 sm:py-4.5 pl-12 sm:pl-16 pr-4 sm:pr-6 shadow-xl focus:ring-4 focus:ring-vibrant-lime/40 font-body-md text-deep-navy transition-all text-base sm:text-lg">
     </div>
   </div>
 </section>
 
 <!-- Category Tabs Bar -->
-<section class="border-b border-surface-variant bg-white sticky top-[72px] z-40 shadow-xs">
+<section class="border-b border-surface-variant bg-white sticky top-[60px] md:top-[72px] z-40 shadow-xs">
   <div class="max-w-container-max mx-auto px-gutter">
-    <div class="flex items-center gap-8 md:gap-12 overflow-x-auto no-scrollbar py-1">
-      <button onclick="filterCategory('all')" id="tab-all" class="category-tab py-4 font-label-md font-bold text-sm tab-active whitespace-nowrap transition-colors">All Questions</button>
-      <button onclick="filterCategory('getting-started')" id="tab-getting-started" class="category-tab py-4 font-label-md font-medium text-sm text-on-surface-variant hover:text-deep-navy whitespace-nowrap transition-colors">General & Getting Started</button>
-      <button onclick="filterCategory('for-parents')" id="tab-for-parents" class="category-tab py-4 font-label-md font-medium text-sm text-on-surface-variant hover:text-deep-navy whitespace-nowrap transition-colors">For Parents</button>
-      <button onclick="filterCategory('for-tutors')" id="tab-for-tutors" class="category-tab py-4 font-label-md font-medium text-sm text-on-surface-variant hover:text-deep-navy whitespace-nowrap transition-colors">For Tutors</button>
-      <button onclick="filterCategory('billing')" id="tab-billing" class="category-tab py-4 font-label-md font-medium text-sm text-on-surface-variant hover:text-deep-navy whitespace-nowrap transition-colors">Billing & Costs</button>
+    <div class="flex items-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto no-scrollbar py-1">
+      <button onclick="filterCategory('all')" id="tab-all" class="category-tab py-3.5 sm:py-4 font-label-md font-bold text-xs sm:text-sm tab-active whitespace-nowrap transition-colors">All Questions</button>
+      <button onclick="filterCategory('getting-started')" id="tab-getting-started" class="category-tab py-3.5 sm:py-4 font-label-md font-medium text-xs sm:text-sm text-on-surface-variant hover:text-deep-navy whitespace-nowrap transition-colors">General & Getting Started</button>
+      <button onclick="filterCategory('for-parents')" id="tab-for-parents" class="category-tab py-3.5 sm:py-4 font-label-md font-medium text-xs sm:text-sm text-on-surface-variant hover:text-deep-navy whitespace-nowrap transition-colors">For Parents</button>
+      <button onclick="filterCategory('for-tutors')" id="tab-for-tutors" class="category-tab py-3.5 sm:py-4 font-label-md font-medium text-xs sm:text-sm text-on-surface-variant hover:text-deep-navy whitespace-nowrap transition-colors">For Tutors</button>
+      <button onclick="filterCategory('billing')" id="tab-billing" class="category-tab py-3.5 sm:py-4 font-label-md font-medium text-xs sm:text-sm text-on-surface-variant hover:text-deep-navy whitespace-nowrap transition-colors">Billing & Costs</button>
     </div>
   </div>
 </section>
@@ -90,55 +90,55 @@
         <div class="space-y-4">
           <!-- Q1 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">How are tutors selected for the platform?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Our tutors undergo a rigorous screening process, including evaluations, interviews, and competency-based recommendations to ensure they have the necessary qualifications, expertise, and experience in their respective fields.
             </div>
           </details>
 
           <!-- Q2 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">What is the process for matching students with the right tutor?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               We carefully assess each student's learning requirements, academic goals, upcoming examinations, and preferred learning style to match them with a suitable tutor who possesses the relevant expertise and teaching approach to best meet their needs.
             </div>
           </details>
 
           <!-- Q3 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">What subjects and grade levels do you offer tutoring for?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               We offer tutoring services for a wide range of subjects, including Mathematics, Add/Further Mathematics, English, Science, Physics, Chemistry, Biology, Literature, Government, History, Geography, Information Communication Technology (ICT), Languages, and more, catering to students aged 5–18 years (from Reception to A-Levels/6th Form).
             </div>
           </details>
 
           <!-- Q4 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">Do you offer exam preparatory classes?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Yes, we do. We offer examination preparatory classes for IGCSE/GCSE, WASSCE, NECO, GCE, JAMB, SATs, IELTS, Junior WASSCE, Cambridge Checkpoint, Common Entrance, and more.
             </div>
           </details>
 
           <!-- Q5 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">Do you provide home tutoring services?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               If there are extenuating circumstances that make it impossible or unwise to conduct online classes productively, special arrangements can be made for face-to-face tutoring at a location provided by the parent or guardian.
             </div>
           </details>
@@ -160,66 +160,66 @@
         <div class="space-y-4">
           <!-- Q6 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">How do you track and communicate student progress to parents or guardians?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               We have an ongoing feedback relationship with the parents/guardians of the learners. This helps us to track improvements, challenges, upcoming assessments, and need for redesign of teaching methods. The openness of our communication makes it easy to stay on track and consolidate academic gains.
             </div>
           </details>
 
           <!-- Q7 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">Is there a restriction to scheduling of lessons due to different time zones?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               No, there are no restrictions by time zone. Aside from having global tutors available across multiple continents, we have tutors expressly available to teach at any allocated time within a 24-hour cycle.
             </div>
           </details>
 
           <!-- Q8 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">What is the procedure for scheduling and rescheduling sessions?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Students and parents can easily schedule or reschedule tutoring sessions through our platform or by contacting our support team, ensuring convenience and flexibility for any schedule updates.
             </div>
           </details>
 
           <!-- Q9 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">How are classes conducted?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Currently, at Edukom we use Zoom, Google Meet, Google Classroom etc. All classes are highly interactive, engaging, and structured to maximize learner participation.
             </div>
           </details>
 
           <!-- Q10 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">How many students do you have in a session?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               One tutor, one student per class (1-on-1). One of our core commitments is attending to the unique learning needs of each child without divided tutor attention.
             </div>
           </details>
 
           <!-- Q11 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">What happens if our family relocates?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Nothing! Our classes are conducted online, allowing your child to seamlessly continue learning from wherever you relocate in the world.
             </div>
           </details>
@@ -241,55 +241,55 @@
         <div class="space-y-4">
           <!-- Q12 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">How do I apply as a tutor with Edukom?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Visit our website and fill out the tutor application form with your current CV. Qualified candidates will be scheduled for a virtual assessment and interview, followed by an onboarding orientation.
             </div>
           </details>
 
           <!-- Q13 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">Who pays for the internet data used for teaching?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Both sides cover their respective data costs. Class-related expenses are factored into tutor compensation paid at the conclusion of each monthly cycle.
             </div>
           </details>
 
           <!-- Q14 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">If a tutor cannot be available for a class, what should they do?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Notify Edukom Admin immediately. The tutor will coordinate with the parent to arrange an alternate time to make up the session within the same payment cycle.
             </div>
           </details>
 
           <!-- Q15 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">How do Tutors get paid?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               Tutors are compensated per hour of tutoring. At the end of each month, verified hours are calculated and paid via direct bank transfer.
             </div>
           </details>
 
           <!-- Q16 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300">
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">Is there a maximum number of hours a Tutor can take per month?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>
-            <div class="px-6 pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-4 text-base">
+            <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-on-surface-variant font-body-md leading-relaxed border-t border-surface-variant/50 pt-3 sm:pt-4 text-sm sm:text-base">
               There is no maximum hour cap, provided teaching quality remains high and scheduled sessions do not clash.
             </div>
           </details>
@@ -311,7 +311,7 @@
         <div class="space-y-4">
           <!-- Q17 -->
           <details class="faq-accordion group bg-white rounded-2xl shadow-xs border border-surface-variant overflow-hidden transition-all duration-300" open>
-            <summary class="flex items-center justify-between p-6 cursor-pointer hover:bg-canvas-gray transition-colors">
+            <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-canvas-gray transition-colors gap-3">
               <h4 class="font-headline-md text-lg font-bold text-deep-navy pr-6 leading-snug">How much do the classes cost?</h4>
               <span class="material-symbols-outlined accordion-icon text-deep-navy transition-transform duration-300">expand_more</span>
             </summary>

@@ -9,4 +9,5 @@ urlpatterns = [
     path('learning/', views.learning_redirect, name='learning_redirect'),
     path('robots.txt', views.robots_txt, name='robots_txt'),
     path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
+    path('offline/', views.offline, name='offline'),
 ]

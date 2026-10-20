@@ -24,20 +24,20 @@
 <main class="max-w-container-max mx-auto px-gutter py-12 md:py-20 relative z-10">
   
   <!-- Hero Header -->
-  <header class="mb-16">
+  <header class="mb-12 sm:mb-16">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
       <div>
         <div class="inline-block border-b-2 border-vibrant-lime pb-1 mb-3">
           <span class="font-label-md uppercase tracking-wider text-deep-navy font-bold text-xs">Academic Programs & Curriculums</span>
         </div>
-        <h1 class="font-headline-lg text-4xl sm:text-5xl font-bold text-deep-navy mb-4 tracking-tight">Master Your Future with Edukom</h1>
-        <p class="font-body-lg text-on-surface-variant max-w-3xl text-base sm:text-lg leading-relaxed">
+        <h1 class="font-headline-lg text-3xl sm:text-4xl md:text-5xl font-bold text-deep-navy mb-4 tracking-tight">Master Your Future with Edukom</h1>
+        <p class="font-body-lg text-on-surface-variant max-w-3xl text-sm sm:text-base md:text-lg leading-relaxed">
           Bridging traditional academic excellence with modern digital innovation. Explore our comprehensive selection of 1-on-1 private tutoring programs across British, Nigerian, American, and IPC Curriculums.
         </p>
       </div>
       
       <!-- Trust & Excellence Badge -->
-      <div class="flex items-center gap-3.5 bg-white px-5 py-3.5 rounded-2xl shadow-sm border border-surface-variant/60">
+      <div class="flex items-center gap-3.5 bg-white px-5 py-3.5 rounded-2xl shadow-sm border border-surface-variant/60 w-full sm:w-auto">
         <div class="w-10 h-10 rounded-full bg-deep-navy text-vibrant-lime flex items-center justify-center shrink-0 shadow-sm">
           <span class="material-symbols-outlined text-xl">workspace_premium</span>
         </div>
@@ -63,13 +63,13 @@
       </div>
 
       <!-- Scrollable Filter Buttons Container -->
-      <div class="flex items-center gap-2.5 overflow-x-auto no-scrollbar scrollbar-none flex-1 py-1 scroll-smooth" id="categoryFilters">
-        <button data-category="all" class="course-filter-btn active-filter bg-deep-navy text-white px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shadow-md shrink-0 whitespace-nowrap">All Programs</button>
-        <button data-category="examprep" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">Exam Prep</button>
-        <button data-category="math" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">Mathematics</button>
-        <button data-category="science" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">Sciences & Tech</button>
-        <button data-category="humanities" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">English & Languages</button>
-        <button data-category="commercial" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap">Commercial & Social Sciences</button>
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar scrollbar-none flex-1 py-1 scroll-smooth" id="categoryFilters">
+        <button data-category="all" class="course-filter-btn active-filter bg-deep-navy text-white px-4 sm:px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shadow-md shrink-0 whitespace-nowrap min-h-[40px]">All Programs</button>
+        <button data-category="examprep" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-4 sm:px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap min-h-[40px]">Exam Prep</button>
+        <button data-category="math" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-4 sm:px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap min-h-[40px]">Mathematics</button>
+        <button data-category="science" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-4 sm:px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap min-h-[40px]">Sciences & Tech</button>
+        <button data-category="humanities" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-4 sm:px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap min-h-[40px]">English & Languages</button>
+        <button data-category="commercial" class="course-filter-btn bg-surface-container hover:bg-deep-navy/10 text-on-surface-variant px-4 sm:px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shrink-0 whitespace-nowrap min-h-[40px]">Commercial & Social Sciences</button>
       </div>
 
       <div class="hidden lg:flex items-center gap-2 shrink-0 border-l border-surface-variant/60 pl-3">
@@ -86,7 +86,7 @@
   <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-20">
     
     <!-- Featured Large Card: Exam Prep & Curriculums -->
-    <div class="md:col-span-8 group relative overflow-hidden rounded-3xl bg-deep-navy text-white shadow-xl min-h-[420px] flex flex-col justify-end p-8 sm:p-12">
+    <div class="md:col-span-8 group relative overflow-hidden rounded-3xl bg-deep-navy text-white shadow-xl min-h-[340px] sm:min-h-[420px] flex flex-col justify-end p-6 sm:p-10 md:p-12">
       <!-- Background Image & Gradient -->
       <div class="absolute inset-0 opacity-30 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('{% static 'IMG/teenage-girl-using-laptop-online-school.jpg' %}');"></div>
       <div class="absolute inset-0 bg-gradient-to-t from-deep-navy via-deep-navy/70 to-transparent"></div>
@@ -97,8 +97,8 @@
         <p class="text-white/80 font-body-md text-sm sm:text-base leading-relaxed">
           Targeted 1-on-1 tutoring designed for outstanding performance in WASSCE, UTME/JAMB, IGCSE, SAT, IELTS, and A-Levels under British, Nigerian, American, and IPC Curriculums.
         </p>
-        <div class="flex flex-wrap items-center gap-6 pt-2">
-          <a href="{% url 'GetATutor' %}" class="bg-vibrant-lime text-deep-navy px-8 py-3.5 rounded-xl font-bold text-sm hover:scale-105 transition-all shadow-lg">
+        <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
+          <a href="{% url 'GetATutor' %}" class="w-full sm:w-auto text-center bg-vibrant-lime text-deep-navy px-8 py-3.5 rounded-xl font-bold text-sm hover:scale-105 transition-all shadow-lg min-h-[44px] flex items-center justify-center">
             Request a Private Tutor
           </a>
           <div class="flex items-center gap-2 text-vibrant-lime">
@@ -454,7 +454,7 @@
   </section>
 
   <!-- Video Course Library Spotlight Banner -->
-  <section class="mb-20 bg-gradient-to-br from-deep-navy via-primary-container to-deep-navy rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden shadow-xl border border-white/10">
+  <section class="mb-16 sm:mb-20 bg-gradient-to-br from-deep-navy via-primary-container to-deep-navy rounded-3xl p-6 sm:p-10 md:p-12 text-white relative overflow-hidden shadow-xl border border-white/10">
     <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-vibrant-lime/15 rounded-full blur-3xl pointer-events-none"></div>
     <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
       <div class="lg:col-span-8 space-y-4">
@@ -469,7 +469,7 @@
           Missed a live session or need revision? Access encrypted, full-syllabus recorded classes, module breakdowns, and exam walk-throughs across STEM, Languages, and Humanities with resume-playback and data-saver streaming.
         </p>
         <div class="flex flex-wrap items-center gap-4 pt-2">
-          <a href="{% url 'videolibrary:catalog' %}" class="bg-vibrant-lime hover:brightness-105 text-deep-navy px-8 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center gap-2 active:scale-95">
+          <a href="{% url 'videolibrary:catalog' %}" class="w-full sm:w-auto justify-center bg-vibrant-lime hover:brightness-105 text-deep-navy px-8 py-3.5 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center gap-2 active:scale-95 min-h-[44px]">
             <span class="material-symbols-outlined text-lg">play_circle</span>
             <span>Browse Video Course Catalog</span>
           </a>
@@ -480,27 +480,27 @@
         </div>
       </div>
       <div class="lg:col-span-4 flex justify-center">
-        <div class="w-44 h-44 sm:w-52 sm:h-52 rounded-3xl bg-white/5 border border-white/15 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm shadow-inner group hover:scale-105 transition-transform">
-          <div class="w-16 h-16 rounded-2xl bg-vibrant-lime text-deep-navy flex items-center justify-center mb-3 shadow-md group-hover:rotate-6 transition-transform">
-            <i class="fa-solid fa-film text-2xl"></i>
+        <div class="w-40 h-40 sm:w-52 sm:h-52 rounded-3xl bg-white/5 border border-white/15 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm shadow-inner group hover:scale-105 transition-transform">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-vibrant-lime text-deep-navy flex items-center justify-center mb-3 shadow-md group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-film text-xl sm:text-2xl"></i>
           </div>
-          <p class="text-white font-bold text-sm">Curriculum Recorded Lessons</p>
-          <p class="text-white/60 text-xs mt-1">Available 24/7 for Enrolled Students</p>
+          <p class="text-white font-bold text-xs sm:text-sm">Curriculum Recorded Lessons</p>
+          <p class="text-white/60 text-[11px] sm:text-xs mt-1">Available 24/7 for Enrolled Students</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Newsletter / CTA Section -->
-  <section class="text-center py-16 px-6 bg-white rounded-3xl border border-surface-variant/60 shadow-sm max-w-4xl mx-auto">
+  <section class="text-center py-12 sm:py-16 px-4 sm:px-6 bg-white rounded-3xl border border-surface-variant/60 shadow-sm max-w-4xl mx-auto">
     <span class="text-vibrant-lime font-bold text-xs uppercase tracking-widest bg-deep-navy px-3 py-1 rounded-md mb-3 inline-block">Stay Connected</span>
     <h3 class="font-headline-lg text-2xl sm:text-4xl font-bold text-deep-navy mb-3">Start Your Academic Journey Today</h3>
     <p class="text-on-surface-variant max-w-xl mx-auto mb-8 text-sm sm:text-base">Connect with expert tutors for academic success. Subscribe for updates on learning resources and exam guides.</p>
     
     <form method="post" action="{% url 'subscribe_newsletter' %}" class="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
       {% csrf_token %}
-      <input class="flex-grow border border-surface-variant rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-deep-navy" placeholder="Your academic email address" type="email" name="email" required>
-      <button type="submit" class="bg-deep-navy text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-primary-container transition-all shrink-0">
+      <input class="flex-grow border border-surface-variant rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:border-deep-navy" placeholder="Your academic email address" type="email" name="email" required>
+      <button type="submit" class="w-full sm:w-auto bg-deep-navy text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-primary-container transition-all shrink-0 min-h-[44px]">
         Subscribe
       </button>
     </form>

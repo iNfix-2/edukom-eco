@@ -101,6 +101,8 @@ def classroom_live_view(request: HttpRequest, session_id: str) -> HttpResponse:
         session.status = SessionStatus.IN_PROGRESS
     session.save()
 
+    latest_signal_id = ClassroomSignal.objects.filter(session=session).aggregate(m=models.Max('id'))['m'] or 0
+
     context = {
         'session': session,
         'room_url': session.room_url or room_data.get('room_url'),
@@ -110,6 +112,7 @@ def classroom_live_view(request: HttpRequest, session_id: str) -> HttpResponse:
         'is_tutor': is_tutor,
         'user_name': display_name,
         'user_id': request.user.id,
+        'latest_signal_id': latest_signal_id,
     }
     return render(request, 'classroom/room.html', context)
 

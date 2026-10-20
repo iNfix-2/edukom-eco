@@ -27,7 +27,7 @@
     color: #ffffff;
   }
   
-  /* Custom form field tweaks inside Crispy forms */
+  /* Custom form field tweaks inside Crispy forms - 16px to prevent iOS auto-zoom */
   .form-step-content input[type="text"],
   .form-step-content input[type="email"],
   .form-step-content input[type="tel"],
@@ -39,7 +39,7 @@
     border-radius: 0.75rem;
     border: 1px solid #c4c6d2;
     background-color: #ffffff;
-    font-size: 1rem;
+    font-size: 16px;
     color: #1a1c1c;
     transition: all 0.2s ease;
   }
@@ -61,7 +61,7 @@
     margin-bottom: 1.25rem;
   }
 
-  /* Crisp Checkbox & Radio Alignment Fix */
+  /* Crisp Checkbox & Radio Alignment Fix with Fluid Mobile Scaling */
   .form-step-content #div_id_subject > div,
   .form-step-content #div_id_curriculum > div,
   .form-step-content #div_id_days > div,
@@ -69,11 +69,23 @@
   .form-step-content .controls > div,
   .form-step-content ul {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)) !important;
-    gap: 0.75rem !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.6rem !important;
     padding: 0 !important;
     margin-top: 0.5rem !important;
     list-style: none !important;
+  }
+
+  @media (min-width: 640px) {
+    .form-step-content #div_id_subject > div,
+    .form-step-content #div_id_curriculum > div,
+    .form-step-content #div_id_days > div,
+    .form-step-content #div_id_lesson_type > div,
+    .form-step-content .controls > div,
+    .form-step-content ul {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+      gap: 0.75rem !important;
+    }
   }
 
   .form-step-content .form-check,
@@ -86,11 +98,13 @@
     gap: 0.5rem !important;
     background-color: #f9f9f9;
     border: 1px solid #e2e2e2;
-    padding: 0.6rem 0.85rem;
+    padding: 0.55rem 0.7rem;
     border-radius: 0.75rem;
     transition: all 0.2s ease;
     cursor: pointer;
     margin: 0 !important;
+    min-height: 44px;
+    word-break: break-word;
   }
 
   .form-step-content .form-check:hover,
@@ -120,12 +134,12 @@
   .form-step-content ul li label {
     display: inline-block !important;
     margin-bottom: 0 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
     font-weight: 500 !important;
     color: #1a1c1c !important;
     cursor: pointer !important;
     user-select: none;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
   }
 </style>
 
@@ -172,7 +186,7 @@
 
           <!-- Main Hero Image Card -->
           <div class="relative overflow-hidden rounded-3xl border-2 border-white/25 shadow-2xl bg-deep-navy/40">
-            <img src="{% static 'IMG/community/WhatsApp_Image_2026-06-23_at_13.39.08.jpeg' %}" onerror="this.onerror=null; this.src='/media/blog_images/WhatsApp_Image_2026-06-23_at_13.39.08.jpeg';" alt="Edukom Expert Tutor" class="w-full h-auto min-h-[380px] sm:min-h-[480px] lg:max-h-[680px] object-cover hover:scale-105 transition-transform duration-500">
+            <img src="{% static 'IMG/community/WhatsApp_Image_2026-06-23_at_13.39.08.jpeg' %}" onerror="this.onerror=null; this.src='/media/blog_images/WhatsApp_Image_2026-06-23_at_13.39.08.jpeg';" alt="Edukom Expert Tutor" class="w-full h-auto min-h-[260px] sm:min-h-[400px] lg:max-h-[640px] object-cover hover:scale-105 transition-transform duration-500">
           </div>
         </div>
       </div>
@@ -236,41 +250,41 @@
     <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-surface-variant/60">
       
       <!-- Form Header -->
-      <div class="bg-deep-navy p-8 sm:p-12 text-center text-white relative">
+      <div class="bg-deep-navy p-6 sm:p-12 text-center text-white relative">
         <span class="font-label-md uppercase tracking-wider text-vibrant-lime font-bold text-xs mb-2 block">Step-by-Step Request</span>
         <h2 class="font-headline-lg text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Request a Private Tutor</h2>
-        <p class="text-primary-fixed/90 font-body-md text-base max-w-xl mx-auto">Fill out the details below and we'll match you with the ideal educator within 24 hours.</p>
+        <p class="text-primary-fixed/90 font-body-md text-sm sm:text-base max-w-xl mx-auto">Fill out the details below and we'll match you with the ideal educator within 24 hours.</p>
       </div>
 
       <!-- Step Navigation Bar -->
-      <div class="bg-surface-container-low border-b border-surface-variant p-4 sm:p-6">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto" id="tab-nav">
+      <div class="bg-surface-container-low border-b border-surface-variant p-3 sm:p-6">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 max-w-3xl mx-auto" id="tab-nav">
           
-          <button type="button" onclick="openform(1)" id="Tab1" class="step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white active-step text-left cursor-pointer">
-            <span id="Span1" class="step-number w-8 h-8 rounded-lg bg-deep-navy text-white flex items-center justify-center font-bold text-sm shrink-0">1</span>
-            <span class="text-xs font-bold leading-tight">About Child</span>
+          <button type="button" onclick="openform(1)" id="Tab1" class="step-tab flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl border border-surface-variant bg-white active-step text-left cursor-pointer min-h-[48px]">
+            <span id="Span1" class="step-number w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-deep-navy text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">1</span>
+            <span class="text-[11px] sm:text-xs font-bold leading-tight line-clamp-1 sm:line-clamp-none">About Child</span>
           </button>
 
-          <button type="button" onclick="openform(2)" id="Tab2" class="step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white text-left cursor-pointer">
-            <span id="Span2" class="step-number w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-sm shrink-0">2</span>
-            <span class="text-xs font-bold leading-tight">Contact Info</span>
+          <button type="button" onclick="openform(2)" id="Tab2" class="step-tab flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl border border-surface-variant bg-white text-left cursor-pointer min-h-[48px]">
+            <span id="Span2" class="step-number w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">2</span>
+            <span class="text-[11px] sm:text-xs font-bold leading-tight line-clamp-1 sm:line-clamp-none">Contact Info</span>
           </button>
 
-          <button type="button" onclick="openform(3)" id="Tab3" class="step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white text-left cursor-pointer">
-            <span id="Span3" class="step-number w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-sm shrink-0">3</span>
-            <span class="text-xs font-bold leading-tight">Location</span>
+          <button type="button" onclick="openform(3)" id="Tab3" class="step-tab flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl border border-surface-variant bg-white text-left cursor-pointer min-h-[48px]">
+            <span id="Span3" class="step-number w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">3</span>
+            <span class="text-[11px] sm:text-xs font-bold leading-tight line-clamp-1 sm:line-clamp-none">Location</span>
           </button>
 
-          <button type="button" onclick="openform(4)" id="Tab4" class="step-tab flex items-center gap-3 p-3 rounded-xl border border-surface-variant bg-white text-left cursor-pointer">
-            <span id="Span4" class="step-number w-8 h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-sm shrink-0">4</span>
-            <span class="text-xs font-bold leading-tight">Schedule</span>
+          <button type="button" onclick="openform(4)" id="Tab4" class="step-tab flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl border border-surface-variant bg-white text-left cursor-pointer min-h-[48px]">
+            <span id="Span4" class="step-number w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-surface-variant text-on-surface flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">4</span>
+            <span class="text-[11px] sm:text-xs font-bold leading-tight line-clamp-1 sm:line-clamp-none">Schedule</span>
           </button>
 
         </div>
       </div>
 
       <!-- Form Body -->
-      <form method="post" class="p-6 sm:p-12">
+      <form method="post" class="p-4 sm:p-8 md:p-12">
         {% csrf_token %}
 
         <!-- Step 1: About Child -->
@@ -283,8 +297,8 @@
             {{ Abform|crispy }}
           </div>
           <div class="pt-6 flex justify-end">
-            <button type="button" class="px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center gap-2" onclick="fnext(1)">
-              Next: Contact Info
+            <button type="button" class="w-full sm:w-auto px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="fnext(1)">
+              <span>Next</span><span class="hidden sm:inline">: Contact Info</span>
               <span class="material-symbols-outlined text-lg">arrow_forward</span>
             </button>
           </div>
@@ -299,13 +313,13 @@
           <div class="grid grid-cols-1 gap-4">
             {{ Guform|crispy }}
           </div>
-          <div class="pt-6 flex justify-between gap-4">
-            <button type="button" class="px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center gap-2" onclick="openform(1)">
+          <div class="pt-6 flex items-center justify-between gap-3">
+            <button type="button" class="flex-1 sm:flex-initial px-5 sm:px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="openform(1)">
               <span class="material-symbols-outlined text-lg">arrow_back</span>
-              Back
+              <span>Back</span>
             </button>
-            <button type="button" class="px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center gap-2" onclick="fnext(2)">
-              Next: Location Info
+            <button type="button" class="flex-1 sm:flex-initial px-5 sm:px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="fnext(2)">
+              <span>Next</span><span class="hidden sm:inline">: Location Info</span>
               <span class="material-symbols-outlined text-lg">arrow_forward</span>
             </button>
           </div>
@@ -320,13 +334,13 @@
           <div class="grid grid-cols-1 gap-4">
             {{ Loform|crispy }}
           </div>
-          <div class="pt-6 flex justify-between gap-4">
-            <button type="button" class="px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center gap-2" onclick="openform(2)">
+          <div class="pt-6 flex items-center justify-between gap-3">
+            <button type="button" class="flex-1 sm:flex-initial px-5 sm:px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="openform(2)">
               <span class="material-symbols-outlined text-lg">arrow_back</span>
-              Back
+              <span>Back</span>
             </button>
-            <button type="button" class="px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center gap-2" onclick="fnext(3)">
-              Next: Lesson Schedule
+            <button type="button" class="flex-1 sm:flex-initial px-5 sm:px-8 py-3.5 bg-deep-navy text-white font-bold rounded-xl hover:bg-primary-container transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="fnext(3)">
+              <span>Next</span><span class="hidden sm:inline">: Lesson Schedule</span>
               <span class="material-symbols-outlined text-lg">arrow_forward</span>
             </button>
           </div>
@@ -341,14 +355,14 @@
           <div class="grid grid-cols-1 gap-4">
             {{ Leform|crispy }}
           </div>
-          <div class="pt-6 flex justify-between gap-4">
-            <button type="button" class="px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center gap-2" onclick="openform(3)">
+          <div class="pt-6 flex items-center justify-between gap-3">
+            <button type="button" class="flex-1 sm:flex-initial px-5 sm:px-6 py-3.5 border-2 border-surface-variant text-deep-navy font-bold rounded-xl hover:bg-canvas-gray transition-all flex items-center justify-center gap-2 min-h-[48px]" onclick="openform(3)">
               <span class="material-symbols-outlined text-lg">arrow_back</span>
-              Back
+              <span>Back</span>
             </button>
-            <button type="submit" class="px-10 py-4 bg-vibrant-lime text-deep-navy font-bold rounded-xl hover:brightness-105 shadow-md transition-all flex items-center gap-2 text-base">
-              Submit Request
-              <span class="material-symbols-outlined text-xl">send</span>
+            <button type="submit" class="flex-1 sm:flex-initial px-6 sm:px-10 py-3.5 sm:py-4 bg-vibrant-lime text-deep-navy font-bold rounded-xl hover:brightness-105 shadow-md transition-all flex items-center justify-center gap-2 text-sm sm:text-base min-h-[48px]">
+              <span>Submit Request</span>
+              <span class="material-symbols-outlined text-lg sm:text-xl">send</span>
             </button>
           </div>
         </div>
